@@ -1,0 +1,247 @@
+/* STREAM Therapist Dashboard - Clinical Design System */
+
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  /* BACKGROUNDS */
+  --bg-app: #F0F4F8;
+  --bg-card: #FFFFFF;
+  --bg-sidebar: #FFFFFF;
+  --bg-header: rgba(255, 255, 255, 0.97);
+  --bg-hover: #F0F7FF;
+  --bg-table-row-hover: #F5FAFF;
+  --bg-input: #F8FAFC;
+
+  /* BRAND */
+  --primary: #1A8FD1;
+  --primary-dark: #1270A8;
+  --primary-light: #E0F2FE;
+  --primary-muted: #BAE6FD;
+
+  /* GRADIENTS */
+  --gradient-primary: linear-gradient(135deg, #1A8FD1 0%, #1270A8 100%);
+  --gradient-success: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  --gradient-warning: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  --gradient-danger: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  --gradient-info: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  --gradient-neutral: linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%);
+
+  /* TEXT */
+  --text-primary: #0F172A;
+  --text-secondary: #374151;
+  --text-muted: #6B7280;
+  --text-on-primary: #FFFFFF;
+  --text-link: #1A8FD1;
+
+  /* BORDERS */
+  --border: #E2E8F0;
+  --border-focus: #1A8FD1;
+
+  /* STATUS */
+  --status-active-bg: #D1FAE5;
+  --status-active-text: #064E3B;
+  --status-warning-bg: #FEF3C7;
+  --status-warning-text: #78350F;
+  --status-danger-bg: #FEE2E2;
+  --status-danger-text: #7F1D1D;
+  --status-info-bg: #DBEAFE;
+  --status-info-text: #1E3A8A;
+  --status-neutral-bg: #F3F4F6;
+  --status-neutral-text: #1F2937;
+
+  /* SHADOWS */
+  --shadow-card: 0 1px 4px rgba(15,23,42,0.06), 0 2px 8px rgba(15,23,42,0.04);
+  --shadow-elevated: 0 4px 16px rgba(15,23,42,0.10);
+  --shadow-sidebar: 2px 0 8px rgba(15,23,42,0.06);
+
+  /* SHAPE */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 9999px;
+
+  /* SPACING (8px grid) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  --padding-page: 28px;
+  --padding-card: 20px;
+  --gap: 16px;
+
+  /* SIDEBAR */
+  --sidebar-width: 224px;
+  --sidebar-collapsed: 64px;
+  --header-height: 60px;
+}
+
+/* DARK MODE */
+.dark {
+  /* BACKGROUNDS */
+  --bg-app: #0F172A;
+  --bg-card: #1E293B;
+  --bg-sidebar: #1E293B;
+  --bg-header: rgba(30, 41, 59, 0.97);
+  --bg-hover: #334155;
+  --bg-table-row-hover: #2D3A4F;
+  --bg-input: #334155;
+
+  /* TEXT */
+  --text-primary: #F1F5F9;
+  --text-secondary: #CBD5E1;
+  --text-muted: #94A3B8;
+  --text-on-primary: #FFFFFF;
+  --text-link: #38BDF8;
+
+  /* BORDERS */
+  --border: #334155;
+  --border-focus: #38BDF8;
+
+  /* BRAND (slightly adjusted for dark mode) */
+  --primary: #38BDF8;
+  --primary-dark: #0EA5E9;
+  --primary-light: #1E3A5F;
+  --primary-muted: #0C4A6E;
+
+  /* GRADIENTS */
+  --gradient-primary: linear-gradient(135deg, #38BDF8 0%, #0EA5E9 100%);
+  --gradient-success: linear-gradient(135deg, #34D399 0%, #10B981 100%);
+  --gradient-warning: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+  --gradient-danger: linear-gradient(135deg, #F87171 0%, #EF4444 100%);
+  --gradient-info: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%);
+  --gradient-neutral: linear-gradient(135deg, #A1A1AA 0%, #71717A 100%);
+
+  /* STATUS */
+  --status-active-bg: #064E3B;
+  --status-active-text: #6EE7B7;
+  --status-warning-bg: #78350F;
+  --status-warning-text: #FCD34D;
+  --status-danger-bg: #7F1D1D;
+  --status-danger-text: #FCA5A5;
+  --status-info-bg: #1E3A8A;
+  --status-info-text: #93C5FD;
+  --status-neutral-bg: #27272A;
+  --status-neutral-text: #D4D4D8;
+
+  /* SHADOWS (darker for dark mode) */
+  --shadow-card: 0 1px 4px rgba(0,0,0,0.24), 0 2px 8px rgba(0,0,0,0.16);
+  --shadow-elevated: 0 4px 16px rgba(0,0,0,0.40);
+  --shadow-sidebar: 2px 0 8px rgba(0,0,0,0.24);
+}
+
+@theme {
+  /* Extend Tailwind with CSS variables */
+  --color-stream-blue: #1A8FD1;
+  --color-stream-blue-dark: #1270A8;
+  --color-stream-blue-light: #E0F2FE;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background: var(--bg-app);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Typography scale */
+.h1 {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.h2 {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.h3 {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.h4 {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.body-lg {
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.body {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.caption {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.mono {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+}
+
+/* Utility classes */
+.gradient-primary {
+  background: var(--gradient-primary);
+}
+
+.gradient-success {
+  background: var(--gradient-success);
+}
+
+.gradient-warning {
+  background: var(--gradient-warning);
+}
+
+.gradient-danger {
+  background: var(--gradient-danger);
+}
+
+.card-shadow {
+  box-shadow: var(--shadow-card);
+}
+
+.elevated-shadow {
+  box-shadow: var(--shadow-elevated);
+}

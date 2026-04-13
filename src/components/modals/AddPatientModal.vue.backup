@@ -1,0 +1,553 @@
+<template>
+  <AppModal v-model="isOpen" title="Add New Patient" @close="handleClose" closable>
+    <form @submit.prevent="handleSubmit" class="form-container">
+      <!-- Patient Information Section -->
+      <div class="form-section">
+        <h4 class="section-title">Patient Information</h4>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Full Name <span class="required">*</span></label>
+            <input
+              v-model="form.name"
+              type="text"
+              class="form-input"
+              placeholder="Enter full name"
+              :class="{ error: errors.name }"
+            />
+            <span v-if="errors.name" class="error-message">{{ errors.name }}</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email <span class="required">*</span></label>
+            <input
+              v-model="form.email"
+              type="email"
+              class="form-input"
+              placeholder="patient@example.com"
+              :class="{ error: errors.email }"
+            />
+            <span v-if="errors.email" class="error-message">{{ errors.email }}</span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Age</label>
+            <input
+              v-model.number="form.age"
+              type="number"
+              class="form-input"
+              placeholder="Enter age"
+              min="1"
+              max="150"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Condition <span class="required">*</span></label>
+            <input
+              v-model="form.condition"
+              type="text"
+              class="form-input"
+              placeholder="e.g., Post-stroke rehabilitation"
+              :class="{ error: errors.condition }"
+            />
+            <span v-if="errors.condition" class="error-message">{{ errors.condition }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account Security Section -->
+      <div class="form-section">
+        <h4 class="section-title">Account Security</h4>
+        <p class="section-description">Set a temporary password for the patient's account</p>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Password <span class="required">*</span></label>
+            <div class="password-input-wrapper">
+              <input
+                v-model="form.password"
+                :type="showPassword ? 'text' : 'password'"
+                class="form-input"
+                placeholder="Enter password (min 8 characters)"
+                :class="{ error: errors.password }"
+              />
+              <button type="button" @click="showPassword = !showPassword" class="password-toggle">
+                <Eye v-if="!showPassword" :size="16" />
+                <EyeOff v-if="showPassword" :size="16" />
+              </button>
+            </div>
+            <span v-if="errors.password" class="error-message">{{ errors.password }}</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Confirm Password <span class="required">*</span></label>
+            <div class="password-input-wrapper">
+              <input
+                v-model="form.confirmPassword"
+                :type="showConfirmPassword ? 'text' : 'password'"
+                class="form-input"
+                placeholder="Re-enter password"
+                :class="{ error: errors.confirmPassword }"
+              />
+              <button
+                type="button"
+                @click="showConfirmPassword = !showConfirmPassword"
+                class="password-toggle"
+              >
+                <Eye v-if="!showConfirmPassword" :size="16" />
+                <EyeOff v-if="showConfirmPassword" :size="16" />
+              </button>
+            </div>
+            <span v-if="errors.confirmPassword" class="error-message">{{
+              errors.confirmPassword
+            }}</span>
+          </div>
+        </div>
+
+        <div class="password-hints">
+          <p class="hint-text">Password Requirements:</p>
+          <ul class="hint-list">
+            <li :class="{ valid: form.password.length >= 8 }">At least 8 characters</li>
+            <li :class="{ valid: /[A-Z]/.test(form.password) }">One uppercase letter</li>
+            <li :class="{ valid: /[a-z]/.test(form.password) }">One lowercase letter</li>
+            <li :class="{ valid: /[0-9]/.test(form.password) }">One number</li>
+          </ul>
+        </div>
+      </div>
+    </form>
+
+    <template #footer>
+      <button type="button" @click="handleClose" class="btn-ghost" :disabled="isSubmitting">
+        Cancel
+      </button>
+      <button type="button" @click="handleSubmit" class="btn-primary" :disabled="isSubmitting">
+        {{ isSubmitting ? 'Creating...' : 'Add Patient' }}
+      </button>
+    </template>
+  </AppModal>
+</template>
+
+<script setup lang="ts">
+import { ref, reactive, watch } from 'vue'
+import { Eye, EyeOff } from 'lucide-vue-next'
+import { usePatientStore } from '@/stores/patientStore'
+import { supabase } from '@/services/supabase'
+import AppModal from '@/components/shared/AppModal.vue'
+
+interface Props {
+  modelValue: boolean
+}
+
+interface Emits {
+  (e: 'update:modelValue', value: boolean): void
+  (e: 'success'): void
+}
+
+const props = defineProps<Props>()
+const emit = defineEmits<Emits>()
+
+const patientStore = usePatientStore()
+
+const isOpen = ref(props.modelValue)
+const isSubmitting = ref(false)
+const showPassword = ref(false)
+const showConfirmPassword = ref(false)
+
+const form = reactive({
+  name: '',
+  email: '',
+  age: undefined as number | undefined,
+  condition: '',
+  password: '',
+  confirmPassword: ''
+})
+
+const errors = reactive({
+  name: '',
+  email: '',
+  condition: '',
+  password: '',
+  confirmPassword: '',
+})
+
+// Sync with v-model
+watch(
+  () => props.modelValue,
+  (val) => {
+    isOpen.value = val
+  },
+)
+
+watch(isOpen, (val) => {
+  emit('update:modelValue', val)
+})
+
+const validateEmail = (email: string): boolean => {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return re.test(email)
+}
+
+const validatePassword = (password: string): string | null => {
+  if (password.length < 8) {
+    return 'Password must be at least 8 characters'
+  }
+  if (!/[A-Z]/.test(password)) {
+    return 'Password must contain at least one uppercase letter'
+  }
+  if (!/[a-z]/.test(password)) {
+    return 'Password must contain at least one lowercase letter'
+  }
+  if (!/[0-9]/.test(password)) {
+    return 'Password must contain at least one number'
+  }
+  return null
+}
+
+const validateForm = (): boolean => {
+  let isValid = true
+
+  // Reset errors
+  errors.name = ''
+  errors.email = ''
+  errors.condition = ''
+  errors.password = ''
+  errors.confirmPassword = ''
+
+  // Name validation
+  if (!form.name.trim()) {
+    errors.name = 'Name is required'
+    isValid = false
+  }
+
+  // Email validation
+  if (!form.email.trim()) {
+    errors.email = 'Email is required'
+    isValid = false
+  } else if (!validateEmail(form.email)) {
+    errors.email = 'Please enter a valid email address'
+    isValid = false
+  }
+
+  // Condition validation
+  if (!form.condition.trim()) {
+    errors.condition = 'Condition is required'
+    isValid = false
+  }
+
+  // Password validation
+  if (!form.password) {
+    errors.password = 'Password is required'
+    isValid = false
+  } else {
+    const passwordError = validatePassword(form.password)
+    if (passwordError) {
+      errors.password = passwordError
+      isValid = false
+    }
+  }
+
+  // Confirm password validation
+  if (!form.confirmPassword) {
+    errors.confirmPassword = 'Please confirm password'
+    isValid = false
+  } else if (form.password !== form.confirmPassword) {
+    errors.confirmPassword = 'Passwords do not match'
+    isValid = false
+  }
+
+  return isValid
+}
+
+const resetForm = () => {
+  form.name = ''
+  form.email = ''
+  form.age = undefined
+  form.condition = ''
+  form.password = ''
+  form.confirmPassword = ''
+
+  errors.name = ''
+  errors.email = ''
+  errors.condition = ''
+  errors.password = ''
+  errors.confirmPassword = ''
+}
+
+const handleClose = () => {
+  if (!isSubmitting.value) {
+    resetForm()
+    isOpen.value = false
+  }
+}
+
+const handleSubmit = async () => {
+  if (!validateForm()) {
+    return
+  }
+
+  isSubmitting.value = true
+
+  try {
+    // Create patient account in Supabase Auth
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email: form.email,
+      password: form.password,
+      options: {
+        data: {
+          role: 'patient',
+          name: form.name,
+        },
+      },
+    })
+
+    if (authError) {
+      throw new Error(authError.message)
+    }
+
+    if (!authData.user) {
+      throw new Error('Failed to create user account')
+    }
+
+    // Create patient record in database with user_id
+    const result = await patientStore.createPatient({
+      name: form.name,
+      email: form.email,
+      condition: form.condition,
+      age: form.age,
+      stroke_type: 'Unknown' // Default value, can be updated later
+    }, authData.user.id)
+
+    if (!result.success) {
+      throw new Error(result.error || 'Failed to create patient')
+    }
+
+    // Success!
+    emit('success')
+    handleClose()
+
+    // Show success message (assuming you have a toast system)
+    alert(
+      `Patient "${form.name}" has been added successfully! They can now log in with their email and password.`,
+    )
+  } catch (error: any) {
+    console.error('Error creating patient:', error)
+    alert(`Failed to create patient: ${error.message}`)
+  } finally {
+    isSubmitting.value = false
+  }
+}
+</script>
+
+<style scoped>
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.section-description {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+  margin-top: -8px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.form-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.required {
+  color: var(--error);
+}
+
+.form-input,
+.form-textarea {
+  height: 40px;
+  padding: 0 var(--space-3);
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: var(--border-focus);
+}
+
+.form-input.error {
+  border-color: var(--error);
+}
+
+.form-textarea {
+  height: auto;
+  padding: var(--space-3);
+  resize: vertical;
+}
+
+.error-message {
+  font-size: 12px;
+  color: var(--error);
+  margin-top: -4px;
+}
+
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper .form-input {
+  padding-right: 40px;
+  width: 100%;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s;
+}
+
+.password-toggle:hover {
+  color: var(--text-primary);
+}
+
+.password-hints {
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+}
+
+.hint-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.hint-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hint-list li {
+  font-size: 12px;
+  color: var(--text-muted);
+  position: relative;
+  padding-left: 20px;
+}
+
+.hint-list li::before {
+  content: '○';
+  position: absolute;
+  left: 4px;
+  color: var(--text-muted);
+}
+
+.hint-list li.valid {
+  color: var(--success);
+}
+
+.hint-list li.valid::before {
+  content: '✓';
+  color: var(--success);
+  font-weight: bold;
+}
+
+.btn-primary {
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  height: 40px;
+  padding: 0 var(--space-5);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  transition: opacity 0.15s;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-ghost {
+  background: none;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  height: 40px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+
+.btn-ghost:hover {
+  background: var(--bg-hover);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn-ghost:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+</style>
