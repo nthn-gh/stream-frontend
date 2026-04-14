@@ -142,6 +142,11 @@ export const useExerciseStore = defineStore('exercise', () => {
         throw patientScopeError
       }
 
+      console.info('[exerciseStore] Assigning plan to patient', {
+        patientId: planData.patient_id,
+        therapistId,
+      })
+
       const { data: plan, error: planError } = await supabase
         .from('exercise_plans')
         .insert({
@@ -158,6 +163,12 @@ export const useExerciseStore = defineStore('exercise', () => {
       if (planError) {
         throw planError
       }
+
+      console.info('[exerciseStore] Created exercise_plans row', {
+        planId: plan.id,
+        patientId: plan.patient_id,
+        therapistId: plan.therapist_id,
+      })
 
       const { error: exercisesError } = await supabase.from('plan_exercises').insert(
         exercises.map((exercise, index) => ({
@@ -179,10 +190,85 @@ export const useExerciseStore = defineStore('exercise', () => {
         throw exercisesError
       }
 
+      console.info('[exerciseStore] Created plan_exercises rows', {
+        count: exercises.length,
+        planId: plan.id,
+      })
+
+      const sessionRows = exercises.map((exercise) => ({
+        patient_id: planData.patient_id,
+        exercise_id: exercise.exercise_id,
+        date: planData.start_date,
+        sets_completed: 0,
+        reps_completed: 0,
+        accuracy_percent: 0,
+        duration_minutes: Math.max(1, Math.round(exercise.duration_seconds / 60)),
+        duration_seconds: exercise.duration_seconds,
+        notes: `Assigned from exercise plan "${planData.name}"`,
+        plan_id: plan.id,
+        status: 'paused' as const,
+      }))
+
+      const { error: sessionsError } = await supabase.from('sessions').insert(sessionRows)
+
+      if (sessionsError) {
+        throw new Error(`Plan saved but compatibility session creation failed: ${sessionsError.message}`)
+      }
+
+      console.info('[exerciseStore] Created compatibility sessions', {
+        count: sessionRows.length,
+        planId: plan.id,
+      })
+
+      let notificationCreated = false
+      const { data: patientRecord, error: patientLookupError } = await supabase
+        .from('patients')
+        .select('user_id')
+        .eq('id', planData.patient_id)
+        .maybeSingle()
+
+      if (patientLookupError) {
+        console.warn('[exerciseStore] Unable to look up patient user for notification', {
+          error: patientLookupError,
+          patientId: planData.patient_id,
+          planId: plan.id,
+        })
+      } else if (patientRecord?.user_id) {
+        const exerciseLabel = exercises.length === 1 ? 'exercise' : 'exercises'
+        const { error: notificationError } = await supabase.from('notifications').insert({
+          user_id: patientRecord.user_id,
+          title: 'New exercise plan assigned',
+          body: `Your therapist assigned ${exercises.length} ${exerciseLabel} in "${planData.name}".`,
+          type: 'plan_updated',
+          read: false,
+        })
+
+        if (notificationError) {
+          console.warn('[exerciseStore] Unable to create plan_updated notification', {
+            error: notificationError,
+            patientId: planData.patient_id,
+            patientUserId: patientRecord.user_id,
+            planId: plan.id,
+          })
+        } else {
+          notificationCreated = true
+          console.info('[exerciseStore] Created plan_updated notification', {
+            patientId: planData.patient_id,
+            patientUserId: patientRecord.user_id,
+            planId: plan.id,
+          })
+        }
+      }
+
       await fetchPatientPlans(planData.patient_id)
       clearPlan()
 
-      return { success: true as const, plan }
+      return {
+        success: true as const,
+        plan,
+        compatibilitySessionsCreated: sessionRows.length,
+        notificationCreated,
+      }
     } catch (err: any) {
       error.value = err.message || 'Unable to create exercise plan'
       return { success: false as const, error: error.value }

@@ -1,74 +1,104 @@
 <template>
   <div class="dashboard">
     <!-- Add Patient Modal -->
-    <AddPatientModal 
-      :isOpen="showAddPatientModal" 
-      :therapistId="authStore.therapistProfile?.id || ''" 
-      @close="showAddPatientModal = false" 
-      @patientAdded="handlePatientAdded" 
+    <AddPatientModal
+      :isOpen="showAddPatientModal"
+      :therapistId="authStore.therapistProfile?.id || ''"
+      @close="showAddPatientModal = false"
+      @patientAdded="handlePatientAdded"
     />
 
     <!-- Page Header -->
     <div class="page-header">
       <div>
         <h1 class="h2">Good {{ timeOfDay }}, {{ therapistName }} 👋</h1>
-        <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">Here's what's happening with your patients today.</p>
+        <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px">
+          Here's what's happening with your patients today.
+        </p>
       </div>
       <button class="btn-primary" @click="showAddPatientModal = true">+ Add Patient</button>
     </div>
 
     <!-- Stat Cards -->
     <div class="stats-grid">
-      <StatCard 
-        :value="String(stats.totalPatients)" 
-        label="Total Patients" 
-        gradient="var(--gradient-primary)" 
+      <StatCard
+        :value="String(stats.totalPatients)"
+        label="Total Patients"
+        gradient="var(--gradient-primary)"
         :trend="{ text: '↑ 2 this month', positive: true }"
       >
         <template #icon>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            width="24"
+            height="24"
+          >
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
           </svg>
         </template>
       </StatCard>
-      <StatCard 
-        :value="String(stats.sessionsToday)" 
-        label="Sessions Today" 
-        gradient="var(--gradient-success)" 
+      <StatCard
+        :value="String(stats.sessionsToday)"
+        label="Sessions Today"
+        gradient="var(--gradient-success)"
         :trend="{ text: '— No change', positive: true }"
       >
         <template #icon>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            width="24"
+            height="24"
+          >
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
           </svg>
         </template>
       </StatCard>
-      <StatCard 
-        :value="String(stats.pendingReviews)" 
-        label="Pending Reviews" 
-        gradient="var(--gradient-warning)" 
+      <StatCard
+        :value="String(stats.pendingReviews)"
+        label="Pending Reviews"
+        gradient="var(--gradient-warning)"
         :trend="{ text: '↑ 1 this week', positive: false }"
       >
         <template #icon>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
-            <path d="M9 11l3 3L22 4"/>
-            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            width="24"
+            height="24"
+          >
+            <path d="M9 11l3 3L22 4" />
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
           </svg>
         </template>
       </StatCard>
-      <StatCard 
-        :value="String(unreadCount)" 
-        label="Unread Alerts" 
-        gradient="var(--gradient-danger)" 
+      <StatCard
+        :value="String(unreadCount)"
+        label="Unread Alerts"
+        gradient="var(--gradient-danger)"
         :trend="{ text: '— No change', positive: true }"
       >
         <template #icon>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            width="24"
+            height="24"
+          >
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
           </svg>
         </template>
       </StatCard>
@@ -82,11 +112,11 @@
           <div class="table-header">
             <h2 class="h3">Active Patients</h2>
             <div class="table-controls">
-              <input 
-                v-model="searchQuery" 
-                type="search" 
-                class="table-search" 
-                placeholder="Search patients..." 
+              <input
+                v-model="searchQuery"
+                type="search"
+                class="table-search"
+                placeholder="Search patients..."
                 @input="filterPatients"
               />
               <select v-model="statusFilter" class="table-select" @change="filterPatients">
@@ -110,16 +140,27 @@
             </thead>
             <tbody>
               <tr v-if="isLoading">
-                <td colspan="6" style="text-align: center; padding: var(--space-8); color: var(--text-muted);">
+                <td
+                  colspan="6"
+                  style="text-align: center; padding: var(--space-8); color: var(--text-muted)"
+                >
                   Loading patients...
                 </td>
               </tr>
               <tr v-else-if="paginatedPatients.length === 0">
-                <td colspan="6" style="text-align: center; padding: var(--space-8); color: var(--text-muted);">
+                <td
+                  colspan="6"
+                  style="text-align: center; padding: var(--space-8); color: var(--text-muted)"
+                >
                   No patients found
                 </td>
               </tr>
-              <tr v-else v-for="patient in paginatedPatients" :key="patient.id" @click="viewPatient(patient.id)">
+              <tr
+                v-else
+                v-for="patient in paginatedPatients"
+                :key="patient.id"
+                @click="viewPatient(patient.id)"
+              >
                 <td>
                   <div class="patient-cell">
                     <div v-if="patient.avatar_url" class="patient-avatar-img">
@@ -135,26 +176,30 @@
                 <td>{{ patient.condition }}</td>
                 <td style="color: var(--text-muted)">{{ formatDate(patient.last_session) }}</td>
                 <td><AdherenceBar :value="patient.adherence_rate" /></td>
-                <td><BaseBadge :variant="getStatusVariant(patient.status)">{{ formatStatus(patient.status) }}</BaseBadge></td>
-                <td><button class="btn-ghost" @click.stop="viewPatient(patient.id)">View</button></td>
+                <td>
+                  <BaseBadge :variant="getStatusVariant(patient.status)">{{
+                    formatStatus(patient.status)
+                  }}</BaseBadge>
+                </td>
+                <td>
+                  <button class="btn-ghost" @click.stop="viewPatient(patient.id)">View</button>
+                </td>
               </tr>
             </tbody>
           </table>
           <div v-if="totalPages > 1" class="table-footer">
-            <span class="caption" style="color: var(--text-secondary);">
-              Showing {{ ((currentPage - 1) * perPage) + 1 }} to {{ Math.min(currentPage * perPage, filteredPatients.length) }} of {{ filteredPatients.length }} patients
+            <span class="caption" style="color: var(--text-secondary)">
+              Showing {{ (currentPage - 1) * perPage + 1 }} to
+              {{ Math.min(currentPage * perPage, filteredPatients.length) }} of
+              {{ filteredPatients.length }} patients
             </span>
             <div class="pagination">
-              <button 
-                class="btn-ghost" 
-                :disabled="currentPage === 1" 
-                @click="currentPage--"
-              >
+              <button class="btn-ghost" :disabled="currentPage === 1" @click="currentPage--">
                 Previous
               </button>
-              <button 
-                class="btn-ghost" 
-                :disabled="currentPage >= totalPages" 
+              <button
+                class="btn-ghost"
+                :disabled="currentPage >= totalPages"
                 @click="currentPage++"
               >
                 Next
@@ -171,9 +216,15 @@
           <h3 class="h4" style="margin-bottom: var(--space-3)">Quick Actions</h3>
           <div class="quick-actions">
             <button class="quick-action-btn" @click="addPatient">+ Add New Patient</button>
-            <button class="quick-action-btn" @click="$router.push('/assign-exercise')">📋 Assign Exercise</button>
-            <button class="quick-action-btn" @click="$router.push('/reports')">📊 Generate Report</button>
-            <button class="quick-action-btn" @click="$router.push('/alerts')">🔔 View Alerts</button>
+            <button class="quick-action-btn" @click="$router.push('/assign-exercise')">
+              📋 Assign Exercise
+            </button>
+            <button class="quick-action-btn" @click="$router.push('/reports')">
+              📊 Generate Report
+            </button>
+            <button class="quick-action-btn" @click="$router.push('/alerts')">
+              🔔 View Alerts
+            </button>
           </div>
         </BaseCard>
 
@@ -181,13 +232,27 @@
         <BaseCard>
           <div class="card-row-header">
             <h3 class="h4">Recent Alerts</h3>
-            <a href="/alerts" class="text-link" @click.prevent="$router.push('/alerts')">View All</a>
+            <RouterLink to="/alerts" class="text-link">View All</RouterLink>
           </div>
           <div class="alert-list">
-            <div v-if="recentAlerts.length === 0" style="text-align: center; padding: var(--space-4); color: var(--text-muted); font-size: 13px;">
+            <div
+              v-if="recentAlerts.length === 0"
+              style="
+                text-align: center;
+                padding: var(--space-4);
+                color: var(--text-muted);
+                font-size: 13px;
+              "
+            >
               No recent alerts
             </div>
-            <div v-else v-for="alert in recentAlerts" :key="alert.id" class="alert-row" :style="{ borderLeftColor: alert.color }">
+            <div
+              v-else
+              v-for="alert in recentAlerts"
+              :key="alert.id"
+              class="alert-row"
+              :style="{ borderLeftColor: alert.color }"
+            >
               <div class="alert-text">{{ alert.text }}</div>
               <div class="alert-sub">{{ alert.patient }} · {{ alert.time }}</div>
             </div>
@@ -198,7 +263,15 @@
         <BaseCard>
           <h3 class="h4" style="margin-bottom: var(--space-3)">Today's Sessions</h3>
           <div class="session-list">
-            <div v-if="todaySessions.length === 0" style="text-align: center; padding: var(--space-4); color: var(--text-muted); font-size: 13px;">
+            <div
+              v-if="todaySessions.length === 0"
+              style="
+                text-align: center;
+                padding: var(--space-4);
+                color: var(--text-muted);
+                font-size: 13px;
+              "
+            >
               No sessions scheduled
             </div>
             <div v-else v-for="session in todaySessions" :key="session.id" class="session-row">
@@ -217,15 +290,17 @@
           <h3 class="h4" style="margin-bottom: var(--space-3)">Patient Adherence Overview</h3>
           <div class="adherence-stats">
             <div class="adherence-stat-row">
-              <span class="caption" style="color: var(--text-secondary);">High Adherence (≥75%)</span>
+              <span class="caption" style="color: var(--text-secondary)"
+                >High Adherence (≥75%)</span
+              >
               <BaseBadge variant="active">{{ adherenceStats.high }}</BaseBadge>
             </div>
             <div class="adherence-stat-row">
-              <span class="caption" style="color: var(--text-secondary);">Moderate (50-74%)</span>
+              <span class="caption" style="color: var(--text-secondary)">Moderate (50-74%)</span>
               <BaseBadge variant="warning">{{ adherenceStats.moderate }}</BaseBadge>
             </div>
             <div class="adherence-stat-row">
-              <span class="caption" style="color: var(--text-secondary);">Low Adherence (<50%)</span>
+              <span class="caption" style="color: var(--text-secondary)">Low Adherence (<50%)</span>
               <BaseBadge variant="danger">{{ adherenceStats.low }}</BaseBadge>
             </div>
           </div>
@@ -278,52 +353,55 @@ const therapistName = computed(() => {
 
 const stats = computed(() => {
   const totalPatients = patients.value.length
-  const sessionsToday = patients.value.filter(p => {
+  const sessionsToday = patients.value.filter((p) => {
     if (!p.last_session) return false
     const sessionDate = new Date(p.last_session).toISOString().split('T')[0]
     const today = new Date().toISOString().split('T')[0]
     return sessionDate === today
   }).length
-  const pendingReviews = patients.value.filter(p => p.status === 'needs_attention').length
+  const pendingReviews = patients.value.filter((p) => p.status === 'needs_attention').length
 
   return {
     totalPatients,
     sessionsToday,
-    pendingReviews
+    pendingReviews,
   }
 })
 
 const recentAlerts = computed(() => {
   return alerts.value
-    .filter(a => !a.resolved)
+    .filter((a) => !a.resolved)
     .slice(0, 3)
-    .map(alert => ({
+    .map((alert) => ({
       id: alert.id,
       text: alert.message,
       patient: alert.patient?.name || 'Unknown',
       time: formatTimestamp(alert.created_at),
-      color: alert.priority === 'high' ? '#EF4444' : alert.priority === 'medium' ? '#F59E0B' : '#3B82F6'
+      color:
+        alert.priority === 'high' ? '#EF4444' : alert.priority === 'medium' ? '#F59E0B' : '#3B82F6',
     }))
 })
 
 const todaySessions = computed(() => {
   const today = new Date().toISOString().split('T')[0]
   return patients.value
-    .filter(p => p.last_session && new Date(p.last_session).toISOString().split('T')[0] === today)
+    .filter((p) => p.last_session && new Date(p.last_session).toISOString().split('T')[0] === today)
     .slice(0, 4)
-    .map(p => ({
+    .map((p) => ({
       id: p.id,
       name: p.name,
       initials: getInitials(p.name),
       time: '9:00 AM',
-      active: true
+      active: true,
     }))
 })
 
 const adherenceStats = computed(() => {
-  const high = patients.value.filter(p => p.adherence_rate >= 75).length
-  const moderate = patients.value.filter(p => p.adherence_rate >= 50 && p.adherence_rate < 75).length
-  const low = patients.value.filter(p => p.adherence_rate < 50).length
+  const high = patients.value.filter((p) => p.adherence_rate >= 75).length
+  const moderate = patients.value.filter(
+    (p) => p.adherence_rate >= 50 && p.adherence_rate < 75,
+  ).length
+  const low = patients.value.filter((p) => p.adherence_rate < 50).length
 
   return { high, moderate, low }
 })
@@ -332,14 +410,13 @@ const filteredPatients = computed(() => {
   let result = patients.value
 
   if (statusFilter.value !== 'all') {
-    result = result.filter(p => p.status === statusFilter.value)
+    result = result.filter((p) => p.status === statusFilter.value)
   }
 
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    result = result.filter(p =>
-      p.name.toLowerCase().includes(query) ||
-      p.email.toLowerCase().includes(query)
+    result = result.filter(
+      (p) => p.name.toLowerCase().includes(query) || p.email.toLowerCase().includes(query),
     )
   }
 
@@ -360,7 +437,7 @@ const filterPatients = () => {
 const getInitials = (name: string) => {
   return name
     .split(' ')
-    .map(n => n[0])
+    .map((n) => n[0])
     .join('')
     .toUpperCase()
     .slice(0, 2)
@@ -385,7 +462,10 @@ const formatTimestamp = (timestamp: string) => {
 }
 
 const formatStatus = (status: string) => {
-  return status.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+  return status
+    .split('_')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ')
 }
 
 const getStatusVariant = (status: string): 'active' | 'warning' | 'danger' | 'info' | 'neutral' => {
@@ -582,7 +662,9 @@ onMounted(async () => {
   font-size: 13px;
   color: var(--primary);
   font-weight: 600;
-  transition: background 0.15s, border-color 0.15s;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
 }
 .btn-ghost:hover {
   background: var(--primary-light);
@@ -612,7 +694,9 @@ onMounted(async () => {
   font: inherit;
   font-size: 14px;
   font-weight: 600;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 }
 .quick-action-btn:hover {
   background: var(--gradient-primary);
@@ -700,7 +784,7 @@ onMounted(async () => {
   background: var(--border);
 }
 .dot--active {
-  background: #10B981;
+  background: #10b981;
 }
 
 /* Adherence Stats */

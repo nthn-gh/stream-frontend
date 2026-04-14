@@ -94,46 +94,18 @@
               </div>
 
               <div class="grid grid-cols-2 gap-4 mb-4">
-                <!-- Date of Birth -->
+                <!-- Age -->
                 <div>
-                  <label :for="'input-dob'" class="input-label">
-                    Date of Birth <span style="color: #ef4444">*</span>
-                  </label>
+                  <label :for="'input-age'" class="input-label">Age</label>
                   <input
-                    :id="'input-dob'"
-                    v-model="form.dateOfBirth"
-                    type="date"
-                    :class="['input-field', { 'input-error': errors.dateOfBirth }]"
+                    :id="'input-age'"
+                    v-model="form.age"
+                    type="number"
+                    min="0"
+                    placeholder="Optional"
+                    :class="['input-field', { 'input-error': errors.age }]"
                   />
-                  <p v-if="errors.dateOfBirth" class="error-message">{{ errors.dateOfBirth }}</p>
-                </div>
-
-                <!-- Phone Number -->
-                <div>
-                  <label :for="'input-phone'" class="input-label">
-                    Phone Number <span style="color: #ef4444">*</span>
-                  </label>
-                  <input
-                    :id="'input-phone'"
-                    v-model="form.phone"
-                    type="tel"
-                    placeholder="(555) 123-4567"
-                    :class="['input-field', { 'input-error': errors.phone }]"
-                  />
-                  <p v-if="errors.phone" class="error-message">{{ errors.phone }}</p>
-                </div>
-              </div>
-
-              <div class="grid grid-cols-2 gap-4">
-                <!-- Sex -->
-                <div>
-                  <label :for="'input-sex'" class="input-label"> Sex </label>
-                  <select :id="'input-sex'" v-model="form.sex" class="input-field">
-                    <option value="">Select...</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Prefer not to say">Prefer not to say</option>
-                  </select>
+                  <p v-if="errors.age" class="error-message">{{ errors.age }}</p>
                 </div>
 
                 <!-- Condition -->
@@ -150,6 +122,17 @@
                   />
                   <p v-if="errors.condition" class="error-message">{{ errors.condition }}</p>
                 </div>
+              </div>
+
+              <div>
+                <label :for="'input-stroke-type'" class="input-label">Stroke Type</label>
+                <input
+                  :id="'input-stroke-type'"
+                  v-model="form.strokeType"
+                  type="text"
+                  placeholder="e.g., Ischemic"
+                  class="input-field"
+                />
               </div>
             </div>
 
@@ -309,10 +292,11 @@
   </Teleport>
 </template>
 <script setup lang="ts">
+import { createClient } from '@supabase/supabase-js'
 import { ref, reactive, watch, computed } from 'vue'
 import { Eye, EyeOff, UserPlus, X } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/authStore'
-import { supabase } from '@/services/supabase'
+import type { Database } from '@/services/database.types'
 
 interface Props {
   isOpen: boolean
@@ -332,13 +316,22 @@ const isSubmitting = ref(false)
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
 
+function createIsolatedSupabaseClient() {
+  return createClient<Database>(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+    },
+  })
+}
+
 const form = reactive({
   fullName: '',
   email: '',
-  dateOfBirth: '',
-  phone: '',
-  sex: '',
+  age: '',
   condition: '',
+  strokeType: '',
   password: '',
   confirmPassword: '',
 })
@@ -346,8 +339,7 @@ const form = reactive({
 const errors = reactive({
   fullName: '',
   email: '',
-  dateOfBirth: '',
-  phone: '',
+  age: '',
   condition: '',
   password: '',
   confirmPassword: '',
@@ -405,16 +397,12 @@ const validateForm = (): boolean => {
     isValid = false
   }
 
-  // Validate Date of Birth
-  if (!form.dateOfBirth) {
-    errors.dateOfBirth = 'Date of birth is required'
-    isValid = false
-  }
-
-  // Validate Phone Number
-  if (!form.phone.trim()) {
-    errors.phone = 'Phone number is required'
-    isValid = false
+  if (form.age.trim()) {
+    const parsedAge = Number.parseInt(form.age, 10)
+    if (!Number.isInteger(parsedAge) || parsedAge < 0) {
+      errors.age = 'Age must be a whole number'
+      isValid = false
+    }
   }
 
   // Validate Condition
@@ -450,10 +438,9 @@ const validateForm = (): boolean => {
 const resetForm = () => {
   form.fullName = ''
   form.email = ''
-  form.dateOfBirth = ''
-  form.phone = ''
-  form.sex = ''
+  form.age = ''
   form.condition = ''
+  form.strokeType = ''
   form.password = ''
   form.confirmPassword = ''
 
@@ -474,8 +461,15 @@ const handleSubmit = async () => {
   isSubmitting.value = true
 
   try {
-    // 1. Create Supabase auth user
-    const { data: authData, error: authError } = await supabase.auth.signUp({
+    const therapistId = props.therapistId || authStore.therapistProfile?.id
+    if (!therapistId) {
+      throw new Error('Therapist profile is not loaded.')
+    }
+
+    const patientClient = createIsolatedSupabaseClient()
+
+    // 1. Create Supabase auth user in an isolated client so the therapist session stays intact.
+    const { data: authData, error: authError } = await patientClient.auth.signUp({
       email: form.email,
       password: form.password,
       options: {
@@ -489,22 +483,37 @@ const handleSubmit = async () => {
 
     if (authError) throw new Error(authError.message)
     if (!authData.user) throw new Error('Failed to create user account')
+    if (!authData.session) {
+      throw new Error(
+        'Patient auth user was created, but no signup session was returned. The portal cannot create the linked patient profile under the current RLS setup.',
+      )
+    }
 
-    // 2. Insert into patients table
-    const nameParts = form.fullName.trim().split(' ')
-    const firstName = nameParts[0]
-    const lastName = nameParts.slice(1).join(' ') || ''
+    // 2. Insert into public.users so patients.user_id can resolve correctly in the Android app.
+    const { error: userError } = await patientClient.from('users').upsert(
+      {
+        id: authData.user.id,
+        email: authData.user.email ?? form.email,
+        full_name: form.fullName.trim(),
+        role: 'patient',
+      },
+      { onConflict: 'id' },
+    )
 
-    const { data: patientData, error: patientError } = await supabase
+    if (userError) throw new Error(userError.message)
+
+    // 3. Insert the schema-aligned patient profile.
+    const parsedAge = form.age.trim() ? Number.parseInt(form.age, 10) : null
+    const { data: patientData, error: patientError } = await patientClient
       .from('patients')
       .insert({
         user_id: authData.user.id,
+        therapist_id: therapistId,
         name: form.fullName,
         email: form.email,
-        phone_number: form.phone,
-        date_of_birth: form.dateOfBirth,
-        sex: form.sex || null,
-        condition: form.condition,
+        age: Number.isInteger(parsedAge) ? parsedAge : null,
+        stroke_type: form.strokeType.trim() || null,
+        condition: form.condition.trim(),
         status: 'active',
         enrolled_date: new Date().toISOString().split('T')[0],
         adherence_rate: 0,
