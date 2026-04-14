@@ -9,7 +9,12 @@ const route = useRoute()
 const { initTheme } = useTheme()
 
 const showLayout = computed(() => {
-  return route.path !== '/login' && route.path !== '/signup' && route.path !== '/confirm-email'
+  return (
+    route.path !== '/login' &&
+    route.path !== '/register' &&
+    route.path !== '/signup' &&
+    route.path !== '/confirm-email'
+  )
 })
 
 // Initialize theme on app mount

@@ -160,6 +160,7 @@ const handleLogin = async () => {
 .login-page {
   min-height: 100vh;
   display: flex;
+  background: var(--bg-app);
 }
 
 .brand-panel {
@@ -213,7 +214,7 @@ const handleLogin = async () => {
   align-items: center;
   justify-content: center;
   padding: var(--space-8);
-  background: white;
+  background: var(--bg-card);
 }
 
 .form-container {
@@ -224,6 +225,10 @@ const handleLogin = async () => {
 .form-header {
   text-align: center;
   margin-bottom: var(--space-8);
+}
+
+.form-header .h1 {
+  color: var(--text-primary);
 }
 
 .login-form {
