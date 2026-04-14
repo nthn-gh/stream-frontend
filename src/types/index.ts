@@ -4,6 +4,7 @@ import type {
   ExercisePlanStatus,
   PatientStatus,
   SessionFormQuality,
+  SessionStatus,
   UserRole,
 } from '@/services/database.types'
 
@@ -44,6 +45,10 @@ export type ProgressMetric = Row<'progress_metrics'>
 export type ProgressMetricInsert = Insert<'progress_metrics'>
 export type ProgressMetricUpdate = Update<'progress_metrics'>
 
+export type SessionLog = Row<'session_logs'>
+export type SessionLogInsert = Insert<'session_logs'>
+export type SessionLogUpdate = Update<'session_logs'>
+
 export type Alert = Row<'alerts'>
 export type AlertInsert = Insert<'alerts'>
 export type AlertUpdate = Update<'alerts'>
@@ -57,15 +62,46 @@ export interface AlertWithPatient extends Alert {
 }
 
 export interface SessionWithExercise extends Session {
-  exercise: Pick<Exercise, 'id' | 'name' | 'category' | 'difficulty'> | null
+  exercise: Pick<
+    Exercise,
+    | 'id'
+    | 'name'
+    | 'category'
+    | 'difficulty'
+    | 'duration_seconds'
+    | 'target_joints'
+    | 'thumbnail_url'
+    | 'video_url'
+  > | null
+  session_logs?: SessionLogWithExercise[]
 }
 
 export interface SessionNoteWithTherapist extends SessionNote {
   therapist: Pick<TherapistProfile, 'id' | 'name'> | null
 }
 
+export interface SessionLogWithExercise extends SessionLog {
+  exercise: Pick<
+    Exercise,
+    'id' | 'name' | 'category' | 'difficulty' | 'target_joints' | 'thumbnail_url' | 'video_url'
+  > | null
+}
+
 export interface PlanExerciseWithExercise extends PlanExercise {
-  exercise: Exercise | null
+  exercise: Pick<
+    Exercise,
+    | 'id'
+    | 'name'
+    | 'description'
+    | 'category'
+    | 'difficulty'
+    | 'duration_minutes'
+    | 'duration_seconds'
+    | 'instructions'
+    | 'target_joints'
+    | 'thumbnail_url'
+    | 'video_url'
+  > | null
 }
 
 export interface ExercisePlanWithExercises extends ExercisePlan {
@@ -75,9 +111,11 @@ export interface ExercisePlanWithExercises extends ExercisePlan {
 export interface ExerciseAssignmentDraft {
   client_id: string
   difficulty: ExerciseDifficulty
-  duration_minutes: number
+  duration_seconds: number
   exercise_id: string
   reps: number
+  rom_max_degrees: number | null
+  rom_min_degrees: number | null
   sets: number
   special_instructions: string | null
 }
@@ -130,8 +168,10 @@ export interface AssignExerciseForm {
     exercise_id: string
     sets: number
     reps: number
-    duration_minutes: number
+    duration_seconds: number
     difficulty: ExerciseDifficulty
+    rom_min_degrees?: number | null
+    rom_max_degrees?: number | null
     special_instructions?: string | null
   }>
 }
@@ -170,4 +210,11 @@ export interface ToastMessage {
   duration?: number
 }
 
-export type { ExerciseDifficulty, ExercisePlanStatus, PatientStatus, SessionFormQuality, UserRole }
+export type {
+  ExerciseDifficulty,
+  ExercisePlanStatus,
+  PatientStatus,
+  SessionFormQuality,
+  SessionStatus,
+  UserRole,
+}

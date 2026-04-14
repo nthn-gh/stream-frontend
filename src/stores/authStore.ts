@@ -139,7 +139,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function updateProfile(updates: AllowedProfileUpdates) {
-    if (!therapistProfile.value) {
+    if (!therapistProfile.value || !user.value) {
       return { success: false as const, error: 'Therapist profile is not loaded.' }
     }
 
@@ -150,6 +150,17 @@ export const useAuthStore = defineStore('auth', () => {
       const payload: AllowedProfileUpdates & { updated_at: string } = {
         ...updates,
         updated_at: new Date().toISOString(),
+      }
+
+      const { error: userUpdateError } = await supabase
+        .from('users')
+        .update({
+          full_name: updates.name ?? therapistProfile.value.name,
+        })
+        .eq('id', user.value.id)
+
+      if (userUpdateError) {
+        throw userUpdateError
       }
 
       const { data, error: updateError } = await supabase
@@ -164,6 +175,10 @@ export const useAuthStore = defineStore('auth', () => {
       }
 
       therapistProfile.value = data as TherapistProfile
+      user.value = {
+        ...user.value,
+        full_name: therapistProfile.value.name,
+      }
       return { success: true as const, data: therapistProfile.value }
     } catch (err: any) {
       error.value = err.message || 'Unable to update therapist profile'
@@ -258,6 +273,7 @@ export const useAuthStore = defineStore('auth', () => {
         {
           id: authData.user.id,
           email: therapistEmail,
+          full_name: name,
           role: 'therapist',
         },
         { onConflict: 'id' },

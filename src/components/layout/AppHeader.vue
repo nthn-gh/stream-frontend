@@ -19,7 +19,10 @@
       </div>
     </div>
     <div class="header-right">
-      <div class="header-date">{{ today }}</div>
+      <div class="header-clock">
+        <div class="header-date">{{ today }}</div>
+        <div class="header-time">{{ currentTime }}</div>
+      </div>
       <button class="icon-btn" aria-label="Notifications" @click="$router.push('/alerts')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
           <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
@@ -33,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onBeforeUnmount, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import { useAlertStore } from '@/stores/alertStore'
@@ -43,10 +46,12 @@ const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 const alertStore = useAlertStore()
-const { therapistProfile } = storeToRefs(authStore)
+const { therapistProfile, user } = storeToRefs(authStore)
 const { unreadCount } = storeToRefs(alertStore)
 
 const searchQuery = ref('')
+const now = ref(new Date())
+let clockTimer: number | null = null
 
 const pageTitles: Record<string, string> = {
   '/dashboard': 'Dashboard',
@@ -65,15 +70,24 @@ const pageTitle = computed(() => {
   return pageTitles[path] || 'STREAM'
 })
 
-const today = new Date().toLocaleDateString('en-US', { 
-  month: 'short', 
-  day: 'numeric', 
-  year: 'numeric' 
-})
+const today = computed(() =>
+  now.value.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }),
+)
+
+const currentTime = computed(() =>
+  now.value.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+  }),
+)
 
 const initials = computed(() => {
-  if (!therapistProfile.value?.name) return 'DT'
-  const parts = therapistProfile.value.name.split(' ')
+  const displayName = therapistProfile.value?.name || user.value?.full_name || 'Therapist'
+  const parts = displayName.split(' ')
   return parts
     .map((p) => p[0])
     .join('')
@@ -86,6 +100,18 @@ const handleSearch = () => {
     router.push({ path: '/patients', query: { search: searchQuery.value } })
   }
 }
+
+onMounted(() => {
+  clockTimer = window.setInterval(() => {
+    now.value = new Date()
+  }, 1000)
+})
+
+onBeforeUnmount(() => {
+  if (clockTimer !== null) {
+    window.clearInterval(clockTimer)
+  }
+})
 </script>
 
 <style scoped>
@@ -149,10 +175,23 @@ const handleSearch = () => {
   gap: var(--space-3);
   margin-left: auto;
 }
+.header-clock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  white-space: nowrap;
+}
+
 .header-date {
   font-size: 13px;
   color: var(--text-muted);
-  white-space: nowrap;
+}
+
+.header-time {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 .icon-btn {
   background: none;

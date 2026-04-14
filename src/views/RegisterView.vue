@@ -111,10 +111,6 @@
             {{ errors.general }}
           </p>
 
-          <p v-if="successMessage" class="success-message">
-            {{ successMessage }}
-          </p>
-
           <p class="signup-link caption">
             Already have an account?
             <router-link to="/login" class="link">Sign in</router-link>
@@ -157,8 +153,6 @@ const errors = reactive({
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
 const isLoading = ref(false)
-const successMessage = ref('')
-
 const validateForm = () => {
   errors.name = ''
   errors.clinicName = ''
@@ -215,16 +209,11 @@ const handleRegister = async () => {
   if (!validateForm()) return
   
   isLoading.value = true
-  successMessage.value = ''
-  
   try {
     const result = await authStore.register(form.email, form.password, form.name, form.clinicName, form.licenseNumber || undefined)
     
     if (result.success) {
-      successMessage.value = 'Account created successfully! Redirecting to login...'
-      setTimeout(() => {
-        router.push('/login')
-      }, 2000)
+      router.push('/login')
     } else {
       errors.general = result.error || 'Registration failed. Please try again.'
     }
@@ -357,15 +346,6 @@ const handleRegister = async () => {
   text-align: center;
   padding: var(--space-3);
   background: var(--status-danger-bg);
-  border-radius: var(--radius-sm);
-}
-
-.success-message {
-  color: #059669;
-  font-size: 13px;
-  text-align: center;
-  padding: var(--space-3);
-  background: var(--status-active-bg);
   border-radius: var(--radius-sm);
 }
 

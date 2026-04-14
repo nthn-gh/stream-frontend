@@ -12,6 +12,7 @@ export type NotificationType =
   | 'achievement'
 export type PatientStatus = 'active' | 'needs_attention' | 'inactive'
 export type SessionFormQuality = 'excellent' | 'good' | 'needs_work'
+export type SessionStatus = 'in_progress' | 'completed' | 'paused' | 'cancelled'
 export type UserRole = 'therapist' | 'patient' | 'admin'
 
 export type Database = {
@@ -116,6 +117,7 @@ export type Database = {
           duration_seconds: number
           exercise_name: string
           id: string
+          migrated_session_id: string | null
           patient_id: string | null
           reps_completed: number
           score: string
@@ -128,6 +130,7 @@ export type Database = {
           duration_seconds: number
           exercise_name: string
           id?: string
+          migrated_session_id?: string | null
           patient_id?: string | null
           reps_completed: number
           score: string
@@ -140,6 +143,7 @@ export type Database = {
           duration_seconds?: number
           exercise_name?: string
           id?: string
+          migrated_session_id?: string | null
           patient_id?: string | null
           reps_completed?: number
           score?: string
@@ -163,10 +167,13 @@ export type Database = {
           description: string | null
           difficulty: ExerciseDifficulty
           duration_minutes: number | null
+          duration_seconds: number | null
           id: string
           instructions: string | null
           name: string
+          target_joints: string[] | null
           thumbnail_url: string | null
+          video_url: string | null
         }
         Insert: {
           category: ExerciseCategory
@@ -174,10 +181,13 @@ export type Database = {
           description?: string | null
           difficulty: ExerciseDifficulty
           duration_minutes?: number | null
+          duration_seconds?: number | null
           id?: string
           instructions?: string | null
           name: string
+          target_joints?: string[] | null
           thumbnail_url?: string | null
+          video_url?: string | null
         }
         Update: {
           category?: ExerciseCategory
@@ -185,10 +195,13 @@ export type Database = {
           description?: string | null
           difficulty?: ExerciseDifficulty
           duration_minutes?: number | null
+          duration_seconds?: number | null
           id?: string
           instructions?: string | null
           name?: string
+          target_joints?: string[] | null
           thumbnail_url?: string | null
+          video_url?: string | null
         }
         Relationships: []
       }
@@ -278,7 +291,7 @@ export type Database = {
           age: number | null
           avatar_url: string | null
           avg_accuracy: number | null
-          condition: string
+          condition: string | null
           created_at: string | null
           current_streak: number | null
           email: string
@@ -288,6 +301,7 @@ export type Database = {
           name: string
           status: PatientStatus | null
           stroke_type: string | null
+          therapist_id: string | null
           total_sessions: number | null
           updated_at: string | null
           user_id: string | null
@@ -297,7 +311,7 @@ export type Database = {
           age?: number | null
           avatar_url?: string | null
           avg_accuracy?: number | null
-          condition: string
+          condition?: string | null
           created_at?: string | null
           current_streak?: number | null
           email: string
@@ -307,6 +321,7 @@ export type Database = {
           name: string
           status?: PatientStatus | null
           stroke_type?: string | null
+          therapist_id?: string | null
           total_sessions?: number | null
           updated_at?: string | null
           user_id?: string | null
@@ -316,7 +331,7 @@ export type Database = {
           age?: number | null
           avatar_url?: string | null
           avg_accuracy?: number | null
-          condition?: string
+          condition?: string | null
           created_at?: string | null
           current_streak?: number | null
           email?: string
@@ -326,11 +341,19 @@ export type Database = {
           name?: string
           status?: PatientStatus | null
           stroke_type?: string | null
+          therapist_id?: string | null
           total_sessions?: number | null
           updated_at?: string | null
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: 'patients_therapist_id_fkey'
+            columns: ['therapist_id']
+            isOneToOne: false
+            referencedRelation: 'therapist_profiles'
+            referencedColumns: ['id']
+          },
           {
             foreignKeyName: 'patients_user_id_fkey'
             columns: ['user_id']
@@ -344,33 +367,42 @@ export type Database = {
         Row: {
           difficulty: ExerciseDifficulty | null
           duration_minutes: number | null
+          duration_seconds: number | null
           exercise_id: string
           id: string
           order: number | null
           plan_id: string
           reps: number | null
+          rom_max_degrees: number | null
+          rom_min_degrees: number | null
           sets: number | null
           special_instructions: string | null
         }
         Insert: {
           difficulty?: ExerciseDifficulty | null
           duration_minutes?: number | null
+          duration_seconds?: number | null
           exercise_id: string
           id?: string
           order?: number | null
           plan_id: string
           reps?: number | null
+          rom_max_degrees?: number | null
+          rom_min_degrees?: number | null
           sets?: number | null
           special_instructions?: string | null
         }
         Update: {
           difficulty?: ExerciseDifficulty | null
           duration_minutes?: number | null
+          duration_seconds?: number | null
           exercise_id?: string
           id?: string
           order?: number | null
           plan_id?: string
           reps?: number | null
+          rom_max_degrees?: number | null
+          rom_min_degrees?: number | null
           sets?: number | null
           special_instructions?: string | null
         }
@@ -432,6 +464,54 @@ export type Database = {
           },
         ]
       }
+      session_logs: {
+        Row: {
+          accuracy_score: number | null
+          created_at: string | null
+          exercise_id: string
+          id: string
+          notes: string | null
+          range_of_motion: number | null
+          reps_completed: number | null
+          session_id: string
+        }
+        Insert: {
+          accuracy_score?: number | null
+          created_at?: string | null
+          exercise_id: string
+          id?: string
+          notes?: string | null
+          range_of_motion?: number | null
+          reps_completed?: number | null
+          session_id: string
+        }
+        Update: {
+          accuracy_score?: number | null
+          created_at?: string | null
+          exercise_id?: string
+          id?: string
+          notes?: string | null
+          range_of_motion?: number | null
+          reps_completed?: number | null
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'session_logs_exercise_id_fkey'
+            columns: ['exercise_id']
+            isOneToOne: false
+            referencedRelation: 'exercises'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'session_logs_session_id_fkey'
+            columns: ['session_id']
+            isOneToOne: false
+            referencedRelation: 'sessions'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       session_notes: {
         Row: {
           created_at: string | null
@@ -484,42 +564,57 @@ export type Database = {
       sessions: {
         Row: {
           accuracy_percent: number | null
+          completed_at: string | null
           created_at: string | null
           date: string
           duration_minutes: number | null
-          exercise_id: string
+          duration_seconds: number | null
+          exercise_id: string | null
           form_quality: SessionFormQuality | null
           id: string
           notes: string | null
           patient_id: string
+          plan_id: string | null
           reps_completed: number | null
           sets_completed: number | null
+          started_at: string | null
+          status: SessionStatus | null
         }
         Insert: {
           accuracy_percent?: number | null
+          completed_at?: string | null
           created_at?: string | null
           date?: string
           duration_minutes?: number | null
-          exercise_id: string
+          duration_seconds?: number | null
+          exercise_id?: string | null
           form_quality?: SessionFormQuality | null
           id?: string
           notes?: string | null
           patient_id: string
+          plan_id?: string | null
           reps_completed?: number | null
           sets_completed?: number | null
+          started_at?: string | null
+          status?: SessionStatus | null
         }
         Update: {
           accuracy_percent?: number | null
+          completed_at?: string | null
           created_at?: string | null
           date?: string
           duration_minutes?: number | null
-          exercise_id?: string
+          duration_seconds?: number | null
+          exercise_id?: string | null
           form_quality?: SessionFormQuality | null
           id?: string
           notes?: string | null
           patient_id?: string
+          plan_id?: string | null
           reps_completed?: number | null
           sets_completed?: number | null
+          started_at?: string | null
+          status?: SessionStatus | null
         }
         Relationships: [
           {
@@ -534,6 +629,13 @@ export type Database = {
             columns: ['patient_id']
             isOneToOne: false
             referencedRelation: 'patients'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'sessions_plan_id_fkey'
+            columns: ['plan_id']
+            isOneToOne: false
+            referencedRelation: 'exercise_plans'
             referencedColumns: ['id']
           },
         ]
@@ -592,18 +694,21 @@ export type Database = {
         Row: {
           created_at: string | null
           email: string
+          full_name: string | null
           id: string
           role: UserRole
         }
         Insert: {
           created_at?: string | null
           email: string
+          full_name?: string | null
           id: string
           role: UserRole
         }
         Update: {
           created_at?: string | null
           email?: string
+          full_name?: string | null
           id?: string
           role?: UserRole
         }

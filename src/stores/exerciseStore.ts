@@ -12,10 +12,12 @@ import type {
 
 type PlanExerciseInput = {
   difficulty: ExerciseDifficulty
-  duration_minutes: number
+  duration_seconds: number
   exercise_id: string
   order: number
   reps: number
+  rom_max_degrees?: number | null
+  rom_min_degrees?: number | null
   sets: number
   special_instructions?: string | null
 }
@@ -72,14 +74,20 @@ export const useExerciseStore = defineStore('exercise', () => {
     }
   }
 
-  function addToPlan(exercise: Exercise, defaults?: Partial<Omit<ExerciseAssignmentDraft, 'client_id' | 'exercise_id'>>) {
+  function addToPlan(
+    exercise: Exercise,
+    defaults?: Partial<Omit<ExerciseAssignmentDraft, 'client_id' | 'exercise_id'>>,
+  ) {
     assignedPlan.value.push({
       client_id: crypto.randomUUID(),
       exercise_id: exercise.id,
       sets: defaults?.sets ?? 3,
       reps: defaults?.reps ?? 10,
-      duration_minutes: defaults?.duration_minutes ?? exercise.duration_minutes ?? 10,
+      duration_seconds:
+        defaults?.duration_seconds ?? exercise.duration_seconds ?? (exercise.duration_minutes ?? 10) * 60,
       difficulty: defaults?.difficulty ?? exercise.difficulty,
+      rom_min_degrees: defaults?.rom_min_degrees ?? null,
+      rom_max_degrees: defaults?.rom_max_degrees ?? null,
       special_instructions: defaults?.special_instructions ?? null,
     })
   }
@@ -122,6 +130,18 @@ export const useExerciseStore = defineStore('exercise', () => {
         throw new Error('Select at least one exercise before creating a plan.')
       }
 
+      const { error: patientScopeError } = await supabase
+        .from('patients')
+        .update({
+          therapist_id: therapistId,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', planData.patient_id)
+
+      if (patientScopeError) {
+        throw patientScopeError
+      }
+
       const { data: plan, error: planError } = await supabase
         .from('exercise_plans')
         .insert({
@@ -145,9 +165,12 @@ export const useExerciseStore = defineStore('exercise', () => {
           exercise_id: exercise.exercise_id,
           sets: exercise.sets,
           reps: exercise.reps,
-          duration_minutes: exercise.duration_minutes,
+          duration_minutes: Math.max(1, Math.round(exercise.duration_seconds / 60)),
+          duration_seconds: exercise.duration_seconds,
           difficulty: exercise.difficulty,
           special_instructions: exercise.special_instructions ?? null,
+          rom_min_degrees: exercise.rom_min_degrees ?? null,
+          rom_max_degrees: exercise.rom_max_degrees ?? null,
           order: exercise.order ?? index,
         })),
       )
@@ -181,9 +204,11 @@ export const useExerciseStore = defineStore('exercise', () => {
         exercise_id: exercise.exercise_id,
         sets: exercise.sets,
         reps: exercise.reps,
-        duration_minutes: exercise.duration_minutes,
+        duration_seconds: exercise.duration_seconds,
         difficulty: exercise.difficulty,
         special_instructions: exercise.special_instructions,
+        rom_min_degrees: exercise.rom_min_degrees,
+        rom_max_degrees: exercise.rom_max_degrees,
         order: index,
       })),
     )
@@ -221,9 +246,12 @@ export const useExerciseStore = defineStore('exercise', () => {
               sets,
               reps,
               duration_minutes,
+              duration_seconds,
               difficulty,
               special_instructions,
               order,
+              rom_min_degrees,
+              rom_max_degrees,
               exercise:exercises(
                 id,
                 name,
@@ -233,6 +261,9 @@ export const useExerciseStore = defineStore('exercise', () => {
                 thumbnail_url,
                 instructions,
                 duration_minutes,
+                duration_seconds,
+                target_joints,
+                video_url,
                 created_at
               )
             )
