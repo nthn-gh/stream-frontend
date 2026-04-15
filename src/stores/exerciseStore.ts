@@ -195,6 +195,8 @@ export const useExerciseStore = defineStore('exercise', () => {
         planId: plan.id,
       })
 
+      let compatibilitySessionsCreated = 0
+      let compatibilitySessionsWarning: string | null = null
       const sessionRows = exercises.map((exercise) => ({
         patient_id: planData.patient_id,
         exercise_id: exercise.exercise_id,
@@ -212,15 +214,23 @@ export const useExerciseStore = defineStore('exercise', () => {
       const { error: sessionsError } = await supabase.from('sessions').insert(sessionRows)
 
       if (sessionsError) {
-        throw new Error(`Plan saved but compatibility session creation failed: ${sessionsError.message}`)
+        compatibilitySessionsWarning =
+          'The plan was saved, but Android compatibility sessions were skipped because the sessions table does not allow this insert yet.'
+        console.warn('[exerciseStore] Compatibility session creation skipped', {
+          error: sessionsError,
+          planId: plan.id,
+          patientId: planData.patient_id,
+        })
+      } else {
+        compatibilitySessionsCreated = sessionRows.length
+        console.info('[exerciseStore] Created compatibility sessions', {
+          count: sessionRows.length,
+          planId: plan.id,
+        })
       }
 
-      console.info('[exerciseStore] Created compatibility sessions', {
-        count: sessionRows.length,
-        planId: plan.id,
-      })
-
       let notificationCreated = false
+      let notificationWarning: string | null = null
       const { data: patientRecord, error: patientLookupError } = await supabase
         .from('patients')
         .select('user_id')
@@ -250,6 +260,7 @@ export const useExerciseStore = defineStore('exercise', () => {
             patientUserId: patientRecord.user_id,
             planId: plan.id,
           })
+          notificationWarning = 'The plan was saved, but the patient notification could not be created.'
         } else {
           notificationCreated = true
           console.info('[exerciseStore] Created plan_updated notification', {
@@ -266,8 +277,10 @@ export const useExerciseStore = defineStore('exercise', () => {
       return {
         success: true as const,
         plan,
-        compatibilitySessionsCreated: sessionRows.length,
+        compatibilitySessionsCreated,
+        compatibilitySessionsWarning,
         notificationCreated,
+        notificationWarning,
       }
     } catch (err: any) {
       error.value = err.message || 'Unable to create exercise plan'

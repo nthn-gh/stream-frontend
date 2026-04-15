@@ -34,7 +34,7 @@
         <div class="section-header">
           <div>
             <h3 class="h3">Select Patient</h3>
-            <p class="section-copy">The plan will be written against the selected `patients.id`.</p>
+            <p class="section-copy">The plan will be written against the selected patient profile.</p>
           </div>
         </div>
 
@@ -61,20 +61,19 @@
             <div class="patient-info">
               <div class="patient-name">{{ patient.name }}</div>
               <div class="patient-email">{{ patient.email }}</div>
-              <div class="patient-meta">Patient ID: {{ patient.id }}</div>
-              <div class="patient-meta">Auth link: {{ patient.user_id || 'Missing patients.user_id' }}</div>
+              <div class="patient-meta">{{ patient.condition || 'No condition recorded' }}</div>
             </div>
           </button>
         </div>
 
         <div v-if="selectedPatient" class="selection-note" :class="{ warning: !selectedPatient.user_id }">
           <p>
-            Assigning to patient record <code>{{ selectedPatient.id }}</code>
+            Assigning to {{ selectedPatient.name }}
             <span v-if="selectedPatient.user_id">
-              linked to auth user <code>{{ selectedPatient.user_id }}</code>.
+              with a linked patient app account.
             </span>
             <span v-else>
-              but this patient is missing <code>patients.user_id</code>, so the Android app cannot resolve the profile.
+              but this patient is missing a linked patient app account, so Android cannot resolve the profile.
             </span>
           </p>
         </div>
@@ -139,7 +138,6 @@
               <div class="exercise-info">
                 <div class="exercise-name">{{ exercise.name }}</div>
                 <p class="exercise-desc">{{ exercise.description || 'No description provided.' }}</p>
-                <p class="exercise-desc">Exercise ID: {{ exercise.id }}</p>
               </div>
               <input
                 type="checkbox"
@@ -209,7 +207,7 @@
             <div class="config-header">
               <div>
                 <h5 class="exercise-config-title">{{ exercise.name }}</h5>
-                <p class="exercise-desc">Plan row will target exercise <code>{{ exercise.id }}</code>.</p>
+                <p class="exercise-desc">Plan row will use this exercise in the selected order.</p>
               </div>
             </div>
 
@@ -288,11 +286,8 @@
           </div>
           <h2 class="h2">Plan Created Successfully</h2>
           <p class="state-copy">
-            The plan was saved for patient <code>{{ selectedPatient?.id }}</code> and should be available to the linked Android patient account.
+            The plan was saved for {{ selectedPatient?.name }} and should be available to the linked Android patient account.
           </p>
-          <div v-if="createdPlanId" class="success-details">
-            <p>Created plan id: <code>{{ createdPlanId }}</code></p>
-          </div>
           <div v-if="assignmentLog.length > 0" class="message-box info">
             <p class="message-title">Write log</p>
             <ul class="log-list">
@@ -428,7 +423,7 @@ function getInitials(name: string) {
 
 function selectPatient(patient: Patient) {
   selectedPatient.value = patient
-  appendLog(`Selected patient ${patient.name} (${patient.id}) with auth link ${patient.user_id || 'missing'}`)
+  appendLog(`Selected patient ${patient.name}`)
   if (!planForm.name) {
     planForm.name = `${patient.name} Recovery Plan`
   }
@@ -454,7 +449,7 @@ function toggleExercise(exercise: Exercise) {
     romMaxDegrees: null,
     specialInstructions: '',
   }
-  appendLog(`Queued exercise ${exercise.name} (${exercise.id})`)
+  appendLog(`Queued ${exercise.name}`)
 }
 
 function ensureConfig(exerciseId: string) {
@@ -466,9 +461,10 @@ function ensureConfig(exerciseId: string) {
 }
 
 function removeExercise(id: string) {
+  const removedExercise = selectedExercises.value.find((exercise) => exercise.id === id)
   selectedExercises.value = selectedExercises.value.filter((exercise) => exercise.id !== id)
   delete exerciseConfig[id]
-  appendLog(`Removed exercise ${id} from plan draft`)
+  appendLog(`Removed ${removedExercise?.name || 'exercise'} from the plan draft`)
 }
 
 function nextStep() {
@@ -509,8 +505,8 @@ async function createPlan() {
 
   if (!selectedPatient.value.user_id) {
     assignmentError.value =
-      'This patient record is missing patients.user_id, so the Android app cannot match the logged-in patient to this plan.'
-    appendLog('Blocked assignment because selected patient has no patients.user_id')
+      'This patient record is missing a linked patient app account, so Android cannot match the logged-in patient to this plan.'
+    appendLog('Blocked assignment because the selected patient has no linked patient app account')
     return
   }
 
@@ -529,8 +525,8 @@ async function createPlan() {
   isCreating.value = true
 
   try {
-    appendLog(`Saving plan for patient_id=${selectedPatient.value.id}, therapist_id=${authStore.therapistProfile.id}`)
-    appendLog(`Using patients.user_id=${selectedPatient.value.user_id} so Android can resolve the same profile`)
+    appendLog(`Saving plan for ${selectedPatient.value.name}`)
+    appendLog('Using the linked patient app account so Android can resolve the same profile')
 
     exerciseStore.clearPlan()
 
@@ -545,7 +541,7 @@ async function createPlan() {
         rom_max_degrees: config.romMaxDegrees,
         special_instructions: config.specialInstructions || null,
       })
-      appendLog(`Prepared plan_exercises row for exercise_id=${exercise.id}`)
+      appendLog(`Prepared ${exercise.name}`)
     })
 
     const result = await exerciseStore.submitPlan(
@@ -561,21 +557,25 @@ async function createPlan() {
     }
 
     createdPlanId.value = result.plan.id
-    appendLog(`Created exercise_plans row ${result.plan.id}`)
-    appendLog(`Created ${selectedExercises.value.length} plan_exercises row(s) for plan_id=${result.plan.id}`)
-    appendLog(`Created ${result.compatibilitySessionsCreated} compatibility session row(s) for the Android app`)
-    appendLog(
-      result.notificationCreated
-        ? 'Created plan_updated notification for the patient account'
-        : 'Skipped plan_updated notification because the insert was not permitted or no patient user was found',
-    )
+    appendLog('Created the exercise plan and assigned exercises')
+    if (result.compatibilitySessionsCreated > 0) {
+      appendLog(`Created ${result.compatibilitySessionsCreated} compatibility session row(s) for the Android app`)
+    } else if (result.compatibilitySessionsWarning) {
+      appendLog(result.compatibilitySessionsWarning)
+    }
+    if (result.notificationCreated) {
+      appendLog('Created the patient notification')
+    } else if (result.notificationWarning) {
+      appendLog(result.notificationWarning)
+    }
     console.info('[AssignExerciseView] Plan created', {
-      patientId: selectedPatient.value.id,
-      patientUserId: selectedPatient.value.user_id,
+      patientName: selectedPatient.value.name,
       planId: result.plan.id,
-      exerciseCount: selectedExercises.value.length,
+      exerciseNames: selectedExercises.value.map((exercise) => exercise.name),
       compatibilitySessionsCreated: result.compatibilitySessionsCreated,
+      compatibilitySessionsWarning: result.compatibilitySessionsWarning,
       notificationCreated: result.notificationCreated,
+      notificationWarning: result.notificationWarning,
       therapistId: authStore.therapistProfile.id,
     })
 
@@ -585,8 +585,7 @@ async function createPlan() {
     appendLog(`Create plan failed: ${assignmentError.value}`)
     console.error('[AssignExerciseView] Failed to create plan', {
       error,
-      patientId: selectedPatient.value.id,
-      patientUserId: selectedPatient.value.user_id,
+      patientName: selectedPatient.value.name,
       therapistId: authStore.therapistProfile.id,
     })
   } finally {
