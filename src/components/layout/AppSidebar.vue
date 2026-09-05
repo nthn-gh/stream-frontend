@@ -59,6 +59,17 @@
         <span>Reports</span>
       </router-link>
 
+      <template v-if="user?.role === 'admin'">
+        <div class="nav-section-label" style="margin-top: var(--space-4)">ADMINISTRATION</div>
+        <router-link to="/admin" class="nav-item" active-class="nav-item--active">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <polyline points="9 12 11 14 15 10"/>
+          </svg>
+          <span>Admin Panel</span>
+        </router-link>
+      </template>
+
       <div class="nav-section-label" style="margin-top: var(--space-4)">SETTINGS</div>
       <router-link to="/settings" class="nav-item" active-class="nav-item--active">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -73,8 +84,8 @@
     <div class="sidebar-user">
       <div class="user-avatar">{{ initials }}</div>
       <div class="user-info">
-        <div class="user-name">{{ therapistProfile?.name || 'Dr. Test' }}</div>
-        <div class="user-role">Therapist</div>
+        <div class="user-name">{{ therapistProfile?.name || user?.full_name || 'Admin' }}</div>
+        <div class="user-role">{{ user?.role === 'admin' ? 'Admin' : 'Therapist' }}</div>
       </div>
       <button class="logout-btn" title="Logout" aria-label="Logout" @click="handleLogout">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -97,12 +108,13 @@ import { storeToRefs } from 'pinia'
 const router = useRouter()
 const authStore = useAuthStore()
 const alertStore = useAlertStore()
-const { therapistProfile } = storeToRefs(authStore)
+const { therapistProfile, user } = storeToRefs(authStore)
 const { unreadCount } = storeToRefs(alertStore)
 
 const initials = computed(() => {
-  if (!therapistProfile.value?.name) return 'DT'
-  const parts = therapistProfile.value.name.split(' ')
+  const name = therapistProfile.value?.name || user.value?.full_name
+  if (!name) return 'AD'
+  const parts = name.split(' ')
   return parts
     .map((p) => p[0])
     .join('')
