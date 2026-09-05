@@ -62,6 +62,12 @@ const router = createRouter({
       component: () => import('@/views/SettingsView.vue'),
       meta: { requiresAuth: true },
     },
+    {
+      path: '/admin',
+      name: 'admin',
+      component: () => import('@/views/AdminView.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true },
+    },
   ],
 })
 
@@ -69,18 +75,23 @@ router.beforeEach(async (to) => {
   const authStore = useAuthStore()
 
   const requiresAuth = to.meta.requiresAuth !== false
+  const requiresAdmin = to.meta.requiresAdmin === true
 
   if (requiresAuth) {
-    const isAuth = await authStore.checkAuth()
+    const isAuth = authStore.isAuthenticated || await authStore.checkAuth()
 
     if (!isAuth) {
       return '/login'
     }
 
-    if (!authStore.isTherapist) {
-      console.error('Access denied - not a therapist')
+    if (!authStore.isTherapist && !authStore.isAdmin) {
+      console.error('Access denied - not a therapist or admin')
       await authStore.logout()
       return '/login'
+    }
+
+    if (requiresAdmin && !authStore.isAdmin) {
+      return '/dashboard'
     }
   }
 

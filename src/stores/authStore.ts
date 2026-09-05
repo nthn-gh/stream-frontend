@@ -28,6 +28,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isAuthenticated = computed(() => Boolean(user.value))
   const isTherapist = computed(() => user.value?.role === 'therapist')
+  const isAdmin = computed(() => user.value?.role === 'admin')
 
   function clearState() {
     user.value = null
@@ -45,8 +46,8 @@ export const useAuthStore = defineStore('auth', () => {
       throw new Error('No matching record was found in public.users for this account.')
     }
 
-    if (data.role !== 'therapist') {
-      throw new Error('Access denied. Therapist account required.')
+    if (data.role !== 'therapist' && data.role !== 'admin') {
+      throw new Error('Access denied. Therapist or admin account required.')
     }
 
     return data as User
@@ -71,12 +72,20 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function hydrateTherapistSession(userId: string) {
-    const [userData, profileData] = await Promise.all([loadTherapistUser(userId), loadTherapistProfile(userId)])
-
+    const userData = await loadTherapistUser(userId)
     user.value = userData
-    therapistProfile.value = profileData
 
-    return { user: userData, profile: profileData }
+    if (userData.role === 'therapist') {
+      const profileData = await loadTherapistProfile(userId)
+      if (profileData.is_active === false) {
+        throw new Error('Account deactivated. Please contact your administrator.')
+      }
+      therapistProfile.value = profileData
+    } else {
+      therapistProfile.value = null
+    }
+
+    return { user: userData, profile: therapistProfile.value }
   }
 
   async function login(email: string, password: string) {
@@ -158,6 +167,8 @@ export const useAuthStore = defineStore('auth', () => {
           full_name: updates.name ?? therapistProfile.value.name,
         })
         .eq('id', user.value.id)
+        .select('id')
+        .single()
 
       if (userUpdateError) {
         throw userUpdateError
@@ -313,6 +324,7 @@ export const useAuthStore = defineStore('auth', () => {
     error,
     isAuthenticated,
     isTherapist,
+    isAdmin,
     login,
     logout,
     fetchProfile,
