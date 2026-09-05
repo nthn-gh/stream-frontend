@@ -135,11 +135,10 @@ export const useAdminStore = defineStore('admin', () => {
 
   async function fetchStats() {
     try {
-      const today = new Date().toISOString().slice(0, 10)
       const [therapistRes, patientRes, sessionRes] = await Promise.all([
         supabase.from('therapist_profiles').select('id', { count: 'exact', head: true }),
         supabase.from('patients').select('id', { count: 'exact', head: true }),
-        supabase.from('sessions').select('id', { count: 'exact', head: true }).eq('date', today),
+        supabase.from('sessions').select('id', { count: 'exact', head: true }).eq('status', 'in_progress'),
       ])
 
       stats.value = {

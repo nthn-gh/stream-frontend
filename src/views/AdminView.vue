@@ -115,7 +115,7 @@
 
       <StatCard
         :value="String(adminStore.stats.totalActiveSessions)"
-        label="Sessions Today"
+        label="Active Sessions"
         gradient="linear-gradient(135deg, #10B981, #059669)"
       >
         <template #icon>
