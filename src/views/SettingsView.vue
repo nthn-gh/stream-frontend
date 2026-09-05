@@ -64,24 +64,6 @@
                   <label class="form-label">License Number</label>
                   <input v-model="profileForm.license" type="text" class="form-input" />
                 </div>
-                <div class="form-group">
-                  <label class="form-label">Specialty</label>
-                  <select v-model="profileForm.specialty" class="form-input">
-                    <option value="physical_therapy">Physical Therapy</option>
-                    <option value="occupational_therapy">Occupational Therapy</option>
-                    <option value="sports_medicine">Sports Medicine</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">Bio</label>
-                <textarea
-                  v-model="profileForm.bio"
-                  rows="3"
-                  class="form-textarea"
-                  placeholder="Tell us about yourself..."
-                ></textarea>
               </div>
 
               <div class="form-actions">
@@ -249,7 +231,7 @@ import BaseCard from '@/components/shared/BaseCard.vue'
 import { useTheme, type Theme } from '@/composables/useTheme'
 
 const authStore = useAuthStore()
-const { therapistProfile } = storeToRefs(authStore)
+const { therapistProfile, user } = storeToRefs(authStore)
 const { theme, setTheme } = useTheme()
 
 const activeTab = ref('profile')
@@ -265,10 +247,8 @@ const tabs = [
 
 const profileForm = ref({
   name: therapistProfile.value?.name || '',
-  email: therapistProfile.value?.email || '',
+  email: user.value?.email || '',
   license: 'PT-12345',
-  specialty: 'physical_therapy',
-  bio: '',
 })
 
 const securityForm = ref({
@@ -315,13 +295,15 @@ const saveProfile = async () => {
   isSaving.value = true
 
   try {
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 800))
+    const result = await authStore.updateProfile({
+      name: profileForm.value.name,
+      license_number: profileForm.value.license,
+    })
 
-    // In a real app, this would call:
-    // await authStore.updateProfile(profileForm.value)
+    if (!result.success) {
+      throw new Error(result.error)
+    }
 
-    console.log('Profile updated:', profileForm.value)
     showSuccess('Profile updated successfully!')
   } catch (error) {
     console.error('Error updating profile:', error)
@@ -351,13 +333,14 @@ const updatePassword = async () => {
   isSaving.value = true
 
   try {
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 800))
+    const result = await authStore.changePassword(
+      securityForm.value.currentPassword,
+      securityForm.value.newPassword,
+    )
 
-    // In a real app, this would call:
-    // await authStore.updatePassword(securityForm.value)
-
-    console.log('Password updated')
+    if (!result.success) {
+      throw new Error(result.error)
+    }
 
     // Clear form
     securityForm.value = {
@@ -444,10 +427,8 @@ const changePhoto = () => {
 const resetProfileForm = () => {
   profileForm.value = {
     name: therapistProfile.value?.name || '',
-    email: therapistProfile.value?.email || '',
+    email: user.value?.email || '',
     license: 'PT-12345',
-    specialty: 'physical_therapy',
-    bio: '',
   }
 }
 
