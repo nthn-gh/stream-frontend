@@ -88,7 +88,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { AlertCircle, Activity, Clock, CheckCircle } from 'lucide-vue-next'
 import { useAlertStore } from '@/stores/alertStore'
@@ -185,6 +185,11 @@ const handleResolve = async (alertId: string) => {
 
 onMounted(async () => {
   await alertStore.fetchAlerts()
+  alertStore.subscribeRealtime()
+})
+
+onBeforeUnmount(() => {
+  alertStore.unsubscribeRealtime()
 })
 </script>
 

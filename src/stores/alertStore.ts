@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import type { RealtimeChannel } from '@supabase/supabase-js'
+import type { RealtimeChannel, RealtimePostgresChangesPayload } from '@supabase/supabase-js'
 import { supabase } from '@/services/supabase'
 import { getTherapistPatientIds } from '@/services/therapistScope'
 import { useAuthStore } from '@/stores/authStore'
@@ -8,6 +8,7 @@ import type { AlertWithPatient } from '@/types'
 
 export const useAlertStore = defineStore('alert', () => {
   const alerts = ref<AlertWithPatient[]>([])
+  const patientIds = ref<string[]>([])
   const isLoading = ref(false)
   const error = ref<string | null>(null)
   let realtimeChannel: RealtimeChannel | null = null
@@ -41,9 +42,10 @@ export const useAlertStore = defineStore('alert', () => {
         return []
       }
 
-      const patientIds = await getTherapistPatientIds(therapistId)
+      const fetchedPatientIds = await getTherapistPatientIds(therapistId)
+      patientIds.value = fetchedPatientIds
 
-      if (patientIds.length === 0) {
+      if (fetchedPatientIds.length === 0) {
         alerts.value = []
         return []
       }
@@ -63,7 +65,7 @@ export const useAlertStore = defineStore('alert', () => {
             patient:patients(id, name, email, avatar_url)
           `,
         )
-        .in('patient_id', patientIds)
+        .in('patient_id', fetchedPatientIds)
         .order('created_at', { ascending: false })
 
       if (filters?.type && filters.type !== 'all') {
@@ -128,6 +130,11 @@ export const useAlertStore = defineStore('alert', () => {
       realtimeChannel.unsubscribe()
     }
 
+    const ids = patientIds.value
+    if (!ids.length) {
+      return
+    }
+
     realtimeChannel = supabase
       .channel('alerts-changes')
       .on(
@@ -137,8 +144,12 @@ export const useAlertStore = defineStore('alert', () => {
           schema: 'public',
           table: 'alerts',
         },
-        () => {
-          void fetchAlerts()
+        (payload: RealtimePostgresChangesPayload<{ patient_id: string }>) => {
+          const changedPatientId = payload.new?.patient_id ?? payload.old?.patient_id
+
+          if (changedPatientId && patientIds.value.includes(changedPatientId)) {
+            void fetchAlerts()
+          }
         },
       )
       .subscribe()
