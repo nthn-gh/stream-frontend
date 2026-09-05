@@ -132,8 +132,8 @@ npm run type-check
 **Solution:** Check `.env` file has:
 
 ```env
-VITE_SUPABASE_URL=https://enatklmakcnxqnlhujxi.supabase.co
-VITE_SUPABASE_ANON_KEY=sb_publishable_gYVjbeorP4zWrJyUwYolxA_Ouw3Lsuz
+VITE_SUPABASE_URL=[REDACTED — rotated 2026-09-05]
+VITE_SUPABASE_ANON_KEY=[REDACTED — rotated 2026-09-05]
 ```
 
 ### Issue: Redirected to /login on all pages
