@@ -1,53 +1,8 @@
-/*
- * ============================================================
- * SUPABASE SQL — Run ALL of the following in the Supabase SQL
- * Editor before using this admin panel:
- *
- * -- 1. Add is_active column to therapist_profiles
- * ALTER TABLE therapist_profiles
- *   ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT TRUE;
- *
- * -- 2. Admin RLS policy: SELECT on therapist_profiles
- * CREATE POLICY "Admins can select therapist_profiles"
- *   ON therapist_profiles FOR SELECT
- *   USING (auth.uid() IN (SELECT id FROM users WHERE role = 'admin'));
- *
- * -- 3. Admin RLS policy: INSERT on therapist_profiles
- * CREATE POLICY "Admins can insert therapist_profiles"
- *   ON therapist_profiles FOR INSERT
- *   WITH CHECK (auth.uid() IN (SELECT id FROM users WHERE role = 'admin'));
- *
- * -- 4. Admin RLS policy: UPDATE on therapist_profiles
- * CREATE POLICY "Admins can update therapist_profiles"
- *   ON therapist_profiles FOR UPDATE
- *   USING (auth.uid() IN (SELECT id FROM users WHERE role = 'admin'));
- *
- * -- 5. Admin RLS policy: DELETE on therapist_profiles
- * CREATE POLICY "Admins can delete therapist_profiles"
- *   ON therapist_profiles FOR DELETE
- *   USING (auth.uid() IN (SELECT id FROM users WHERE role = 'admin'));
- *
- * -- 6. Admin RLS policy: SELECT on users
- * CREATE POLICY "Admins can select users"
- *   ON users FOR SELECT
- *   USING (auth.uid() IN (SELECT id FROM users WHERE role = 'admin'));
- *
- * -- 7. Admin RLS policy: INSERT on users
- * CREATE POLICY "Admins can insert users"
- *   ON users FOR INSERT
- *   WITH CHECK (auth.uid() IN (SELECT id FROM users WHERE role = 'admin'));
- *
- * -- 8. Admin RLS policy: UPDATE on users
- * CREATE POLICY "Admins can update users"
- *   ON users FOR UPDATE
- *   USING (auth.uid() IN (SELECT id FROM users WHERE role = 'admin'));
- *
- * -- 9. Admin RLS policy: DELETE on users
- * CREATE POLICY "Admins can delete users"
- *   ON users FOR DELETE
- *   USING (auth.uid() IN (SELECT id FROM users WHERE role = 'admin'));
- * ============================================================
- */
+// RLS policies and schema this store depends on (therapist_profiles,
+// users) live in supabase/migrations/, not here — see
+// 20260813_fix_users_rls_recursion.sql for the current admin policies
+// (is_admin()-based) and later migrations in that directory for
+// anything since.
 
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
