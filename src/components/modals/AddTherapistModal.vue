@@ -105,7 +105,7 @@
           <!-- Success State -->
           <div v-else class="modal-body success-body">
             <div class="success-icon-wrap">
-              <CheckCircle :size="32" style="color: #10b981" />
+              <CheckCircle :size="32" style="color: var(--success)" />
             </div>
             <h4 class="success-title">Therapist Created Successfully</h4>
             <p class="success-subtitle">Share these credentials with the therapist:</p>
@@ -371,7 +371,7 @@ async function handleSubmit() {
 }
 
 .required {
-  color: #ef4444;
+  color: var(--error);
 }
 
 .input-field {
@@ -399,7 +399,7 @@ async function handleSubmit() {
 }
 
 .input-field.input-error {
-  border-color: #ef4444;
+  border-color: var(--error);
 }
 
 .input-field.input-error:focus {
@@ -432,7 +432,7 @@ async function handleSubmit() {
 
 .error-message {
   font-size: 12px;
-  color: #991b1b;
+  color: var(--status-danger-text);
   margin: 0;
 }
 
@@ -442,7 +442,7 @@ async function handleSubmit() {
   border-radius: 10px;
   padding: 10px 14px;
   font-size: 13px;
-  color: #dc2626;
+  color: var(--status-danger-text);
 }
 
 .success-body {
@@ -543,7 +543,7 @@ async function handleSubmit() {
   padding: 0 24px;
   font-size: 15px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--text-on-primary);
   background: var(--primary);
   border: none;
   border-radius: 12px;

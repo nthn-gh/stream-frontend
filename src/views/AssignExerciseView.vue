@@ -796,7 +796,7 @@ onMounted(async () => {
 }
 
 .selection-note.warning {
-  border-color: #f59e0b;
+  border-color: var(--warning);
   background: rgba(245, 158, 11, 0.12);
 }
 
@@ -922,7 +922,7 @@ onMounted(async () => {
 .message-box.error {
   background: rgba(239, 68, 68, 0.08);
   border-color: rgba(239, 68, 68, 0.3);
-  color: #991b1b;
+  color: var(--status-danger-text);
 }
 
 .log-list {

@@ -675,7 +675,7 @@ const resetSecurityForm = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #e2e8f0;
+  background-color: var(--border);
   border-radius: var(--radius-pill);
   transition: 0.3s;
 }

@@ -77,9 +77,9 @@ defineProps({
   margin-top: 4px;
 }
 .trend--up {
-  color: #059669;
+  color: var(--success);
 }
 .trend--down {
-  color: #DC2626;
+  color: var(--error);
 }
 </style>

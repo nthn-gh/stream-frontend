@@ -82,7 +82,7 @@ function handleInput(event: Event) {
 }
 
 .input-shell--error {
-  border-color: #dc2626;
+  border-color: var(--error);
 }
 
 .input-shell--error:focus-within {
@@ -118,6 +118,6 @@ function handleInput(event: Event) {
 
 .input-error {
   font-size: 12px;
-  color: #b91c1c;
+  color: var(--status-danger-text);
 }
 </style>

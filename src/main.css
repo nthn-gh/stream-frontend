@@ -14,13 +14,29 @@
   --bg-input: #F8FAFC;
 
   /* BRAND */
-  --primary: #1A8FD1;
-  --primary-dark: #1270A8;
-  --primary-light: #E0F2FE;
-  --primary-muted: #BAE6FD;
+  --primary: #0EA5E9;
+  --primary-dark: #0884BC;
+  --primary-light: #E0F5FE;
+  --primary-muted: #BAE8FD;
+  --teal: #14B8A6;
+  --navy: #030213;
+  --orange: #F97316;
+  --orange-bg: #FEE6D5;
+  --purple: #8B5CF6;
+  --purple-dark: #7C3AED;
+  --purple-bg: #E1D5FE;
+
+  /* Flat aliases matching tailwind.config.ts's success/warning/error --
+     needed so var(--error)/var(--warning)/var(--success) resolve;
+     previously only the --status-*-bg/-text pairs and gradients existed. */
+  --error: #EF4444;
+  --warning: #F59E0B;
+  --success: #10B981;
+  --info: #3B82F6;
+  --info-dark: #2563EB;
 
   /* GRADIENTS */
-  --gradient-primary: linear-gradient(135deg, #1A8FD1 0%, #1270A8 100%);
+  --gradient-primary: linear-gradient(135deg, #0EA5E9 0%, #0884BC 100%);
   --gradient-success: linear-gradient(135deg, #10B981 0%, #059669 100%);
   --gradient-warning: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
   --gradient-danger: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
@@ -61,7 +77,10 @@
   --radius-lg: 16px;
   --radius-pill: 9999px;
 
-  /* SPACING (8px grid) */
+  /* SPACING (legacy scale -- kept as-is; BaseCard.vue/DashboardView.vue
+     still consume these exact values. Superseded by the true 8px-grid
+     scale below; migrate consumers over in a later step, then remove
+     this block. */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -71,6 +90,29 @@
   --space-8: 32px;
   --space-10: 40px;
   --space-12: 48px;
+
+  /* SPACING (Section 6 -- true 8px grid, canonical going forward).
+     Named by literal pixel value to avoid any collision with the
+     legacy --space-N index-based names above. */
+  --space-half: 4px;
+  --space-8px: 8px;
+  --space-16px: 16px;
+  --space-24px: 24px;
+  --space-32px: 32px;
+  --space-40px: 40px;
+  --space-48px: 48px;
+  --space-64px: 64px;
+
+  /* FONT SIZE SCALE (Section 6) */
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 30px;
+  --font-size-4xl: 36px;
+  --font-size-5xl: 48px;
 
   --padding-page: 28px;
   --padding-card: 20px;
@@ -109,6 +151,16 @@
   --primary-dark: #0EA5E9;
   --primary-light: #1E3A5F;
   --primary-muted: #0C4A6E;
+  --orange: #FA9046;
+  --orange-bg: #7C4016;
+  --purple: #AC8AF9;
+  --purple-dark: #8B5CF6;
+  --purple-bg: #35167C;
+  --error: #F87171;
+  --warning: #FBBF24;
+  --success: #34D399;
+  --info: #60A5FA;
+  --info-dark: #3B82F6;
 
   /* GRADIENTS */
   --gradient-primary: linear-gradient(135deg, #38BDF8 0%, #0EA5E9 100%);

@@ -340,6 +340,7 @@ import BaseBadge from '@/components/shared/BaseBadge.vue'
 import BaseCard from '@/components/shared/BaseCard.vue'
 import { useExerciseStore } from '@/stores/exerciseStore'
 import { usePatientStore } from '@/stores/patientStore'
+import { resolveToken } from '@/services/designTokens'
 import type { PlanExerciseWithExercise } from '@/types'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Legend, Tooltip, Filler)
@@ -403,7 +404,7 @@ const romChartData = computed(() => ({
     {
       label: 'ROM Degrees',
       data: orderedProgress.value.map((metric) => metric.rom_degrees ?? 0),
-      borderColor: '#2563eb',
+      borderColor: resolveToken('--info-dark', '#2563eb'),
       backgroundColor: 'rgba(37, 99, 235, 0.12)',
       tension: 0.3,
       fill: true,
@@ -419,7 +420,7 @@ const accuracyChartData = computed(() => {
       {
         label: 'Accuracy %',
         data: recentSessions.map((session) => Number(session.accuracy_percent ?? 0)),
-        backgroundColor: '#14b8a6',
+        backgroundColor: resolveToken('--teal', '#14b8a6'),
         borderRadius: 10,
       },
     ],
@@ -432,21 +433,21 @@ const progressChartData = computed(() => ({
     {
       label: 'ROM',
       data: orderedProgress.value.map((metric) => metric.rom_degrees ?? 0),
-      borderColor: '#2563eb',
+      borderColor: resolveToken('--info-dark', '#2563eb'),
       backgroundColor: 'rgba(37, 99, 235, 0.08)',
       tension: 0.3,
     },
     {
       label: 'Strength',
       data: orderedProgress.value.map((metric) => metric.strength_score ?? 0),
-      borderColor: '#f97316',
+      borderColor: resolveToken('--orange', '#f97316'),
       backgroundColor: 'rgba(249, 115, 22, 0.08)',
       tension: 0.3,
     },
     {
       label: 'Balance',
       data: orderedProgress.value.map((metric) => metric.balance_score ?? 0),
-      borderColor: '#14b8a6',
+      borderColor: resolveToken('--teal', '#14b8a6'),
       backgroundColor: 'rgba(20, 184, 166, 0.08)',
       tension: 0.3,
     },
@@ -988,7 +989,7 @@ onMounted(async () => {
 
 .status-message--error {
   background: rgba(239, 68, 68, 0.08);
-  color: #b91c1c;
+  color: var(--status-danger-text);
 }
 
 .modal-overlay {

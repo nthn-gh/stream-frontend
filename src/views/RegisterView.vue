@@ -346,7 +346,7 @@ const handleRegister = async () => {
 }
 
 .error-message {
-  color: #DC2626;
+  color: var(--status-danger-text);
   font-size: 13px;
   text-align: center;
   padding: var(--space-3);

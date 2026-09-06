@@ -12,11 +12,11 @@
     <div class="page-header">
       <div>
         <h1 class="h2">Good {{ timeOfDay }}, {{ therapistName }} 👋</h1>
-        <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px">
+        <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-top: var(--space-half)">
           Here's what's happening with your patients today.
         </p>
       </div>
-      <button class="btn-primary" @click="showAddPatientModal = true">+ Add Patient</button>
+      <AppButton variant="primary" @click="showAddPatientModal = true">+ Add Patient</AppButton>
     </div>
 
     <!-- Stat Cards -->
@@ -108,7 +108,7 @@
     <div class="dashboard-body">
       <!-- Patients Table (left, 2/3 width) -->
       <div class="dashboard-main">
-        <BaseCard>
+        <AppCard class="dash-card">
           <div class="table-header">
             <h2 class="h3">Active Patients</h2>
             <div class="table-controls">
@@ -177,12 +177,12 @@
                 <td style="color: var(--text-muted)">{{ formatDate(patient.last_session) }}</td>
                 <td><AdherenceBar :value="patient.adherence_rate" /></td>
                 <td>
-                  <BaseBadge :variant="getStatusVariant(patient.status)">{{
+                  <AppBadge :variant="getStatusVariant(patient.status)">{{
                     formatStatus(patient.status)
-                  }}</BaseBadge>
+                  }}</AppBadge>
                 </td>
                 <td>
-                  <button class="btn-ghost" @click.stop="viewPatient(patient.id)">View</button>
+                  <AppButton variant="secondary" class="btn-ghost" @click.stop="viewPatient(patient.id)">View</AppButton>
                 </td>
               </tr>
             </tbody>
@@ -194,42 +194,43 @@
               {{ filteredPatients.length }} patients
             </span>
             <div class="pagination">
-              <button class="btn-ghost" :disabled="currentPage === 1" @click="currentPage--">
+              <AppButton variant="secondary" class="btn-ghost" :disabled="currentPage === 1" @click="currentPage--">
                 Previous
-              </button>
-              <button
+              </AppButton>
+              <AppButton
+                variant="secondary"
                 class="btn-ghost"
                 :disabled="currentPage >= totalPages"
                 @click="currentPage++"
               >
                 Next
-              </button>
+              </AppButton>
             </div>
           </div>
-        </BaseCard>
+        </AppCard>
       </div>
 
       <!-- Right Panel (1/3 width) -->
       <div class="dashboard-aside">
         <!-- Quick Actions -->
-        <BaseCard>
+        <AppCard class="dash-card">
           <h3 class="h4" style="margin-bottom: var(--space-3)">Quick Actions</h3>
           <div class="quick-actions">
-            <button class="quick-action-btn" @click="addPatient">+ Add New Patient</button>
-            <button class="quick-action-btn" @click="$router.push('/assign-exercise')">
+            <AppButton variant="secondary" class="quick-action-btn" @click="addPatient">+ Add New Patient</AppButton>
+            <AppButton variant="secondary" class="quick-action-btn" @click="$router.push('/assign-exercise')">
               📋 Assign Exercise
-            </button>
-            <button class="quick-action-btn" @click="$router.push('/reports')">
+            </AppButton>
+            <AppButton variant="secondary" class="quick-action-btn" @click="$router.push('/reports')">
               📊 Generate Report
-            </button>
-            <button class="quick-action-btn" @click="$router.push('/alerts')">
+            </AppButton>
+            <AppButton variant="secondary" class="quick-action-btn" @click="$router.push('/alerts')">
               🔔 View Alerts
-            </button>
+            </AppButton>
           </div>
-        </BaseCard>
+        </AppCard>
 
         <!-- Recent Alerts -->
-        <BaseCard>
+        <AppCard class="dash-card">
           <div class="card-row-header">
             <h3 class="h4">Recent Alerts</h3>
             <RouterLink to="/alerts" class="text-link">View All</RouterLink>
@@ -241,7 +242,7 @@
                 text-align: center;
                 padding: var(--space-4);
                 color: var(--text-muted);
-                font-size: 13px;
+                font-size: var(--font-size-sm);
               "
             >
               No recent alerts
@@ -257,10 +258,10 @@
               <div class="alert-sub">{{ alert.patient }} · {{ alert.time }}</div>
             </div>
           </div>
-        </BaseCard>
+        </AppCard>
 
         <!-- Today's Sessions -->
-        <BaseCard>
+        <AppCard class="dash-card">
           <h3 class="h4" style="margin-bottom: var(--space-3)">Today's Sessions</h3>
           <div class="session-list">
             <div
@@ -269,7 +270,7 @@
                 text-align: center;
                 padding: var(--space-4);
                 color: var(--text-muted);
-                font-size: 13px;
+                font-size: var(--font-size-sm);
               "
             >
               No sessions scheduled
@@ -283,28 +284,28 @@
               <span class="session-dot" :class="{ 'dot--active': session.active }"></span>
             </div>
           </div>
-        </BaseCard>
+        </AppCard>
 
         <!-- Adherence Overview -->
-        <BaseCard>
+        <AppCard class="dash-card">
           <h3 class="h4" style="margin-bottom: var(--space-3)">Patient Adherence Overview</h3>
           <div class="adherence-stats">
             <div class="adherence-stat-row">
               <span class="caption" style="color: var(--text-secondary)"
                 >High Adherence (≥75%)</span
               >
-              <BaseBadge variant="active">{{ adherenceStats.high }}</BaseBadge>
+              <AppBadge variant="success">{{ adherenceStats.high }}</AppBadge>
             </div>
             <div class="adherence-stat-row">
               <span class="caption" style="color: var(--text-secondary)">Moderate (50-74%)</span>
-              <BaseBadge variant="warning">{{ adherenceStats.moderate }}</BaseBadge>
+              <AppBadge variant="warning">{{ adherenceStats.moderate }}</AppBadge>
             </div>
             <div class="adherence-stat-row">
               <span class="caption" style="color: var(--text-secondary)">Low Adherence (<50%)</span>
-              <BaseBadge variant="danger">{{ adherenceStats.low }}</BaseBadge>
+              <AppBadge variant="error">{{ adherenceStats.low }}</AppBadge>
             </div>
           </div>
-        </BaseCard>
+        </AppCard>
       </div>
     </div>
   </div>
@@ -313,12 +314,14 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { supabase } from '@/services/supabase'
 import { useAuthStore } from '@/stores/authStore'
 import { usePatientStore } from '@/stores/patientStore'
 import { useAlertStore } from '@/stores/alertStore'
 import { storeToRefs } from 'pinia'
-import BaseCard from '@/components/shared/BaseCard.vue'
-import BaseBadge from '@/components/shared/BaseBadge.vue'
+import AppCard from '@/components/shared/AppCard.vue'
+import AppBadge from '@/components/shared/AppBadge.vue'
+import AppButton from '@/components/shared/AppButton.vue'
 import AdherenceBar from '@/components/shared/AdherenceBar.vue'
 import StatCard from '@/components/shared/StatCard.vue'
 import AddPatientModal from '@/components/modals/AddPatientModal.vue'
@@ -332,6 +335,7 @@ const { therapistProfile } = storeToRefs(authStore)
 const { patients, isLoading } = storeToRefs(patientStore)
 const { alerts, unreadCount } = storeToRefs(alertStore)
 
+const sessionsTodayCount = ref(0)
 const showAddPatientModal = ref(false)
 const searchQuery = ref('')
 const statusFilter = ref('all')
@@ -353,17 +357,11 @@ const therapistName = computed(() => {
 
 const stats = computed(() => {
   const totalPatients = patients.value.length
-  const sessionsToday = patients.value.filter((p) => {
-    if (!p.last_session) return false
-    const sessionDate = new Date(p.last_session).toISOString().split('T')[0]
-    const today = new Date().toISOString().split('T')[0]
-    return sessionDate === today
-  }).length
   const pendingReviews = patients.value.filter((p) => p.status === 'needs_attention').length
 
   return {
     totalPatients,
-    sessionsToday,
+    sessionsToday: sessionsTodayCount.value,
     pendingReviews,
   }
 })
@@ -378,7 +376,7 @@ const recentAlerts = computed(() => {
       patient: alert.patient?.name || 'Unknown',
       time: formatTimestamp(alert.created_at),
       color:
-        alert.priority === 'high' ? '#EF4444' : alert.priority === 'medium' ? '#F59E0B' : '#3B82F6',
+        alert.priority === 'high' ? 'var(--error)' : alert.priority === 'medium' ? 'var(--warning)' : 'var(--info)',
     }))
 })
 
@@ -468,8 +466,8 @@ const formatStatus = (status: string) => {
     .join(' ')
 }
 
-const getStatusVariant = (status: string): 'active' | 'warning' | 'danger' | 'info' | 'neutral' => {
-  if (status === 'active') return 'active'
+const getStatusVariant = (status: string): 'success' | 'warning' | 'error' | 'info' | 'neutral' => {
+  if (status === 'active') return 'success'
   if (status === 'needs_attention') return 'warning'
   return 'neutral'
 }
@@ -487,10 +485,35 @@ const handlePatientAdded = async () => {
 onMounted(async () => {
   await patientStore.fetchPatients()
   await alertStore.fetchAlerts({ resolved: false })
+
+  const patientIds = patients.value.map((p) => p.id)
+  if (patientIds.length > 0) {
+    const todayStart = new Date()
+    todayStart.setHours(0, 0, 0, 0)
+    const { count } = await supabase
+      .from('sessions')
+      .select('id', { count: 'exact', head: true })
+      .in('patient_id', patientIds)
+      .gte('started_at', todayStart.toISOString())
+    sessionsTodayCount.value = count ?? 0
+  }
 })
 </script>
 
 <style scoped>
+/* AppCard's own template hardcodes bg-white/border-slate-200/shadow-md
+   (Tailwind utilities, no dark-mode handling at all -- unlike the
+   var(--bg-card) etc. system every other surface in this file uses).
+   Overriding just those three properties keeps AppCard's own padding/
+   radius/hover behavior intact while correcting the one real
+   functional regression (cards staying white in dark mode); scoped
+   attribute selector specificity beats the plain utility classes. */
+.dash-card {
+  background: var(--bg-card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-card);
+}
+
 .dashboard {
   display: flex;
   flex-direction: column;
@@ -540,7 +563,7 @@ onMounted(async () => {
   border-radius: var(--radius-sm);
   padding: 0 var(--space-3);
   font: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   background: var(--bg-input);
   color: var(--text-primary);
   outline: none;
@@ -558,7 +581,7 @@ onMounted(async () => {
 }
 .data-table th {
   text-align: left;
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -593,7 +616,7 @@ onMounted(async () => {
   border-radius: var(--radius-pill);
   background: var(--gradient-primary);
   color: white;
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -613,12 +636,12 @@ onMounted(async () => {
   object-fit: cover;
 }
 .patient-name {
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--text-primary);
 }
 .patient-email {
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   color: var(--text-muted);
 }
 .table-footer {
@@ -635,22 +658,13 @@ onMounted(async () => {
 }
 
 /* Buttons */
-.btn-primary {
-  background: var(--gradient-primary);
-  color: white;
-  border: none;
-  cursor: pointer;
-  height: 40px;
-  padding: 0 var(--space-5);
-  border-radius: var(--radius-sm);
-  font: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  transition: opacity 0.15s;
-}
-.btn-primary:hover {
-  opacity: 0.9;
-}
+/* .btn-primary removed: the header "+ Add Patient" button now renders
+   via AppButton's own native primary variant (already token-driven,
+   see AppButton.vue), so this hand-rolled rule had no remaining
+   consumer. .btn-ghost/.quick-action-btn are kept: AppButton has no
+   variant matching either bespoke look, so both still apply their
+   full original styling on top of <AppButton variant="secondary">
+   via the class passthrough below, overriding its default look. */
 .btn-ghost {
   background: none;
   border: 1px solid var(--border);
@@ -659,7 +673,7 @@ onMounted(async () => {
   padding: 0 var(--space-4);
   border-radius: var(--radius-sm);
   font: inherit;
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   color: var(--primary);
   font-weight: 600;
   transition:
@@ -692,7 +706,7 @@ onMounted(async () => {
   border-radius: var(--radius-sm);
   padding: 0 var(--space-4);
   font: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   transition:
     background 0.15s,
@@ -711,7 +725,7 @@ onMounted(async () => {
   margin-bottom: var(--space-3);
 }
 .text-link {
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   color: var(--text-link);
   font-weight: 500;
   text-decoration: none;
@@ -731,14 +745,14 @@ onMounted(async () => {
   background: var(--bg-hover);
 }
 .alert-text {
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--text-primary);
 }
 .alert-sub {
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   color: var(--text-muted);
-  margin-top: 2px;
+  margin-top: var(--space-half);
 }
 
 /* Sessions */
@@ -759,19 +773,19 @@ onMounted(async () => {
   border-radius: var(--radius-pill);
   background: var(--gradient-primary);
   color: white;
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .session-name {
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--text-primary);
 }
 .session-time {
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   color: var(--text-muted);
 }
 .session-info {
@@ -784,7 +798,7 @@ onMounted(async () => {
   background: var(--border);
 }
 .dot--active {
-  background: #10b981;
+  background: var(--success);
 }
 
 /* Adherence Stats */

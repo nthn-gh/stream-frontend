@@ -89,7 +89,7 @@
       <StatCard
         :value="String(adminStore.stats.totalTherapists)"
         label="Total Therapists"
-        gradient="linear-gradient(135deg, #0EA5E9, #0284C7)"
+        gradient="var(--gradient-primary)"
       >
         <template #icon>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -101,7 +101,7 @@
       <StatCard
         :value="String(adminStore.stats.totalPatients)"
         label="Total Patients"
-        gradient="linear-gradient(135deg, #8B5CF6, #7C3AED)"
+        gradient="linear-gradient(135deg, var(--purple), var(--purple-dark))"
       >
         <template #icon>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -116,7 +116,7 @@
       <StatCard
         :value="String(adminStore.stats.totalActiveSessions)"
         label="Active Sessions"
-        gradient="linear-gradient(135deg, #10B981, #059669)"
+        gradient="var(--gradient-success)"
       >
         <template #icon>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -605,13 +605,13 @@ onMounted(async () => {
 
 .btn-danger {
   background: none;
-  border: 1px solid #EF4444;
+  border: 1px solid var(--error);
   cursor: pointer;
   padding: 0 var(--space-4);
   border-radius: var(--radius-sm);
   font: inherit;
   font-size: 13px;
-  color: #EF4444;
+  color: var(--error);
   font-weight: 600;
   transition: background 0.15s;
 }
@@ -622,13 +622,13 @@ onMounted(async () => {
 
 .btn-reactivate {
   background: none;
-  border: 1px solid #10B981;
+  border: 1px solid var(--success);
   cursor: pointer;
   padding: 0 var(--space-4);
   border-radius: var(--radius-sm);
   font: inherit;
   font-size: 13px;
-  color: #10B981;
+  color: var(--success);
   font-weight: 600;
   transition: background 0.15s;
 }
@@ -771,7 +771,7 @@ onMounted(async () => {
 }
 
 .required {
-  color: #ef4444;
+  color: var(--error);
 }
 
 .input-field {
@@ -799,12 +799,12 @@ onMounted(async () => {
 }
 
 .input-field.input-error {
-  border-color: #ef4444;
+  border-color: var(--error);
 }
 
 .error-message {
   font-size: 12px;
-  color: #991b1b;
+  color: var(--status-danger-text);
   margin: 0;
 }
 
@@ -814,7 +814,7 @@ onMounted(async () => {
   border-radius: 10px;
   padding: 10px 14px;
   font-size: 13px;
-  color: #dc2626;
+  color: var(--status-danger-text);
 }
 
 .btn-secondary {

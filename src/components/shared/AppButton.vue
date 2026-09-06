@@ -39,21 +39,38 @@ defineEmits<{
 }>()
 
 const buttonClasses = computed(() => {
-  const base = 'inline-flex items-center justify-center font-semibold transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60'
-  
+  const base = 'app-button inline-flex items-center justify-center font-semibold transition-all duration-150 disabled:cursor-not-allowed disabled:opacity-60'
+
   const variants = {
-    primary: 'bg-primary text-white hover:bg-primary-hover active:scale-[0.98] shadow-sm',
+    primary: 'app-button--primary text-white active:scale-[0.98] shadow-sm',
     secondary: 'bg-white border border-slate-200 text-slate-900 hover:bg-slate-50 hover:border-slate-300',
     destructive: 'bg-error text-white hover:bg-red-600 shadow-sm',
     icon: 'bg-transparent hover:bg-slate-100 text-slate-700'
   }
-  
+
   const sizes = {
     small: props.variant === 'icon' ? 'w-9 h-9 rounded-lg' : 'h-9 px-4 text-sm rounded-lg',
     medium: props.variant === 'icon' ? 'w-10 h-10 rounded-xl' : 'h-11 px-6 text-base rounded-xl',
     large: props.variant === 'icon' ? 'w-12 h-12 rounded-xl' : 'h-13 px-8 text-lg rounded-xl'
   }
-  
+
   return `${base} ${variants[props.variant]} ${sizes[props.size]}`
 })
 </script>
+
+<style scoped>
+/* Primary variant and its focus ring go through the canonical CSS var
+   token (--primary), not a Tailwind utility, so they track main.css's
+   corrected value automatically. Ring-offset uses --bg-card instead of
+   Tailwind's hardcoded white so it still shows correctly in dark mode. */
+.app-button--primary {
+  background: var(--primary);
+}
+.app-button--primary:hover:not(:disabled) {
+  opacity: 0.9;
+}
+.app-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--bg-card), 0 0 0 4px var(--primary);
+}
+</style>

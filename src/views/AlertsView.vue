@@ -33,7 +33,7 @@
       
       <div v-else-if="displayedAlerts.length === 0" class="empty-state">
         <div class="empty-icon">
-          <CheckCircle :size="48" style="color: #10B981;" />
+          <CheckCircle :size="48" style="color: var(--success);" />
         </div>
         <h3 class="h3" style="margin-bottom: var(--space-1);">No alerts right now</h3>
         <p style="color: var(--text-muted);">All patients are on track. Great work!</p>
@@ -151,9 +151,9 @@ const getIconBackground = (type: string) => {
 }
 
 const getSeverityColor = (priority: string) => {
-  if (priority === 'high') return '#EF4444'
-  if (priority === 'medium') return '#F59E0B'
-  return '#3B82F6'
+  if (priority === 'high') return 'var(--error)'
+  if (priority === 'medium') return 'var(--warning)'
+  return 'var(--info)'
 }
 
 const getPriorityVariant = (priority: string): 'active' | 'warning' | 'danger' | 'info' | 'neutral' => {

@@ -203,6 +203,7 @@ import BaseCard from '@/components/shared/BaseCard.vue'
 import StatCard from '@/components/shared/StatCard.vue'
 import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
+import { resolveToken } from '@/services/designTokens'
 
 const patientStore = usePatientStore()
 const { patients } = storeToRefs(patientStore)
@@ -254,7 +255,7 @@ const exportToPDF = async () => {
       scale: 2,
       useCORS: true,
       logging: false,
-      backgroundColor: '#ffffff',
+      backgroundColor: resolveToken('--bg-card', '#ffffff'),
     })
 
     // Calculate PDF dimensions

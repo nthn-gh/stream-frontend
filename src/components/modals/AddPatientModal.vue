@@ -70,7 +70,7 @@
                 margin-bottom: 16px;
               "
             >
-              <AlertCircle :size="18" style="color: #f59e0b; flex-shrink: 0; margin-top: 1px" />
+              <AlertCircle :size="18" style="color: var(--warning); flex-shrink: 0; margin-top: 1px" />
               <p style="font-size: 13px; color: var(--text-primary); line-height: 1.5">
                 <strong>Important:</strong> Patients created here must self-register in the STREAM Android app using the same email address to link their account.
               </p>
@@ -85,7 +85,7 @@
                 <!-- Full Name -->
                 <div>
                   <label :for="'input-fullname'" class="input-label">
-                    Full Name <span style="color: #ef4444">*</span>
+                    Full Name <span style="color: var(--error)">*</span>
                   </label>
                   <input
                     :id="'input-fullname'"
@@ -100,7 +100,7 @@
                 <!-- Email -->
                 <div>
                   <label :for="'input-email'" class="input-label">
-                    Email <span style="color: #ef4444">*</span>
+                    Email <span style="color: var(--error)">*</span>
                   </label>
                   <input
                     :id="'input-email'"
@@ -131,7 +131,7 @@
                 <!-- Condition -->
                 <div>
                   <label :for="'input-condition'" class="input-label">
-                    Condition <span style="color: #ef4444">*</span>
+                    Condition <span style="color: var(--error)">*</span>
                   </label>
                   <input
                     :id="'input-condition'"
@@ -183,7 +183,7 @@
                 justify-content: center;
               "
             >
-              <CheckCircle :size="30" style="color: #10b981" />
+              <CheckCircle :size="30" style="color: var(--success)" />
             </div>
             <div style="max-width: 420px">
               <h4
@@ -254,7 +254,7 @@
                   style="
                     width: 16px;
                     height: 16px;
-                    border: 2px solid #ffffff;
+                    border: 2px solid var(--text-on-primary);
                     border-top-color: transparent;
                     border-radius: 50%;
                     display: inline-block;
@@ -529,7 +529,7 @@ const handleSubmit = async () => {
 }
 
 .input-field.input-error {
-  border-color: #ef4444;
+  border-color: var(--error);
 }
 
 .input-field.input-error:focus {
@@ -549,7 +549,7 @@ select.input-field {
 /* Error Message */
 .error-message {
   font-size: 12px;
-  color: #991b1b;
+  color: var(--status-danger-text);
   margin-top: 4px;
 }
 
@@ -593,8 +593,8 @@ select.input-field {
 }
 
 .requirement-dot.requirement-met {
-  background: #10b981;
-  border-color: #10b981;
+  background: var(--success);
+  border-color: var(--success);
 }
 
 .requirement-text {
@@ -603,7 +603,7 @@ select.input-field {
 }
 
 .requirement-text-met {
-  color: #10b981;
+  color: var(--success);
   font-weight: 500;
 }
 
@@ -636,7 +636,7 @@ select.input-field {
   padding: 0 24px;
   font-size: 15px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--text-on-primary);
   background: var(--primary);
   border: none;
   border-radius: 12px;
@@ -657,7 +657,7 @@ select.input-field {
 
 .btn-primary:disabled {
   background: var(--text-muted);
-  color: #94a3b8;
+  color: var(--bg-card);
   cursor: not-allowed;
 }
 
