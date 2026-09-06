@@ -106,56 +106,6 @@ export type Database = {
           },
         ]
       }
-      exercise_sessions: {
-        Row: {
-          completion_percent: number
-          created_at: string | null
-          duration_seconds: number
-          exercise_name: string
-          id: string
-          migrated_session_id: string | null
-          patient_id: string | null
-          reps_completed: number
-          score: string
-          target_reps: number
-          user_id: string
-        }
-        Insert: {
-          completion_percent: number
-          created_at?: string | null
-          duration_seconds: number
-          exercise_name: string
-          id?: string
-          migrated_session_id?: string | null
-          patient_id?: string | null
-          reps_completed: number
-          score: string
-          target_reps?: number
-          user_id: string
-        }
-        Update: {
-          completion_percent?: number
-          created_at?: string | null
-          duration_seconds?: number
-          exercise_name?: string
-          id?: string
-          migrated_session_id?: string | null
-          patient_id?: string | null
-          reps_completed?: number
-          score?: string
-          target_reps?: number
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "exercise_sessions_patient_id_fkey"
-            columns: ["patient_id"]
-            isOneToOne: false
-            referencedRelation: "patients"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       exercises: {
         Row: {
           category: string

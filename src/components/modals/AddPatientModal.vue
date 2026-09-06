@@ -575,38 +575,6 @@ select.input-field {
 }
 
 /* Password Requirements */
-.password-requirements {
-  background: var(--primary-light);
-  border-radius: 12px;
-  padding: 14px 16px;
-  margin-top: 16px;
-}
-
-.requirement-dot {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 1.5px solid var(--text-muted);
-  background: transparent;
-  flex-shrink: 0;
-  transition: all 200ms;
-}
-
-.requirement-dot.requirement-met {
-  background: var(--success);
-  border-color: var(--success);
-}
-
-.requirement-text {
-  color: var(--text-muted);
-  font-weight: 400;
-}
-
-.requirement-text-met {
-  color: var(--success);
-  font-weight: 500;
-}
-
 /* Buttons */
 .btn-secondary {
   height: 44px;
