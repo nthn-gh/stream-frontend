@@ -9,7 +9,7 @@
             {{ unreadCount }} Unread
           </span>
         </h1>
-        <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">Monitor patient issues and take action</p>
+        <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-top: var(--space-half);">Monitor patient issues and take action</p>
       </div>
       
       <div class="filter-tabs">
@@ -56,22 +56,22 @@
               <div class="alert-card-top">
                 <div class="alert-patient">
                   <h3 class="h4">{{ alert.patient?.name || 'Unknown Patient' }}</h3>
-                  <BaseBadge :variant="getPriorityVariant(alert.priority)">
+                  <AppBadge :variant="getPriorityVariant(alert.priority)">
                     {{ alert.priority.toUpperCase() }}
-                  </BaseBadge>
+                  </AppBadge>
                 </div>
-                
+
                 <div class="alert-actions">
-                  <button class="btn-ghost" @click="viewPatient(alert.patient_id)">
+                  <AppButton variant="secondary" class="btn-ghost" @click="viewPatient(alert.patient_id)">
                     View Patient
-                  </button>
-                  <button
+                  </AppButton>
+                  <AppButton
                     v-if="!alert.resolved"
-                    class="btn-primary"
+                    variant="primary"
                     @click="handleResolve(alert.id)"
                   >
                     Mark Resolved
-                  </button>
+                  </AppButton>
                 </div>
               </div>
               
@@ -93,8 +93,8 @@ import { useRouter } from 'vue-router'
 import { AlertCircle, Activity, Clock, CheckCircle } from 'lucide-vue-next'
 import { useAlertStore } from '@/stores/alertStore'
 import { storeToRefs } from 'pinia'
-import BaseCard from '@/components/shared/BaseCard.vue'
-import BaseBadge from '@/components/shared/BaseBadge.vue'
+import AppBadge from '@/components/shared/AppBadge.vue'
+import AppButton from '@/components/shared/AppButton.vue'
 
 const router = useRouter()
 const alertStore = useAlertStore()
@@ -156,8 +156,8 @@ const getSeverityColor = (priority: string) => {
   return 'var(--info)'
 }
 
-const getPriorityVariant = (priority: string): 'active' | 'warning' | 'danger' | 'info' | 'neutral' => {
-  if (priority === 'high') return 'danger'
+const getPriorityVariant = (priority: string): 'success' | 'warning' | 'error' | 'info' | 'neutral' => {
+  if (priority === 'high') return 'error'
   if (priority === 'medium') return 'warning'
   return 'info'
 }
@@ -206,9 +206,9 @@ onBeforeUnmount(() => {
   margin-bottom: var(--space-2);
 }
 .unread-badge {
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: 600;
-  padding: 4px 10px;
+  padding: var(--space-half) var(--space-8px);
   border-radius: var(--radius-pill);
   background: var(--status-danger-bg);
   color: var(--status-danger-text);
@@ -225,7 +225,7 @@ onBeforeUnmount(() => {
   background: var(--bg-card);
   color: var(--text-secondary);
   font: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.15s;
@@ -341,22 +341,9 @@ onBeforeUnmount(() => {
   color: var(--text-secondary);
   margin-bottom: var(--space-1);
 }
-.btn-primary {
-  background: var(--gradient-primary);
-  color: white;
-  border: none;
-  cursor: pointer;
-  height: 36px;
-  padding: 0 var(--space-4);
-  border-radius: var(--radius-sm);
-  font: inherit;
-  font-size: 13px;
-  font-weight: 600;
-  transition: opacity 0.15s;
-}
-.btn-primary:hover {
-  opacity: 0.9;
-}
+/* .btn-primary removed: "Mark Resolved" now renders through AppButton's
+   own native primary variant. .btn-ghost is kept -- no AppButton
+   variant matches its transparent-bg/primary-text/bordered look. */
 .btn-ghost {
   background: none;
   border: 1px solid var(--border);
@@ -365,7 +352,7 @@ onBeforeUnmount(() => {
   padding: 0 var(--space-4);
   border-radius: var(--radius-sm);
   font: inherit;
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   color: var(--primary);
   font-weight: 600;
   transition: background 0.15s, border-color 0.15s;

@@ -12,22 +12,22 @@
     <div class="page-header">
       <div>
         <h1 class="h2">Patients</h1>
-        <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">Manage and monitor all your patients</p>
+        <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-top: var(--space-half);">Manage and monitor all your patients</p>
       </div>
       <div class="header-actions">
-        <button class="btn-secondary" @click="showAddPatientModal = true">
+        <AppButton variant="secondary" class="btn-secondary btn-icon-gap" @click="showAddPatientModal = true">
           <UserPlus :size="16" />
           <span>Add Patient</span>
-        </button>
-        <button class="btn-primary" @click="router.push('/assign-exercise')">
+        </AppButton>
+        <AppButton variant="primary" class="btn-icon-gap" @click="router.push('/assign-exercise')">
           <Plus :size="16" />
           <span>Assign Exercise</span>
-        </button>
+        </AppButton>
       </div>
     </div>
 
     <!-- Content -->
-    <BaseCard>
+    <AppCard class="dash-card">
       <!-- Toolbar -->
       <div class="table-header">
         <h3 class="h3">Patient List</h3>
@@ -95,9 +95,9 @@
               <td>{{ patient.condition }}</td>
               <td style="color: var(--text-muted)">{{ formatDate(patient.last_session) }}</td>
               <td><AdherenceBar :value="patient.adherence_rate" /></td>
-              <td><BaseBadge :variant="getStatusVariant(patient.status)">{{ formatStatus(patient.status) }}</BaseBadge></td>
+              <td><AppBadge :variant="getStatusVariant(patient.status)">{{ formatStatus(patient.status) }}</AppBadge></td>
               <td>
-                <button class="btn-ghost btn-sm" @click.stop="viewPatient(patient.id)">View</button>
+                <AppButton variant="secondary" class="btn-ghost btn-sm" @click.stop="viewPatient(patient.id)">View</AppButton>
               </td>
             </tr>
           </tbody>
@@ -109,24 +109,26 @@
             Showing {{ ((currentPage - 1) * perPage) + 1 }} to {{ Math.min(currentPage * perPage, filteredPatients.length) }} of {{ filteredPatients.length }} patients
           </span>
           <div class="pagination">
-            <button 
-              class="btn-ghost btn-sm" 
-              :disabled="currentPage === 1" 
+            <AppButton
+              variant="secondary"
+              class="btn-ghost btn-sm"
+              :disabled="currentPage === 1"
               @click="currentPage--"
             >
               Previous
-            </button>
-            <button 
-              class="btn-ghost btn-sm" 
-              :disabled="currentPage >= totalPages" 
+            </AppButton>
+            <AppButton
+              variant="secondary"
+              class="btn-ghost btn-sm"
+              :disabled="currentPage >= totalPages"
               @click="currentPage++"
             >
               Next
-            </button>
+            </AppButton>
           </div>
         </div>
       </div>
-    </BaseCard>
+    </AppCard>
   </div>
 </template>
 
@@ -137,8 +139,9 @@ import { Search, Users, Plus, UserPlus } from 'lucide-vue-next'
 import { usePatientStore } from '@/stores/patientStore'
 import { useAuthStore } from '@/stores/authStore'
 import { storeToRefs } from 'pinia'
-import BaseCard from '@/components/shared/BaseCard.vue'
-import BaseBadge from '@/components/shared/BaseBadge.vue'
+import AppCard from '@/components/shared/AppCard.vue'
+import AppBadge from '@/components/shared/AppBadge.vue'
+import AppButton from '@/components/shared/AppButton.vue'
 import AdherenceBar from '@/components/shared/AdherenceBar.vue'
 import AddPatientModal from '@/components/modals/AddPatientModal.vue'
 
@@ -207,8 +210,8 @@ const formatStatus = (status: string) => {
   return status.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
 }
 
-const getStatusVariant = (status: string): 'active' | 'warning' | 'danger' | 'info' | 'neutral' => {
-  if (status === 'active') return 'active'
+const getStatusVariant = (status: string): 'success' | 'warning' | 'error' | 'info' | 'neutral' => {
+  if (status === 'active') return 'success'
   if (status === 'needs_attention') return 'warning'
   return 'neutral'
 }
@@ -247,27 +250,23 @@ onMounted(async () => {
   gap: var(--space-2);
 }
 
-.btn-primary {
-  background: var(--gradient-primary);
-  color: white;
-  border: none;
-  cursor: pointer;
-  height: 40px;
-  padding: 0 var(--space-5);
-  border-radius: var(--radius-sm);
-  font: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  transition: opacity 0.15s;
-  display: flex;
-  align-items: center;
+/* .dash-card: AppCard hardcodes bg-white/border-slate-200/shadow-md
+   with no dark-mode handling (same gap fixed in DashboardView.vue). */
+.dash-card {
+  background: var(--bg-card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-card);
+}
+
+.btn-icon-gap {
   gap: var(--space-2);
 }
 
-.btn-primary:hover {
-  opacity: 0.9;
-}
-
+/* .btn-primary removed: the header's "Assign Exercise" button now
+   renders through AppButton's own native primary variant. .btn-secondary
+   is kept -- it's a primary-outline look (white bg, primary-colored
+   border/text), not the neutral bordered-card look AppButton's native
+   secondary variant provides, so no clean native match exists. */
 .btn-secondary {
   background: white;
   color: var(--primary);
@@ -277,7 +276,7 @@ onMounted(async () => {
   padding: 0 var(--space-5);
   border-radius: var(--radius-sm);
   font: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   transition: all 0.15s;
   display: flex;
@@ -323,7 +322,7 @@ onMounted(async () => {
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   outline: none;
 }
 
@@ -338,7 +337,7 @@ onMounted(async () => {
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-family: inherit;
   outline: none;
 }
@@ -379,7 +378,7 @@ onMounted(async () => {
 
 .data-table th {
   text-align: left;
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -420,7 +419,7 @@ onMounted(async () => {
   border-radius: var(--radius-pill);
   background: var(--gradient-primary);
   color: white;
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -443,13 +442,13 @@ onMounted(async () => {
 }
 
 .patient-name {
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .patient-email {
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   color: var(--text-muted);
 }
 
@@ -460,7 +459,7 @@ onMounted(async () => {
   padding: 0 var(--space-4);
   border-radius: var(--radius-sm);
   font: inherit;
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   color: var(--primary);
   font-weight: 600;
   transition: background 0.15s, border-color 0.15s;

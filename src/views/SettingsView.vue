@@ -11,7 +11,7 @@
     <div class="page-header">
       <div>
         <h1 class="h2">Settings</h1>
-        <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px">
+        <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-top: var(--space-half)">
           Manage your profile and preferences
         </p>
       </div>
@@ -34,7 +34,7 @@
     <div class="settings-content">
       <!-- Profile Tab -->
       <div v-if="activeTab === 'profile'">
-        <BaseCard>
+        <AppCard class="dash-card">
           <h3 class="h3" style="margin-bottom: var(--space-6)">Profile Information</h3>
 
           <div class="profile-layout">
@@ -43,7 +43,7 @@
               <div class="avatar-large">
                 {{ initials }}
               </div>
-              <button class="btn-ghost" style="margin-top: var(--space-3)" @click="changePhoto">Change Photo</button>
+              <AppButton variant="secondary" class="btn-ghost" style="margin-top: var(--space-3)" @click="changePhoto">Change Photo</AppButton>
             </div>
 
             <!-- Form Fields -->
@@ -67,19 +67,19 @@
               </div>
 
               <div class="form-actions">
-                <button class="btn-ghost" @click="resetProfileForm">Cancel</button>
-                <button class="btn-primary" :disabled="isSaving" @click="saveProfile">
+                <AppButton variant="secondary" class="btn-ghost" @click="resetProfileForm">Cancel</AppButton>
+                <AppButton variant="primary" :disabled="isSaving" @click="saveProfile">
                   {{ isSaving ? 'Saving...' : 'Save Changes' }}
-                </button>
+                </AppButton>
               </div>
             </div>
           </div>
-        </BaseCard>
+        </AppCard>
       </div>
 
       <!-- Security Tab -->
       <div v-if="activeTab === 'security'" class="settings-section">
-        <BaseCard>
+        <AppCard class="dash-card">
           <h3 class="h3" style="margin-bottom: var(--space-4)">Change Password</h3>
 
           <div class="form-container">
@@ -99,36 +99,36 @@
             </div>
 
             <div class="form-actions">
-              <button class="btn-ghost" @click="resetSecurityForm">Cancel</button>
-              <button class="btn-primary" :disabled="isSaving" @click="updatePassword">
+              <AppButton variant="secondary" class="btn-ghost" @click="resetSecurityForm">Cancel</AppButton>
+              <AppButton variant="primary" :disabled="isSaving" @click="updatePassword">
                 {{ isSaving ? 'Updating...' : 'Update Password' }}
-              </button>
+              </AppButton>
             </div>
           </div>
-        </BaseCard>
+        </AppCard>
 
-        <BaseCard>
+        <AppCard class="dash-card">
           <h3 class="h3" style="margin-bottom: var(--space-2)">Two-Factor Authentication</h3>
           <p class="caption" style="color: var(--text-muted); margin-bottom: var(--space-4)">
             Add an extra layer of security to your account
           </p>
 
-          <button class="btn-ghost" :disabled="isSaving" @click="enable2FA">
+          <AppButton variant="secondary" class="btn-ghost" :disabled="isSaving" @click="enable2FA">
             {{ isSaving ? 'Enabling...' : 'Enable 2FA' }}
-          </button>
-        </BaseCard>
+          </AppButton>
+        </AppCard>
       </div>
 
       <!-- Notifications Tab -->
       <div v-if="activeTab === 'notifications'">
-        <BaseCard>
+        <AppCard class="dash-card">
           <h3 class="h3" style="margin-bottom: var(--space-6)">Notification Preferences</h3>
 
           <div class="notification-list">
             <div class="notification-item">
               <div class="notification-info">
                 <p class="h4">Patient Alerts</p>
-                <p class="caption" style="color: var(--text-muted); margin-top: 2px">
+                <p class="caption" style="color: var(--text-muted); margin-top: var(--space-half)">
                   Get notified when patients miss sessions or show low adherence
                 </p>
               </div>
@@ -141,7 +141,7 @@
             <div class="notification-item">
               <div class="notification-info">
                 <p class="h4">Email Notifications</p>
-                <p class="caption" style="color: var(--text-muted); margin-top: 2px">
+                <p class="caption" style="color: var(--text-muted); margin-top: var(--space-half)">
                   Receive email updates about your practice
                 </p>
               </div>
@@ -154,7 +154,7 @@
             <div class="notification-item">
               <div class="notification-info">
                 <p class="h4">Session Reminders</p>
-                <p class="caption" style="color: var(--text-muted); margin-top: 2px">
+                <p class="caption" style="color: var(--text-muted); margin-top: var(--space-half)">
                   Get reminders about upcoming patient sessions
                 </p>
               </div>
@@ -172,16 +172,16 @@
               border-top: 1px solid var(--border);
             "
           >
-            <button class="btn-primary" :disabled="isSaving" @click="saveNotifications">
+            <AppButton variant="primary" :disabled="isSaving" @click="saveNotifications">
               {{ isSaving ? 'Saving...' : 'Save Preferences' }}
-            </button>
+            </AppButton>
           </div>
-        </BaseCard>
+        </AppCard>
       </div>
 
       <!-- Preferences Tab -->
       <div v-if="activeTab === 'preferences'">
-        <BaseCard>
+        <AppCard class="dash-card">
           <h3 class="h3" style="margin-bottom: var(--space-4)">Display Preferences</h3>
 
           <div class="form-container">
@@ -212,12 +212,12 @@
             </div>
 
             <div class="form-actions">
-              <button class="btn-primary" :disabled="isSaving" @click="savePreferences">
+              <AppButton variant="primary" :disabled="isSaving" @click="savePreferences">
                 {{ isSaving ? 'Saving...' : 'Save Preferences' }}
-              </button>
+              </AppButton>
             </div>
           </div>
-        </BaseCard>
+        </AppCard>
       </div>
     </div>
   </div>
@@ -227,7 +227,8 @@
 import { ref, computed, watch } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
 import { storeToRefs } from 'pinia'
-import BaseCard from '@/components/shared/BaseCard.vue'
+import AppCard from '@/components/shared/AppCard.vue'
+import AppButton from '@/components/shared/AppButton.vue'
 import { useTheme, type Theme } from '@/composables/useTheme'
 
 const authStore = useAuthStore()
@@ -442,6 +443,14 @@ const resetSecurityForm = () => {
 </script>
 
 <style scoped>
+/* AppCard hardcodes bg-white/border-slate-200/shadow-md with no
+   dark-mode handling (same gap fixed in DashboardView.vue). */
+.dash-card {
+  background: var(--bg-card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-card);
+}
+
 .page {
   display: flex;
   flex-direction: column;
@@ -469,7 +478,7 @@ const resetSecurityForm = () => {
   border-bottom: 2px solid transparent;
   margin-bottom: -2px;
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s;
@@ -515,7 +524,7 @@ const resetSecurityForm = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: var(--font-size-3xl);
   font-weight: 700;
   color: var(--primary);
 }
@@ -547,7 +556,7 @@ const resetSecurityForm = () => {
 }
 
 .form-label {
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -560,7 +569,7 @@ const resetSecurityForm = () => {
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-family: inherit;
   outline: none;
   transition: border-color 0.15s;
@@ -584,29 +593,11 @@ const resetSecurityForm = () => {
   margin-top: var(--space-2);
 }
 
-.btn-primary {
-  background: var(--gradient-primary);
-  color: white;
-  border: none;
-  cursor: pointer;
-  height: 40px;
-  padding: 0 var(--space-5);
-  border-radius: var(--radius-sm);
-  font: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  transition: opacity 0.15s;
-}
-
-.btn-primary:hover {
-  opacity: 0.9;
-}
-
-.btn-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
+/* .btn-primary removed: every "primary" action button in this file now
+   renders through AppButton's own native primary variant. .btn-ghost
+   is kept -- transparent background + var(--text-secondary) text isn't
+   AppButton's native secondary look (var(--bg-card) filled,
+   var(--text-primary) text), so no clean native match exists. */
 .btn-ghost {
   background: none;
   border: 1px solid var(--border);
@@ -615,7 +606,7 @@ const resetSecurityForm = () => {
   padding: 0 var(--space-4);
   border-radius: var(--radius-sm);
   font: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   color: var(--text-secondary);
   font-weight: 600;
   transition:
@@ -707,13 +698,13 @@ const resetSecurityForm = () => {
 /* Success Toast */
 .success-toast {
   position: fixed;
-  top: 24px;
-  right: 24px;
+  top: var(--space-24px);
+  right: var(--space-24px);
   background: var(--gradient-success);
   color: white;
   padding: var(--space-3) var(--space-5);
   border-radius: var(--radius-sm);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 1000;

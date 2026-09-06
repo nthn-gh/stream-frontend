@@ -4,7 +4,7 @@
     <div class="page-header">
       <div>
         <h1 class="h2">Reports & Analytics</h1>
-        <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px">
+        <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-top: var(--space-half)">
           Generate insights and track patient progress
         </p>
       </div>
@@ -102,7 +102,7 @@
     </div>
 
     <!-- Patient Selector -->
-    <BaseCard>
+    <AppCard class="dash-card">
       <div class="selector-header">
         <h3 class="h3">Generate Patient Report</h3>
       </div>
@@ -113,20 +113,21 @@
             {{ patient.name }}
           </option>
         </select>
-        <button class="btn-primary" :disabled="!selectedPatient || isGenerating" @click="generateReport">
+        <AppButton variant="primary" :disabled="!selectedPatient || isGenerating" @click="generateReport">
           {{ isGenerating ? 'Generating...' : 'Generate Report' }}
-        </button>
-        <button
+        </AppButton>
+        <AppButton
           v-if="reportGenerated && selectedPatientData"
+          variant="secondary"
           class="btn-secondary"
           :disabled="isGenerating"
           @click="exportToPDF"
         >
-          <Download :size="16" style="margin-right: 6px;" />
+          <Download :size="16" style="margin-right: var(--space-8px);" />
           Export PDF
-        </button>
+        </AppButton>
       </div>
-    </BaseCard>
+    </AppCard>
 
     <!-- Empty State -->
     <div v-if="!reportGenerated || !selectedPatient" class="empty-state">
@@ -139,7 +140,7 @@
     <!-- Report Display -->
     <div v-else-if="selectedPatientData" ref="reportRef" class="report-grid">
       <!-- Patient Info -->
-      <BaseCard>
+      <AppCard class="dash-card">
         <h3 class="h3" style="margin-bottom: var(--space-4)">Patient Information</h3>
         <div class="info-grid">
           <div class="info-item">
@@ -161,19 +162,19 @@
             </div>
           </div>
         </div>
-      </BaseCard>
+      </AppCard>
 
       <!-- Progress Chart -->
-      <BaseCard>
+      <AppCard class="dash-card">
         <h3 class="h3" style="margin-bottom: var(--space-4)">Progress Overview</h3>
         <div class="chart-placeholder">
           <Activity :size="32" style="color: var(--text-muted); margin-bottom: var(--space-2)" />
           <p class="caption" style="color: var(--text-muted)">Chart visualization area</p>
         </div>
-      </BaseCard>
+      </AppCard>
 
       <!-- Recent Activity -->
-      <BaseCard>
+      <AppCard class="dash-card">
         <h3 class="h3" style="margin-bottom: var(--space-4)">Recent Activity</h3>
         <div class="activity-list">
           <div class="activity-item">
@@ -189,17 +190,18 @@
             <span class="caption">Missed scheduled session - 1 week ago</span>
           </div>
         </div>
-      </BaseCard>
+      </AppCard>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { Users, Activity, TrendingUp, FileText, Download } from 'lucide-vue-next'
+import { Activity, FileText, Download } from 'lucide-vue-next'
 import { usePatientStore } from '@/stores/patientStore'
 import { storeToRefs } from 'pinia'
-import BaseCard from '@/components/shared/BaseCard.vue'
+import AppCard from '@/components/shared/AppCard.vue'
+import AppButton from '@/components/shared/AppButton.vue'
 import StatCard from '@/components/shared/StatCard.vue'
 import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
@@ -289,6 +291,14 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+/* AppCard hardcodes bg-white/border-slate-200/shadow-md with no
+   dark-mode handling (same gap fixed in DashboardView.vue). */
+.dash-card {
+  background: var(--bg-card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-card);
+}
+
 .page {
   display: flex;
   flex-direction: column;
@@ -325,7 +335,7 @@ onMounted(async () => {
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-family: inherit;
   outline: none;
 }
@@ -334,32 +344,10 @@ onMounted(async () => {
   border-color: var(--border-focus);
 }
 
-.btn-primary {
-  background: var(--gradient-primary);
-  color: white;
-  border: none;
-  cursor: pointer;
-  height: 36px;
-  padding: 0 var(--space-5);
-  border-radius: var(--radius-sm);
-  font: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  transition: opacity 0.15s;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-primary:hover {
-  opacity: 0.9;
-}
-
-.btn-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
+/* .btn-primary removed: "Generate Report" now renders through
+   AppButton's own native primary variant. .btn-secondary is kept --
+   it's a primary-outline look (white bg, primary border/text), not
+   AppButton's neutral bordered-card secondary, so no native match. */
 .btn-secondary {
   background: white;
   color: var(--primary);
@@ -369,7 +357,7 @@ onMounted(async () => {
   padding: 0 var(--space-5);
   border-radius: var(--radius-sm);
   font: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   transition: all 0.15s;
   display: inline-flex;
@@ -416,7 +404,7 @@ onMounted(async () => {
 }
 
 .info-label {
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -424,7 +412,7 @@ onMounted(async () => {
 }
 
 .info-value {
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   color: var(--text-primary);
 }
 

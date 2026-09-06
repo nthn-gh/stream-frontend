@@ -7,7 +7,7 @@
       </div>
     </div>
 
-    <BaseCard>
+    <AppCard class="dash-card">
       <div class="step-indicator">
         <div v-for="(step, index) in steps" :key="step" class="step-item">
           <div class="step-number" :class="{ active: currentStep === index, complete: currentStep > index }">
@@ -16,21 +16,21 @@
           <span class="step-label" :class="{ active: currentStep >= index }">{{ step }}</span>
         </div>
       </div>
-    </BaseCard>
+    </AppCard>
 
-    <BaseCard v-if="isBootstrapping" class="state-card">
+    <AppCard v-if="isBootstrapping" class="state-card dash-card">
       <p class="state-title">Loading assignment data</p>
       <p class="state-copy">Fetching patients and exercise library from Supabase.</p>
-    </BaseCard>
+    </AppCard>
 
-    <BaseCard v-else-if="bootstrapError" class="state-card">
+    <AppCard v-else-if="bootstrapError" class="state-card dash-card">
       <p class="state-title">Unable to load assignment data</p>
       <p class="state-copy">{{ bootstrapError }}</p>
-      <button class="btn-secondary" @click="initialize">Retry</button>
-    </BaseCard>
+      <AppButton variant="secondary" class="btn-secondary" @click="initialize">Retry</AppButton>
+    </AppCard>
 
     <template v-else>
-      <BaseCard v-if="currentStep === 0">
+      <AppCard v-if="currentStep === 0" class="dash-card">
         <div class="section-header">
           <div>
             <h3 class="h3">Select Patient</h3>
@@ -79,11 +79,11 @@
         </div>
 
         <div class="step-actions">
-          <button class="btn-primary" :disabled="!selectedPatient" @click="nextStep">Continue to Exercises</button>
+          <AppButton variant="primary" :disabled="!selectedPatient" @click="nextStep">Continue to Exercises</AppButton>
         </div>
-      </BaseCard>
+      </AppCard>
 
-      <BaseCard v-if="currentStep === 1">
+      <AppCard v-if="currentStep === 1" class="dash-card">
         <div class="section-header">
           <div>
             <h3 class="h3">Select Exercises</h3>
@@ -147,10 +147,10 @@
               />
             </div>
             <div class="exercise-badges">
-              <BaseBadge variant="info">{{ exercise.category?.replace('_', ' ') }}</BaseBadge>
-              <BaseBadge :variant="exercise.difficulty === 'easy' ? 'active' : exercise.difficulty === 'hard' ? 'danger' : 'warning'">
+              <AppBadge variant="info">{{ exercise.category?.replace('_', ' ') }}</AppBadge>
+              <AppBadge :variant="exercise.difficulty === 'easy' ? 'success' : exercise.difficulty === 'hard' ? 'error' : 'warning'">
                 {{ exercise.difficulty }}
-              </BaseBadge>
+              </AppBadge>
             </div>
           </div>
         </div>
@@ -168,14 +168,14 @@
         </div>
 
         <div class="step-actions">
-          <button class="btn-ghost" @click="previousStep">Back</button>
-          <button class="btn-primary" :disabled="selectedExercises.length === 0" @click="nextStep">
+          <AppButton variant="secondary" class="btn-ghost" @click="previousStep">Back</AppButton>
+          <AppButton variant="primary" :disabled="selectedExercises.length === 0" @click="nextStep">
             Continue to Plan Details
-          </button>
+          </AppButton>
         </div>
-      </BaseCard>
+      </AppCard>
 
-      <BaseCard v-if="currentStep === 2">
+      <AppCard v-if="currentStep === 2" class="dash-card">
         <div class="section-header">
           <div>
             <h3 class="h3">Configure Plan</h3>
@@ -272,14 +272,14 @@
         </div>
 
         <div class="step-actions">
-          <button class="btn-ghost" :disabled="isCreating" @click="previousStep">Back</button>
-          <button class="btn-primary" :disabled="!isValidPlan || isCreating" @click="createPlan">
+          <AppButton variant="secondary" class="btn-ghost" :disabled="isCreating" @click="previousStep">Back</AppButton>
+          <AppButton variant="primary" :disabled="!isValidPlan || isCreating" @click="createPlan">
             {{ isCreating ? 'Saving Plan...' : 'Create Exercise Plan' }}
-          </button>
+          </AppButton>
         </div>
-      </BaseCard>
+      </AppCard>
 
-      <BaseCard v-if="currentStep === 3">
+      <AppCard v-if="currentStep === 3" class="dash-card">
         <div class="success-state">
           <div class="success-icon">
             <Check :size="40" />
@@ -295,11 +295,11 @@
             </ul>
           </div>
           <div class="success-actions">
-            <button class="btn-ghost" @click="resetForm">Create Another Plan</button>
-            <button class="btn-primary" @click="$router.push(`/patients/${selectedPatient?.id}`)">View Patient</button>
+            <AppButton variant="secondary" class="btn-ghost" @click="resetForm">Create Another Plan</AppButton>
+            <AppButton variant="primary" @click="$router.push(`/patients/${selectedPatient?.id}`)">View Patient</AppButton>
           </div>
         </div>
-      </BaseCard>
+      </AppCard>
     </template>
   </div>
 </template>
@@ -311,8 +311,9 @@ import { Search, X, Check } from 'lucide-vue-next'
 import { usePatientStore } from '@/stores/patientStore'
 import { useExerciseStore } from '@/stores/exerciseStore'
 import { useAuthStore } from '@/stores/authStore'
-import BaseCard from '@/components/shared/BaseCard.vue'
-import BaseBadge from '@/components/shared/BaseBadge.vue'
+import AppCard from '@/components/shared/AppCard.vue'
+import AppBadge from '@/components/shared/AppBadge.vue'
+import AppButton from '@/components/shared/AppButton.vue'
 import type { Exercise, ExerciseDifficulty, Patient } from '@/types'
 
 const router = useRouter()
@@ -615,6 +616,14 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+/* AppCard hardcodes bg-white/border-slate-200/shadow-md with no
+   dark-mode handling (same gap fixed in DashboardView.vue). */
+.dash-card {
+  background: var(--bg-card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-card);
+}
+
 .page {
   display: flex;
   flex-direction: column;
@@ -634,7 +643,7 @@ onMounted(async () => {
 .patient-meta,
 .exercise-desc {
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
 }
 
 .step-indicator {
@@ -674,7 +683,7 @@ onMounted(async () => {
 }
 
 .step-label {
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--text-muted);
 }
@@ -697,7 +706,7 @@ onMounted(async () => {
 
 .state-title {
   color: var(--text-primary);
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   font-weight: 700;
 }
 
@@ -723,7 +732,7 @@ onMounted(async () => {
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   outline: none;
 }
 
@@ -767,7 +776,7 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   flex-shrink: 0;
 }
 
@@ -781,7 +790,7 @@ onMounted(async () => {
 .exercise-config-title,
 .message-title {
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
 }
 
@@ -829,7 +838,7 @@ onMounted(async () => {
 
 .filter-label,
 .form-label {
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -841,7 +850,7 @@ onMounted(async () => {
   border-radius: var(--radius-sm);
   background: var(--bg-input);
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-family: inherit;
   outline: none;
 }
@@ -940,7 +949,11 @@ onMounted(async () => {
   margin-top: var(--space-4);
 }
 
-.btn-primary,
+/* .btn-primary removed: every "primary" action button in this file now
+   renders through AppButton's own native primary variant. .btn-ghost/
+   .btn-secondary are kept -- transparent bg + var(--primary) text
+   isn't AppButton's native filled/var(--text-primary) secondary look,
+   so no clean native match exists. */
 .btn-ghost,
 .btn-secondary {
   cursor: pointer;
@@ -948,24 +961,13 @@ onMounted(async () => {
   padding: 0 var(--space-5);
   border-radius: var(--radius-sm);
   font: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
-}
-
-.btn-primary {
-  background: var(--gradient-primary);
-  color: white;
-  border: none;
-}
-
-.btn-ghost,
-.btn-secondary {
   background: none;
   border: 1px solid var(--border);
   color: var(--primary);
 }
 
-.btn-primary:disabled,
 .btn-ghost:disabled,
 .btn-secondary:disabled {
   opacity: 0.5;

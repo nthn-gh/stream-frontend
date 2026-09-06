@@ -43,7 +43,7 @@ const buttonClasses = computed(() => {
 
   const variants = {
     primary: 'app-button--primary text-white active:scale-[0.98] shadow-sm',
-    secondary: 'bg-white border border-slate-200 text-slate-900 hover:bg-slate-50 hover:border-slate-300',
+    secondary: 'app-button--secondary border',
     destructive: 'bg-error text-white hover:bg-red-600 shadow-sm',
     icon: 'bg-transparent hover:bg-slate-100 text-slate-700'
   }
@@ -68,6 +68,21 @@ const buttonClasses = computed(() => {
 }
 .app-button--primary:hover:not(:disabled) {
   opacity: 0.9;
+}
+/* Secondary variant: same reasoning as primary above -- was
+   bg-white/border-slate-200/text-slate-900 (no dark-mode handling at
+   all), now driven by the canonical CSS vars so it tracks theme
+   correctly. Fixed here centrally rather than per-consumer since this
+   look (bordered, card-colored, primary text) recurs almost everywhere
+   as the standard non-primary action button. */
+.app-button--secondary {
+  background: var(--bg-card);
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+.app-button--secondary:hover:not(:disabled) {
+  background: var(--bg-hover);
+  border-color: var(--text-muted);
 }
 .app-button:focus {
   outline: none;

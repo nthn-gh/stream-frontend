@@ -7,24 +7,24 @@
       </div>
 
       <div class="header-actions">
-        <button class="btn-secondary" @click="router.push('/patients')">Back</button>
-        <button class="btn-secondary" @click="openNoteModal">Add Clinical Note</button>
-        <button class="btn-primary" @click="router.push(`/assign-exercise?patientId=${patientId}`)">Assign Exercise</button>
+        <AppButton variant="secondary" @click="router.push('/patients')">Back</AppButton>
+        <AppButton variant="secondary" @click="openNoteModal">Add Clinical Note</AppButton>
+        <AppButton variant="primary" @click="router.push(`/assign-exercise?patientId=${patientId}`)">Assign Exercise</AppButton>
       </div>
     </div>
 
-    <BaseCard v-if="isLoading" class="state-card">
+    <AppCard v-if="isLoading" class="state-card dash-card">
       <p class="state-text">Loading patient details...</p>
-    </BaseCard>
+    </AppCard>
 
-    <BaseCard v-else-if="loadError" class="state-card">
+    <AppCard v-else-if="loadError" class="state-card dash-card">
       <p class="state-title">Unable to load this patient</p>
       <p class="state-text">{{ loadError }}</p>
-      <button class="btn-secondary" @click="loadPatientDetail">Retry</button>
-    </BaseCard>
+      <AppButton variant="secondary" @click="loadPatientDetail">Retry</AppButton>
+    </AppCard>
 
     <template v-else-if="patient">
-      <BaseCard>
+      <AppCard class="dash-card">
         <div class="profile-header">
           <div class="profile-avatar">{{ getInitials(patient.name) }}</div>
 
@@ -32,10 +32,10 @@
             <h2 class="h2">{{ patient.name }}</h2>
             <p class="profile-meta">{{ patient.email }}</p>
             <div class="badge-row">
-              <BaseBadge :variant="patient.status === 'active' ? 'active' : patient.status === 'needs_attention' ? 'warning' : 'neutral'">
+              <AppBadge :variant="patient.status === 'active' ? 'success' : patient.status === 'needs_attention' ? 'warning' : 'neutral'">
                 {{ formatStatus(patient.status || 'inactive') }}
-              </BaseBadge>
-              <BaseBadge variant="info">{{ patient.condition || 'No condition recorded' }}</BaseBadge>
+              </AppBadge>
+              <AppBadge variant="info">{{ patient.condition || 'No condition recorded' }}</AppBadge>
             </div>
           </div>
 
@@ -54,7 +54,7 @@
             </div>
           </div>
         </div>
-      </BaseCard>
+      </AppCard>
 
       <div class="tabs">
         <button v-for="tab in tabs" :key="tab.id" class="tab-button" :class="{ 'tab-button--active': activeTab === tab.id }" @click="activeTab = tab.id">
@@ -63,7 +63,7 @@
       </div>
 
       <div v-if="activeTab === 'overview'" class="overview-grid">
-        <BaseCard>
+        <AppCard class="dash-card">
           <h3 class="h3">Patient Snapshot</h3>
           <div class="detail-grid">
             <div class="detail-item">
@@ -83,9 +83,9 @@
               <span class="detail-value">{{ formatDate(patient.last_session) }}</span>
             </div>
           </div>
-        </BaseCard>
+        </AppCard>
 
-        <BaseCard>
+        <AppCard class="dash-card">
           <div class="card-header">
             <div>
               <h3 class="h3">ROM Progress</h3>
@@ -96,9 +96,9 @@
             <Line :data="romChartData" :options="lineChartOptions" />
           </div>
           <div v-else class="empty-card">No ROM metrics recorded yet.</div>
-        </BaseCard>
+        </AppCard>
 
-        <BaseCard>
+        <AppCard class="dash-card">
           <div class="card-header">
             <div>
               <h3 class="h3">Recent Session Accuracy</h3>
@@ -109,9 +109,9 @@
             <Bar :data="accuracyChartData" :options="barChartOptions" />
           </div>
           <div v-else class="empty-card">No session accuracy data recorded yet.</div>
-        </BaseCard>
+        </AppCard>
 
-        <BaseCard>
+        <AppCard class="dash-card">
           <h3 class="h3">Active Plan Exercises</h3>
           <div v-if="activePlanExercises.length" class="list-stack">
             <article v-for="exercise in activePlanExercises" :key="exercise.planExerciseId" class="list-card">
@@ -125,17 +125,17 @@
                   <p class="list-meta">Plan: {{ exercise.planName }}</p>
                   <p v-if="exercise.special_instructions" class="list-copy">{{ exercise.special_instructions }}</p>
                 </div>
-                <BaseBadge :variant="exercise.planStatus === 'completed' ? 'info' : 'active'">
+                <AppBadge :variant="exercise.planStatus === 'completed' ? 'info' : 'success'">
                   {{ formatStatus(exercise.planStatus) }}
-                </BaseBadge>
+                </AppBadge>
               </div>
             </article>
           </div>
           <div v-else class="empty-card">No active exercises assigned.</div>
-        </BaseCard>
+        </AppCard>
       </div>
 
-      <BaseCard v-if="activeTab === 'sessions'">
+      <AppCard v-if="activeTab === 'sessions'" class="dash-card">
         <div class="card-header">
           <div>
             <h3 class="h3">Session History</h3>
@@ -160,9 +160,9 @@
                 </p>
                 <p v-if="session.notes" class="list-copy">{{ session.notes }}</p>
               </div>
-              <BaseBadge :variant="session.status === 'completed' ? 'active' : session.status === 'paused' ? 'warning' : 'info'">
+              <AppBadge :variant="session.status === 'completed' ? 'success' : session.status === 'paused' ? 'warning' : 'info'">
                 {{ formatStatus(session.status || 'completed') }}
-              </BaseBadge>
+              </AppBadge>
             </div>
 
             <div v-if="session.session_logs?.length" class="log-list">
@@ -179,9 +179,9 @@
           </article>
         </div>
         <div v-else class="empty-card">No sessions recorded for this patient yet.</div>
-      </BaseCard>
+      </AppCard>
 
-      <BaseCard v-if="activeTab === 'progress'">
+      <AppCard v-if="activeTab === 'progress'" class="dash-card">
         <div class="card-header">
           <div>
             <h3 class="h3">Progress Metrics</h3>
@@ -210,15 +210,15 @@
           </div>
         </div>
         <div v-else class="empty-card">No progress metrics recorded yet.</div>
-      </BaseCard>
+      </AppCard>
 
-      <BaseCard v-if="activeTab === 'notes'">
+      <AppCard v-if="activeTab === 'notes'" class="dash-card">
         <div class="card-header">
           <div>
             <h3 class="h3">Clinical Notes</h3>
             <p class="card-copy">Therapist-authored entries saved to `session_notes`.</p>
           </div>
-          <button class="btn-primary" @click="openNoteModal">Add Clinical Note</button>
+          <AppButton variant="primary" @click="openNoteModal">Add Clinical Note</AppButton>
         </div>
 
         <div v-if="patientNotes.length" class="list-stack">
@@ -234,15 +234,15 @@
           </article>
         </div>
         <div v-else class="empty-card">No clinical notes have been added yet.</div>
-      </BaseCard>
+      </AppCard>
 
-      <BaseCard v-if="activeTab === 'plans'">
+      <AppCard v-if="activeTab === 'plans'" class="dash-card">
         <div class="card-header">
           <div>
             <h3 class="h3">Exercise Plans</h3>
             <p class="card-copy">Real plan metadata with ROM-aware plan exercise configuration.</p>
           </div>
-          <button class="btn-primary" @click="router.push(`/assign-exercise?patientId=${patientId}`)">Assign New</button>
+          <AppButton variant="primary" @click="router.push(`/assign-exercise?patientId=${patientId}`)">Assign New</AppButton>
         </div>
 
         <div v-if="exercisePlans.length" class="list-stack">
@@ -252,9 +252,9 @@
                 <h4 class="list-title">{{ plan.name }}</h4>
                 <p class="list-meta">{{ formatDate(plan.start_date) }} to {{ formatDate(plan.end_date) }}</p>
               </div>
-              <BaseBadge :variant="plan.status === 'completed' ? 'info' : plan.status === 'draft' ? 'warning' : 'active'">
+              <AppBadge :variant="plan.status === 'completed' ? 'info' : plan.status === 'draft' ? 'warning' : 'success'">
                 {{ formatStatus(plan.status || 'active') }}
-              </BaseBadge>
+              </AppBadge>
             </div>
 
             <div v-if="plan.plan_exercises.length" class="plan-list">
@@ -274,50 +274,39 @@
           </article>
         </div>
         <div v-else class="empty-card">No plans assigned to this patient yet.</div>
-      </BaseCard>
+      </AppCard>
     </template>
 
-    <Teleport to="body">
-      <Transition name="modal">
-        <div v-if="isNoteModalOpen" class="modal-overlay" @click.self="closeNoteModal">
-          <div class="modal-card">
-            <div class="modal-header">
-              <div>
-                <h3 class="h3">Add Clinical Note</h3>
-                <p class="card-copy">Save a therapist note directly to `session_notes`.</p>
-              </div>
-              <button class="icon-btn" @click="closeNoteModal" aria-label="Close note modal">×</button>
-            </div>
+    <AppModal
+      v-model="isNoteModalOpen"
+      class="dash-modal"
+      title="Add Clinical Note"
+      :closable="!isSavingNote"
+    >
+      <p class="card-copy">Save a therapist note directly to `session_notes`.</p>
+      <div class="form-group">
+        <label class="form-label" for="note-session">Link to session (optional)</label>
+        <select id="note-session" v-model="noteForm.sessionId" class="form-input">
+          <option value="">No linked session</option>
+          <option v-for="session in patientSessions" :key="session.id" :value="session.id">
+            {{ formatDate(session.date) }} · {{ session.exercise?.name || 'Session' }}
+          </option>
+        </select>
+      </div>
 
-            <div class="modal-body">
-              <div class="form-group">
-                <label class="form-label" for="note-session">Link to session (optional)</label>
-                <select id="note-session" v-model="noteForm.sessionId" class="form-input">
-                  <option value="">No linked session</option>
-                  <option v-for="session in patientSessions" :key="session.id" :value="session.id">
-                    {{ formatDate(session.date) }} · {{ session.exercise?.name || 'Session' }}
-                  </option>
-                </select>
-              </div>
+      <div class="form-group">
+        <label class="form-label" for="note-body">Clinical note</label>
+        <textarea id="note-body" v-model.trim="noteForm.note" class="form-textarea" rows="6"></textarea>
+      </div>
 
-              <div class="form-group">
-                <label class="form-label" for="note-body">Clinical note</label>
-                <textarea id="note-body" v-model.trim="noteForm.note" class="form-textarea" rows="6"></textarea>
-              </div>
-
-              <p v-if="noteError" class="status-message status-message--error">{{ noteError }}</p>
-            </div>
-
-            <div class="modal-footer">
-              <button class="btn-secondary" :disabled="isSavingNote" @click="closeNoteModal">Cancel</button>
-              <button class="btn-primary" :disabled="isSavingNote" @click="saveNote">
-                {{ isSavingNote ? 'Saving...' : 'Save Note' }}
-              </button>
-            </div>
-          </div>
-        </div>
-      </Transition>
-    </Teleport>
+      <p v-if="noteError" class="status-message status-message--error">{{ noteError }}</p>
+      <template #footer>
+        <AppButton variant="secondary" :disabled="isSavingNote" @click="closeNoteModal">Cancel</AppButton>
+        <AppButton variant="primary" :disabled="isSavingNote" @click="saveNote">
+          {{ isSavingNote ? 'Saving...' : 'Save Note' }}
+        </AppButton>
+      </template>
+    </AppModal>
   </div>
 </template>
 
@@ -336,8 +325,10 @@ import {
 } from 'chart.js'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import BaseBadge from '@/components/shared/BaseBadge.vue'
-import BaseCard from '@/components/shared/BaseCard.vue'
+import AppBadge from '@/components/shared/AppBadge.vue'
+import AppCard from '@/components/shared/AppCard.vue'
+import AppButton from '@/components/shared/AppButton.vue'
+import AppModal from '@/components/shared/AppModal.vue'
 import { useExerciseStore } from '@/stores/exerciseStore'
 import { usePatientStore } from '@/stores/patientStore'
 import { resolveToken } from '@/services/designTokens'
@@ -654,6 +645,24 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+/* AppCard/AppModal hardcode bg-white/border-slate-200/text-slate-900
+   with no dark-mode handling (same gap fixed in DashboardView.vue's
+   .dash-card and AdminView.vue's .dash-modal). */
+.dash-card {
+  background: var(--bg-card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-card);
+}
+.dash-modal :deep(.bg-white) {
+  background: var(--bg-card);
+}
+.dash-modal :deep(.border-slate-200) {
+  border-color: var(--border);
+}
+.dash-modal :deep(.text-slate-900) {
+  color: var(--text-primary);
+}
+
 .page {
   display: flex;
   flex-direction: column;
@@ -663,9 +672,7 @@ onMounted(async () => {
 .page-header,
 .header-actions,
 .card-header,
-.list-card-head,
-.modal-header,
-.modal-footer {
+.list-card-head {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -685,7 +692,7 @@ onMounted(async () => {
 .empty-card,
 .list-copy {
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
 }
 
 .state-card {
@@ -696,7 +703,7 @@ onMounted(async () => {
 }
 
 .state-title {
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   font-weight: 700;
   color: var(--text-primary);
 }
@@ -717,7 +724,7 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: var(--font-size-3xl);
   font-weight: 700;
 }
 
@@ -741,22 +748,22 @@ onMounted(async () => {
 
 .stat-card {
   min-width: 120px;
-  padding: 14px 16px;
+  padding: var(--space-16px) var(--space-16px);
   border-radius: 16px;
   background: var(--bg-hover);
 }
 
 .stat-label {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .stat-value {
-  margin-top: 8px;
+  margin-top: var(--space-8px);
   color: var(--text-primary);
-  font-size: 24px;
+  font-size: var(--font-size-2xl);
   font-weight: 700;
 }
 
@@ -774,7 +781,7 @@ onMounted(async () => {
   background: var(--bg-card);
   color: var(--text-secondary);
   font: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   cursor: pointer;
 }
@@ -795,21 +802,21 @@ onMounted(async () => {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
-  margin-top: 18px;
+  margin-top: var(--space-16px);
 }
 
 .detail-item {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 14px 16px;
+  padding: var(--space-16px) var(--space-16px);
   border: 1px solid var(--border);
   border-radius: 16px;
 }
 
 .detail-label {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -818,13 +825,13 @@ onMounted(async () => {
 .list-title,
 .log-title {
   color: var(--text-primary);
-  font-size: 15px;
+  font-size: var(--font-size-base);
   font-weight: 700;
 }
 
 .chart-wrap {
   height: 280px;
-  margin-top: 18px;
+  margin-top: var(--space-16px);
 }
 
 .chart-wrap--tall {
@@ -837,14 +844,14 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  margin-top: 18px;
+  margin-top: var(--space-16px);
 }
 
 .list-card,
 .session-card,
 .plan-row,
 .log-row {
-  padding: 16px;
+  padding: var(--space-16px);
   border-radius: 18px;
   border: 1px solid var(--border);
   background: var(--bg-card);
@@ -865,14 +872,14 @@ onMounted(async () => {
 
 .log-note {
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
 }
 
 .metrics-table {
   display: flex;
   flex-direction: column;
   gap: 1px;
-  margin-top: 18px;
+  margin-top: var(--space-16px);
   border: 1px solid var(--border);
   border-radius: 16px;
   overflow: hidden;
@@ -882,22 +889,22 @@ onMounted(async () => {
   display: grid;
   grid-template-columns: 1.3fr repeat(4, 1fr);
   gap: 12px;
-  padding: 14px 16px;
+  padding: var(--space-16px) var(--space-16px);
   background: var(--bg-card);
 }
 
 .metrics-row--header {
   background: var(--bg-hover);
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .empty-card {
-  margin-top: 18px;
-  padding: 18px;
+  margin-top: var(--space-16px);
+  padding: var(--space-16px);
   border: 1px dashed var(--border);
   border-radius: 16px;
   text-align: center;
@@ -910,7 +917,7 @@ onMounted(async () => {
 }
 
 .form-label {
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -927,11 +934,11 @@ onMounted(async () => {
 
 .form-input {
   height: 44px;
-  padding: 0 14px;
+  padding: 0 var(--space-16px);
 }
 
 .form-textarea {
-  padding: 12px 14px;
+  padding: var(--space-16px) var(--space-16px);
   resize: vertical;
 }
 
@@ -942,105 +949,21 @@ onMounted(async () => {
   box-shadow: 0 0 0 3px var(--primary-light);
 }
 
-.btn-primary,
-.btn-secondary,
-.icon-btn {
-  height: 42px;
-  padding: 0 18px;
-  border-radius: 12px;
-  font: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.btn-primary {
-  border: none;
-  background: var(--gradient-primary);
-  color: white;
-}
-
-.btn-secondary {
-  border: 1px solid var(--border);
-  background: var(--bg-card);
-  color: var(--text-primary);
-}
-
-.icon-btn {
-  width: 42px;
-  padding: 0;
-  border: 1px solid var(--border);
-  background: var(--bg-card);
-  color: var(--text-primary);
-}
-
-.btn-primary:disabled,
-.btn-secondary:disabled,
-.icon-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
+/* .btn-primary/.btn-secondary/.icon-btn removed: every button in this
+   file now renders through AppButton's own primary/secondary variants
+   (dark-mode-safe as of the AppButton.vue fix). .modal-overlay/
+   .modal-card/.modal-header/.modal-footer/.modal-body/.modal-enter-*/
+   .modal-leave-* removed: AppModal now owns all of that chrome (see
+   .dash-modal override above). */
 .status-message {
-  padding: 12px 14px;
+  padding: var(--space-16px) var(--space-16px);
   border-radius: 12px;
-  font-size: 13px;
+  font-size: var(--font-size-sm);
 }
 
 .status-message--error {
   background: rgba(239, 68, 68, 0.08);
   color: var(--status-danger-text);
-}
-
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  background: rgba(15, 23, 42, 0.45);
-  backdrop-filter: blur(6px);
-}
-
-.modal-card {
-  width: min(640px, 100%);
-  border-radius: 20px;
-  border: 1px solid var(--border);
-  background: var(--bg-card);
-  box-shadow: var(--shadow-elevated);
-}
-
-.modal-header,
-.modal-footer {
-  padding: 20px 24px;
-}
-
-.modal-header {
-  border-bottom: 1px solid var(--border);
-}
-
-.modal-footer {
-  border-top: 1px solid var(--border);
-  justify-content: flex-end;
-}
-
-.modal-body {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  padding: 24px;
-}
-
-.modal-enter-active,
-.modal-leave-active {
-  transition: opacity 0.2s ease;
-}
-
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
 }
 
 @media (max-width: 1080px) {

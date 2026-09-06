@@ -8,79 +8,55 @@
     />
 
     <!-- Edit Therapist Modal -->
-    <Teleport to="body">
-      <Transition name="modal">
-        <div
-          v-if="showEditModal && editTarget"
-          class="modal-backdrop"
-          @click.self="closeEditModal"
-        >
-          <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="edit-therapist-title">
-            <!-- Header -->
-            <div class="modal-header">
-              <div class="modal-header-inner">
-                <div class="modal-title-group">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--text-primary); flex-shrink: 0">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                  </svg>
-                  <h3 id="edit-therapist-title" class="modal-title-text">Edit Therapist</h3>
-                </div>
-                <button type="button" class="close-btn" :disabled="isEditing" aria-label="Close" @click="closeEditModal">
-                  <X :size="20" />
-                </button>
-              </div>
-            </div>
-            <!-- Body -->
-            <div class="modal-body">
-              <div class="form-grid">
-                <div class="form-group">
-                  <label class="input-label">Full Name <span class="required">*</span></label>
-                  <input v-model="editForm.name" type="text" placeholder="Dr. Jane Smith" :class="['input-field', { 'input-error': editErrors.name }]" />
-                  <p v-if="editErrors.name" class="error-message">{{ editErrors.name }}</p>
-                </div>
-                <div class="form-group">
-                  <label class="input-label">Email</label>
-                  <input v-model="editForm.email" type="email" placeholder="therapist@clinic.com" :class="['input-field', { 'input-error': editErrors.email }]" />
-                  <p v-if="editErrors.email" class="error-message">{{ editErrors.email }}</p>
-                </div>
-              </div>
-              <div class="form-grid">
-                <div class="form-group">
-                  <label class="input-label">Clinic Name</label>
-                  <input v-model="editForm.clinicName" type="text" placeholder="City Rehab Center" class="input-field" />
-                </div>
-                <div class="form-group">
-                  <label class="input-label">License Number</label>
-                  <input v-model="editForm.licenseNumber" type="text" placeholder="PT-12345" class="input-field" />
-                </div>
-              </div>
-              <div v-if="editError" class="submit-error">{{ editError }}</div>
-            </div>
-            <!-- Footer -->
-            <div class="modal-footer">
-              <button type="button" class="btn-secondary" :disabled="isEditing" @click="closeEditModal">Cancel</button>
-              <button type="button" class="btn-primary" :disabled="isEditing" @click="handleEditSubmit">
-                <span v-if="isEditing" class="spinner-inline"></span>
-                {{ isEditing ? 'Saving...' : 'Save Changes' }}
-              </button>
-            </div>
-          </div>
+    <AppModal
+      v-model="showEditModal"
+      class="dash-modal"
+      title="Edit Therapist"
+      :closable="!isEditing"
+    >
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="input-label">Full Name <span class="required">*</span></label>
+          <input v-model="editForm.name" type="text" placeholder="Dr. Jane Smith" :class="['input-field', { 'input-error': editErrors.name }]" />
+          <p v-if="editErrors.name" class="error-message">{{ editErrors.name }}</p>
         </div>
-      </Transition>
-    </Teleport>
+        <div class="form-group">
+          <label class="input-label">Email</label>
+          <input v-model="editForm.email" type="email" placeholder="therapist@clinic.com" :class="['input-field', { 'input-error': editErrors.email }]" />
+          <p v-if="editErrors.email" class="error-message">{{ editErrors.email }}</p>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="input-label">Clinic Name</label>
+          <input v-model="editForm.clinicName" type="text" placeholder="City Rehab Center" class="input-field" />
+        </div>
+        <div class="form-group">
+          <label class="input-label">License Number</label>
+          <input v-model="editForm.licenseNumber" type="text" placeholder="PT-12345" class="input-field" />
+        </div>
+      </div>
+      <div v-if="editError" class="submit-error">{{ editError }}</div>
+      <template #footer>
+        <AppButton variant="secondary" class="btn-secondary" :disabled="isEditing" @click="closeEditModal">Cancel</AppButton>
+        <AppButton variant="primary" :disabled="isEditing" @click="handleEditSubmit">
+          <span v-if="isEditing" class="spinner-inline"></span>
+          {{ isEditing ? 'Saving...' : 'Save Changes' }}
+        </AppButton>
+      </template>
+    </AppModal>
 
     <!-- Page Header -->
     <div class="page-header">
       <div>
         <h1 class="h2">Admin Panel</h1>
-        <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">Manage therapists and monitor platform activity</p>
+        <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-top: var(--space-half);">Manage therapists and monitor platform activity</p>
       </div>
       <div class="header-actions">
-        <button class="btn-primary" @click="showAddModal = true">
+        <AppButton variant="primary" class="btn-icon-gap" @click="showAddModal = true">
           <UserPlus :size="16" />
           <span>Add Therapist</span>
-        </button>
+        </AppButton>
       </div>
     </div>
 
@@ -127,7 +103,7 @@
     </div>
 
     <!-- Therapist Table -->
-    <BaseCard>
+    <AppCard class="dash-card">
       <div class="table-header">
         <h3 class="h3">Therapist Management</h3>
         <div class="table-controls">
@@ -186,29 +162,31 @@
               <td style="color: var(--text-secondary)">{{ therapist.clinic_name || '—' }}</td>
               <td style="color: var(--text-secondary)">{{ therapist.license_number || '—' }}</td>
               <td>
-                <BaseBadge :variant="therapist.is_active ? 'active' : 'neutral'">
+                <AppBadge :variant="therapist.is_active ? 'success' : 'neutral'">
                   {{ therapist.is_active ? 'Active' : 'Inactive' }}
-                </BaseBadge>
+                </AppBadge>
               </td>
               <td>
                 <div class="action-buttons">
-                  <button class="btn-ghost btn-sm" @click.stop="openEditModal(therapist)">Edit</button>
-                  <button
+                  <AppButton variant="secondary" class="btn-ghost btn-sm" @click.stop="openEditModal(therapist)">Edit</AppButton>
+                  <AppButton
                     v-if="therapist.is_active"
+                    variant="secondary"
                     class="btn-danger btn-sm"
                     :disabled="adminStore.isLoading"
                     @click.stop="handleDeactivate(therapist)"
                   >
                     Deactivate
-                  </button>
-                  <button
+                  </AppButton>
+                  <AppButton
                     v-else
+                    variant="secondary"
                     class="btn-reactivate btn-sm"
                     :disabled="adminStore.isLoading"
                     @click.stop="handleReactivate(therapist)"
                   >
                     Reactivate
-                  </button>
+                  </AppButton>
                 </div>
               </td>
             </tr>
@@ -221,22 +199,24 @@
             Showing {{ (currentPage - 1) * perPage + 1 }} to {{ Math.min(currentPage * perPage, filteredTherapists.length) }} of {{ filteredTherapists.length }} therapists
           </span>
           <div class="pagination">
-            <button class="btn-ghost btn-sm" :disabled="currentPage === 1" @click="currentPage--">Previous</button>
-            <button class="btn-ghost btn-sm" :disabled="currentPage >= totalPages" @click="currentPage++">Next</button>
+            <AppButton variant="secondary" class="btn-ghost btn-sm" :disabled="currentPage === 1" @click="currentPage--">Previous</AppButton>
+            <AppButton variant="secondary" class="btn-ghost btn-sm" :disabled="currentPage >= totalPages" @click="currentPage++">Next</AppButton>
           </div>
         </div>
       </div>
-    </BaseCard>
+    </AppCard>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, reactive, onMounted } from 'vue'
-import { Search, UserPlus, X } from 'lucide-vue-next'
+import { Search, UserPlus } from 'lucide-vue-next'
 import { useAdminStore } from '@/stores/adminStore'
 import type { TherapistWithUser } from '@/stores/adminStore'
-import BaseCard from '@/components/shared/BaseCard.vue'
-import BaseBadge from '@/components/shared/BaseBadge.vue'
+import AppCard from '@/components/shared/AppCard.vue'
+import AppBadge from '@/components/shared/AppBadge.vue'
+import AppButton from '@/components/shared/AppButton.vue'
+import AppModal from '@/components/shared/AppModal.vue'
 import StatCard from '@/components/shared/StatCard.vue'
 import AddTherapistModal from '@/components/modals/AddTherapistModal.vue'
 
@@ -384,6 +364,29 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+/* AppCard/AppModal both hardcode bg-white/border-slate-200 with no
+   dark-mode handling (same gap as DashboardView.vue's .dash-card) --
+   overriding just background/border/shadow, leaving their own
+   padding/radius/hover behavior as the family's native sizing. */
+.dash-card {
+  background: var(--bg-card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-card);
+}
+.dash-modal :deep(.bg-white) {
+  background: var(--bg-card);
+}
+.dash-modal :deep(.border-slate-200) {
+  border-color: var(--border);
+}
+.dash-modal :deep(.text-slate-900) {
+  color: var(--text-primary);
+}
+
+.btn-icon-gap {
+  gap: var(--space-2);
+}
+
 .page {
   display: flex;
   flex-direction: column;
@@ -400,27 +403,6 @@ onMounted(async () => {
 .header-actions {
   display: flex;
   gap: var(--space-2);
-}
-
-.btn-primary {
-  background: var(--gradient-primary);
-  color: white;
-  border: none;
-  cursor: pointer;
-  height: 40px;
-  padding: 0 var(--space-5);
-  border-radius: var(--radius-sm);
-  font: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  transition: opacity 0.15s;
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.btn-primary:hover:not(:disabled) {
-  opacity: 0.9;
 }
 
 .stats-grid {
@@ -463,7 +445,7 @@ onMounted(async () => {
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   outline: none;
   font-family: inherit;
 }
@@ -479,7 +461,7 @@ onMounted(async () => {
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-family: inherit;
   outline: none;
 }
@@ -520,7 +502,7 @@ onMounted(async () => {
 
 .data-table th {
   text-align: left;
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -560,7 +542,7 @@ onMounted(async () => {
   border-radius: var(--radius-pill);
   background: var(--gradient-primary);
   color: white;
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -569,13 +551,13 @@ onMounted(async () => {
 }
 
 .therapist-name {
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .therapist-email {
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   color: var(--text-muted);
 }
 
@@ -592,7 +574,7 @@ onMounted(async () => {
   padding: 0 var(--space-4);
   border-radius: var(--radius-sm);
   font: inherit;
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   color: var(--primary);
   font-weight: 600;
   transition: background 0.15s, border-color 0.15s;
@@ -610,7 +592,7 @@ onMounted(async () => {
   padding: 0 var(--space-4);
   border-radius: var(--radius-sm);
   font: inherit;
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   color: var(--error);
   font-weight: 600;
   transition: background 0.15s;
@@ -627,7 +609,7 @@ onMounted(async () => {
   padding: 0 var(--space-4);
   border-radius: var(--radius-sm);
   font: inherit;
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   color: var(--success);
   font-weight: 600;
   transition: background 0.15s;
@@ -662,96 +644,10 @@ onMounted(async () => {
   gap: var(--space-2);
 }
 
-/* Edit Modal shared styles */
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(4px);
-}
-
-.modal-card {
-  background: var(--bg-card);
-  box-shadow: var(--shadow-elevated);
-  border-radius: 20px;
-  width: 100%;
-  max-width: 580px;
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.modal-header {
-  padding: 20px 24px 16px;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
-
-.modal-header-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.modal-title-group {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.modal-title-text {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.close-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  border: none;
-  background: transparent;
-  color: var(--text-muted);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 150ms, color 150ms;
-}
-
-.close-btn:hover:not(:disabled) {
-  background: var(--bg-hover);
-  color: var(--text-primary);
-}
-
-.close-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.modal-body {
-  padding: 20px 24px;
-  overflow-y: auto;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.modal-footer {
-  padding: 16px 24px 20px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
+/* Edit Modal shared styles -- backdrop/card/header/close-button/body/
+   footer chrome removed: AppModal now owns all of that (see .dash-modal
+   override above for its dark-mode fix). What's left below is just the
+   form content rendered inside AppModal's default/footer slots. */
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -765,7 +661,7 @@ onMounted(async () => {
 }
 
 .input-label {
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--text-primary);
 }
@@ -778,7 +674,7 @@ onMounted(async () => {
   width: 100%;
   height: 48px;
   padding: 0 16px;
-  font-size: 15px;
+  font-size: var(--font-size-base);
   color: var(--text-primary);
   background: var(--bg-input);
   border: 2px solid transparent;
@@ -803,7 +699,7 @@ onMounted(async () => {
 }
 
 .error-message {
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   color: var(--status-danger-text);
   margin: 0;
 }
@@ -812,15 +708,15 @@ onMounted(async () => {
   background: rgba(239, 68, 68, 0.08);
   border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: 10px;
-  padding: 10px 14px;
-  font-size: 13px;
+  padding: var(--space-8px) var(--space-16px);
+  font-size: var(--font-size-sm);
   color: var(--status-danger-text);
 }
 
 .btn-secondary {
   height: 44px;
   padding: 0 24px;
-  font-size: 15px;
+  font-size: var(--font-size-base);
   font-weight: 600;
   color: var(--text-primary);
   background: var(--bg-card);
@@ -849,20 +745,6 @@ onMounted(async () => {
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
   flex-shrink: 0;
-}
-
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-  transform: scale(0.96);
-}
-
-.modal-enter-active {
-  transition: opacity 200ms ease, transform 300ms ease;
-}
-
-.modal-leave-active {
-  transition: opacity 150ms ease, transform 200ms ease;
 }
 
 @media (max-width: 900px) {

@@ -1,42 +1,14 @@
 <template>
-  <Teleport to="body">
-    <Transition name="modal">
-      <div
-        v-if="isOpen"
-        class="modal-backdrop"
-        @click.self="handleClose"
-        @keydown.escape="handleClose"
-      >
-        <div
-          class="modal-card"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="add-therapist-title"
-        >
-          <!-- Header -->
-          <div class="modal-header">
-            <div class="modal-header-inner">
-              <div class="modal-title-group">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--text-primary); flex-shrink: 0">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                  <polyline points="9 12 11 14 15 10"/>
-                </svg>
-                <h3 id="add-therapist-title" class="modal-title-text">Add New Therapist</h3>
-              </div>
-              <button
-                type="button"
-                class="close-btn"
-                :disabled="isSubmitting"
-                aria-label="Close modal"
-                @click="handleClose"
-              >
-                <X :size="20" />
-              </button>
-            </div>
-          </div>
-
-          <!-- Form -->
-          <form v-if="!isSuccess" class="modal-body" @submit.prevent="handleSubmit">
+  <AppModal
+    :model-value="isOpen"
+    class="dash-modal"
+    title="Add New Therapist"
+    :closable="!isSubmitting"
+    @update:model-value="handleClose"
+    @keydown.escape="handleClose"
+  >
+    <!-- Form -->
+    <form v-if="!isSuccess" id="add-therapist-form" class="modal-body" @submit.prevent="handleSubmit">
             <div class="form-grid">
               <div class="form-group">
                 <label class="input-label">Full Name <span class="required">*</span></label>
@@ -89,7 +61,7 @@
                   :type="showPassword ? 'text' : 'password'"
                   placeholder="Min. 8 characters"
                   :class="['input-field', { 'input-error': errors.password }]"
-                  style="padding-right: 44px"
+                  style="padding-right: var(--space-48px)"
                 />
                 <button type="button" class="eye-toggle" @click="showPassword = !showPassword">
                   <EyeOff v-if="showPassword" :size="18" />
@@ -102,51 +74,49 @@
             <div v-if="submitError" class="submit-error">{{ submitError }}</div>
           </form>
 
-          <!-- Success State -->
-          <div v-else class="modal-body success-body">
-            <div class="success-icon-wrap">
-              <CheckCircle :size="32" style="color: var(--success)" />
-            </div>
-            <h4 class="success-title">Therapist Created Successfully</h4>
-            <p class="success-subtitle">Share these credentials with the therapist:</p>
-            <div class="credentials-box">
-              <div class="credential-row">
-                <span class="credential-label">Email</span>
-                <span class="credential-value">{{ successCredentials.email }}</span>
-              </div>
-              <div class="credential-row">
-                <span class="credential-label">Password</span>
-                <span class="credential-value">{{ successCredentials.password }}</span>
-              </div>
-            </div>
-            <p class="success-note">
-              The therapist can log in to the portal and change their password in Settings.
-            </p>
-          </div>
-
-          <!-- Footer -->
-          <div class="modal-footer">
-            <template v-if="!isSuccess">
-              <button type="button" class="btn-secondary" :disabled="isSubmitting" @click="handleClose">
-                Cancel
-              </button>
-              <button type="submit" class="btn-primary" :disabled="isSubmitting" @click="handleSubmit">
-                <span v-if="isSubmitting" class="spinner-inline"></span>
-                {{ isSubmitting ? 'Creating...' : 'Create Therapist' }}
-              </button>
-            </template>
-            <button v-else type="button" class="btn-primary" @click="handleClose">Done</button>
-          </div>
+    <!-- Success State -->
+    <div v-else class="modal-body success-body">
+      <div class="success-icon-wrap">
+        <CheckCircle :size="32" style="color: var(--success)" />
+      </div>
+      <h4 class="success-title">Therapist Created Successfully</h4>
+      <p class="success-subtitle">Share these credentials with the therapist:</p>
+      <div class="credentials-box">
+        <div class="credential-row">
+          <span class="credential-label">Email</span>
+          <span class="credential-value">{{ successCredentials.email }}</span>
+        </div>
+        <div class="credential-row">
+          <span class="credential-label">Password</span>
+          <span class="credential-value">{{ successCredentials.password }}</span>
         </div>
       </div>
-    </Transition>
-  </Teleport>
+      <p class="success-note">
+        The therapist can log in to the portal and change their password in Settings.
+      </p>
+    </div>
+
+    <template #footer>
+      <template v-if="!isSuccess">
+        <AppButton variant="secondary" :disabled="isSubmitting" @click="handleClose">
+          Cancel
+        </AppButton>
+        <AppButton type="submit" form="add-therapist-form" variant="primary" class="btn-icon-gap" :disabled="isSubmitting" @click="handleSubmit">
+          <span v-if="isSubmitting" class="spinner-inline"></span>
+          {{ isSubmitting ? 'Creating...' : 'Create Therapist' }}
+        </AppButton>
+      </template>
+      <AppButton v-else variant="primary" @click="handleClose">Done</AppButton>
+    </template>
+  </AppModal>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue'
-import { X, Eye, EyeOff, CheckCircle } from 'lucide-vue-next'
+import { Eye, EyeOff, CheckCircle } from 'lucide-vue-next'
 import { useAdminStore } from '@/stores/adminStore'
+import AppModal from '@/components/shared/AppModal.vue'
+import AppButton from '@/components/shared/AppButton.vue'
 
 interface Props {
   isOpen: boolean
@@ -263,109 +233,44 @@ async function handleSubmit() {
 </script>
 
 <style scoped>
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(4px);
-}
-
-.modal-card {
+/* .modal-backdrop/.modal-card/.modal-header*/.modal-title-*/.close-btn*
+   removed: AppModal now owns all of that chrome. .modal-body is kept
+   but trimmed down to just the flex-column layout it still needs to
+   provide for its own children (form-grid/form-group/etc.) -- padding,
+   overflow-y, and flex:1 are now AppModal's own body wrapper's job.
+   AppCard/AppModal hardcode bg-white/border-slate-200/text-slate-900
+   with no dark-mode handling (same gap fixed in DashboardView.vue's
+   .dash-card and AdminView.vue's .dash-modal). */
+.dash-modal :deep(.bg-white) {
   background: var(--bg-card);
-  box-shadow: var(--shadow-elevated);
-  border-radius: 20px;
-  width: 100%;
-  max-width: 580px;
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
 }
-
-.modal-header {
-  padding: 20px 24px 16px;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
+.dash-modal :deep(.border-slate-200) {
+  border-color: var(--border);
 }
-
-.modal-header-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.modal-title-group {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.modal-title-text {
-  font-size: 20px;
-  font-weight: 700;
+.dash-modal :deep(.text-slate-900) {
   color: var(--text-primary);
-}
-
-.close-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  border: none;
-  background: transparent;
-  color: var(--text-muted);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 150ms, color 150ms;
-}
-
-.close-btn:hover:not(:disabled) {
-  background: var(--bg-hover);
-  color: var(--text-primary);
-}
-
-.close-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 .modal-body {
-  padding: 20px 24px;
-  overflow-y: auto;
-  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-}
-
-.modal-footer {
-  padding: 16px 24px 20px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  flex-shrink: 0;
+  gap: var(--space-16px);
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: var(--space-16px);
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-8px);
 }
 
 .input-label {
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--text-primary);
 }
@@ -378,7 +283,7 @@ async function handleSubmit() {
   width: 100%;
   height: 48px;
   padding: 0 16px;
-  font-size: 15px;
+  font-size: var(--font-size-base);
   color: var(--text-primary);
   background: var(--bg-input);
   border: 2px solid transparent;
@@ -412,14 +317,14 @@ async function handleSubmit() {
 
 .eye-toggle {
   position: absolute;
-  right: 12px;
+  right: var(--space-16px);
   top: 50%;
   transform: translateY(-50%);
   background: transparent;
   border: none;
   color: var(--text-muted);
   cursor: pointer;
-  padding: 4px;
+  padding: var(--space-half);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -431,7 +336,7 @@ async function handleSubmit() {
 }
 
 .error-message {
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   color: var(--status-danger-text);
   margin: 0;
 }
@@ -440,15 +345,15 @@ async function handleSubmit() {
   background: rgba(239, 68, 68, 0.08);
   border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: 10px;
-  padding: 10px 14px;
-  font-size: 13px;
+  padding: var(--space-8px) var(--space-16px);
+  font-size: var(--font-size-sm);
   color: var(--status-danger-text);
 }
 
 .success-body {
   align-items: center;
   text-align: center;
-  padding: 32px 24px;
+  padding: var(--space-32px) var(--space-24px);
 }
 
 .success-icon-wrap {
@@ -463,14 +368,14 @@ async function handleSubmit() {
 }
 
 .success-title {
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
 }
 
 .success-subtitle {
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   color: var(--text-muted);
   margin: 0;
 }
@@ -478,29 +383,29 @@ async function handleSubmit() {
 .credentials-box {
   background: var(--bg-input);
   border-radius: 12px;
-  padding: 16px 20px;
+  padding: var(--space-16px) var(--space-24px);
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-8px);
 }
 
 .credential-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--space-16px);
 }
 
 .credential-label {
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   color: var(--text-muted);
   font-weight: 500;
   flex-shrink: 0;
 }
 
 .credential-value {
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--text-primary);
   word-break: break-all;
@@ -508,61 +413,20 @@ async function handleSubmit() {
 }
 
 .success-note {
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   color: var(--text-muted);
   line-height: 1.6;
   margin: 0;
 }
 
-.btn-secondary {
-  height: 44px;
-  padding: 0 24px;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-primary);
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 150ms;
-  font-family: inherit;
-}
-
-.btn-secondary:hover:not(:disabled) {
-  background: var(--bg-hover);
-  border-color: var(--text-muted);
-}
-
-.btn-secondary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn-primary {
-  height: 44px;
-  padding: 0 24px;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-on-primary);
-  background: var(--primary);
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 150ms;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-family: inherit;
-}
-
-.btn-primary:hover:not(:disabled) {
-  opacity: 0.9;
-}
-
-.btn-primary:disabled {
-  background: var(--text-muted);
-  cursor: not-allowed;
+/* .btn-secondary/.btn-primary removed: both already matched
+   AppButton's own native secondary/primary variants exactly (unlike
+   other files' bespoke ghost/outline looks), so Cancel/Create
+   Therapist/Done now render through AppButton's native styling
+   directly, no override needed. .btn-icon-gap replaces .btn-primary's
+   gap: 8px for the spinner+label layout on the submit button. */
+.btn-icon-gap {
+  gap: var(--space-8px);
 }
 
 .spinner-inline {
@@ -577,20 +441,6 @@ async function handleSubmit() {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
-}
-
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-  transform: scale(0.96);
-}
-
-.modal-enter-active {
-  transition: opacity 200ms ease, transform 300ms ease;
-}
-
-.modal-leave-active {
-  transition: opacity 150ms ease, transform 200ms ease;
 }
 
 @media (max-width: 600px) {

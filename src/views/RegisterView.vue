@@ -98,14 +98,15 @@
             </template>
           </AppInput>
           
-          <button
+          <AppButton
             type="submit"
-            :disabled="isLoading"
+            variant="primary"
             class="btn-login"
+            :disabled="isLoading"
           >
             <span v-if="isLoading" class="loading-spinner"></span>
             <span v-else>Create Account</span>
-          </button>
+          </AppButton>
           
           <p v-if="errors.general" class="error-message">
             {{ errors.general }}
@@ -127,6 +128,7 @@ import { useRouter } from 'vue-router'
 import { Eye, EyeOff } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/authStore'
 import AppInput from '@/components/shared/AppInput.vue'
+import AppButton from '@/components/shared/AppButton.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -265,7 +267,7 @@ const handleRegister = async () => {
 }
 
 .brand-title {
-  font-size: 56px;
+  font-size: var(--font-size-5xl);
   font-weight: 700;
   color: white;
   margin-bottom: var(--space-4);
@@ -273,7 +275,7 @@ const handleRegister = async () => {
 }
 
 .brand-subtitle {
-  font-size: 24px;
+  font-size: var(--font-size-2xl);
   color: rgba(255, 255, 255, 0.9);
 }
 
@@ -306,30 +308,12 @@ const handleRegister = async () => {
   gap: var(--space-6);
 }
 
+/* .btn-login kept, trimmed to just width/height: AppButton's native
+   primary variant now provides the correct background/color/border,
+   but has no full-width option, so this fills that one gap. */
 .btn-login {
   width: 100%;
   height: 48px;
-  background: var(--gradient-primary);
-  color: white;
-  border: none;
-  border-radius: var(--radius-sm);
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.15s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-}
-
-.btn-login:hover:not(:disabled) {
-  opacity: 0.9;
-}
-
-.btn-login:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 
 .loading-spinner {
@@ -347,7 +331,7 @@ const handleRegister = async () => {
 
 .error-message {
   color: var(--status-danger-text);
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   text-align: center;
   padding: var(--space-3);
   background: var(--status-danger-bg);
