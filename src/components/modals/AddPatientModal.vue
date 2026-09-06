@@ -52,10 +52,30 @@
 
           <!-- Body -->
           <form
+            v-if="!isSuccess"
             @submit.prevent="handleSubmit"
             class="overflow-y-auto flex-1"
             style="padding: 20px 24px"
           >
+            <!-- Self-Registration Warning -->
+            <div
+              style="
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                background: rgba(251, 191, 36, 0.12);
+                border: 1px solid rgba(251, 191, 36, 0.4);
+                border-radius: 12px;
+                padding: 12px 14px;
+                margin-bottom: 16px;
+              "
+            >
+              <AlertCircle :size="18" style="color: #f59e0b; flex-shrink: 0; margin-top: 1px" />
+              <p style="font-size: 13px; color: var(--text-primary); line-height: 1.5">
+                <strong>Important:</strong> Patients created here must self-register in the STREAM Android app using the same email address to link their account.
+              </p>
+            </div>
+
             <!-- Section 1: Patient Information -->
             <div class="mb-5">
               <h4 style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 12px">
@@ -136,154 +156,116 @@
               </div>
             </div>
 
-            <!-- Section 2: Account Security -->
-            <div style="margin-top: 20px">
-              <h4 style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 12px">
-                Account Security
-              </h4>
-              <div class="grid grid-cols-2 gap-4 mb-4">
-                <!-- Password -->
-                <div>
-                  <label :for="'input-password'" class="input-label">
-                    Password <span style="color: #ef4444">*</span>
-                  </label>
-                  <div style="position: relative">
-                    <input
-                      :id="'input-password'"
-                      v-model="form.password"
-                      :type="showPassword ? 'text' : 'password'"
-                      placeholder="Enter password"
-                      :class="['input-field', { 'input-error': errors.password }]"
-                      style="padding-right: 40px"
-                    />
-                    <button
-                      type="button"
-                      @click="showPassword = !showPassword"
-                      class="eye-toggle"
-                      tabindex="-1"
-                      :aria-label="showPassword ? 'Hide password' : 'Show password'"
-                    >
-                      <Eye v-if="!showPassword" :size="18" />
-                      <EyeOff v-else :size="18" />
-                    </button>
-                  </div>
-                  <p v-if="errors.password" class="error-message">{{ errors.password }}</p>
-                </div>
-
-                <!-- Confirm Password -->
-                <div>
-                  <label :for="'input-confirm-password'" class="input-label">
-                    Confirm Password <span style="color: #ef4444">*</span>
-                  </label>
-                  <div style="position: relative">
-                    <input
-                      :id="'input-confirm-password'"
-                      v-model="form.confirmPassword"
-                      :type="showConfirmPassword ? 'text' : 'password'"
-                      placeholder="Re-enter password"
-                      :class="['input-field', { 'input-error': errors.confirmPassword }]"
-                      style="padding-right: 40px"
-                    />
-                    <button
-                      type="button"
-                      @click="showConfirmPassword = !showConfirmPassword"
-                      class="eye-toggle"
-                      tabindex="-1"
-                      :aria-label="showConfirmPassword ? 'Hide password' : 'Show password'"
-                    >
-                      <Eye v-if="!showConfirmPassword" :size="18" />
-                      <EyeOff v-else :size="18" />
-                    </button>
-                  </div>
-                  <p v-if="errors.confirmPassword" class="error-message">
-                    {{ errors.confirmPassword }}
-                  </p>
-                </div>
-              </div>
-
-              <!-- Password Requirements -->
-              <div class="password-requirements">
-                <p style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 10px">
-                  Password Requirements:
-                </p>
-                <ul style="display: flex; flex-direction: column; gap: 8px">
-                  <li style="display: flex; align-items: center; gap: 8px; font-size: 14px">
-                    <span
-                      :class="['requirement-dot', { 'requirement-met': passwordChecks.length }]"
-                    ></span>
-                    <span
-                      class="requirement-text"
-                      :class="{ 'requirement-text-met': passwordChecks.length }"
-                    >
-                      At least 8 characters
-                    </span>
-                  </li>
-                  <li style="display: flex; align-items: center; gap: 8px; font-size: 14px">
-                    <span
-                      :class="['requirement-dot', { 'requirement-met': passwordChecks.uppercase }]"
-                    ></span>
-                    <span
-                      class="requirement-text"
-                      :class="{ 'requirement-text-met': passwordChecks.uppercase }"
-                    >
-                      One uppercase letter
-                    </span>
-                  </li>
-                  <li style="display: flex; align-items: center; gap: 8px; font-size: 14px">
-                    <span
-                      :class="['requirement-dot', { 'requirement-met': passwordChecks.lowercase }]"
-                    ></span>
-                    <span
-                      class="requirement-text"
-                      :class="{ 'requirement-text-met': passwordChecks.lowercase }"
-                    >
-                      One lowercase letter
-                    </span>
-                  </li>
-                  <li style="display: flex; align-items: center; gap: 8px; font-size: 14px">
-                    <span
-                      :class="['requirement-dot', { 'requirement-met': passwordChecks.number }]"
-                    ></span>
-                    <span
-                      class="requirement-text"
-                      :class="{ 'requirement-text-met': passwordChecks.number }"
-                    >
-                      One number
-                    </span>
-                  </li>
-                </ul>
-              </div>
-            </div>
           </form>
+
+          <!-- Success State -->
+          <div
+            v-else
+            class="overflow-y-auto flex-1"
+            style="
+              padding: 40px 24px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              text-align: center;
+              gap: 20px;
+            "
+          >
+            <div
+              style="
+                width: 64px;
+                height: 64px;
+                border-radius: 50%;
+                background: rgba(16, 185, 129, 0.12);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              <CheckCircle :size="30" style="color: #10b981" />
+            </div>
+            <div style="max-width: 420px">
+              <h4
+                style="
+                  font-size: 18px;
+                  font-weight: 700;
+                  color: var(--text-primary);
+                  margin-bottom: 10px;
+                "
+              >
+                Patient Added Successfully
+              </h4>
+              <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 16px">
+                Share this email and invite code with your patient:
+              </p>
+              <div
+                style="
+                  background: var(--bg-input);
+                  border-radius: 12px;
+                  padding: 12px 20px;
+                  font-size: 15px;
+                  font-weight: 600;
+                  color: var(--text-primary);
+                  margin-bottom: 12px;
+                  word-break: break-all;
+                "
+              >
+                {{ successEmail }}
+              </div>
+              <div
+                style="
+                  background: var(--bg-input);
+                  border-radius: 12px;
+                  padding: 12px 20px;
+                  font-size: 18px;
+                  font-weight: 700;
+                  letter-spacing: 0.15em;
+                  color: var(--text-primary);
+                  margin-bottom: 16px;
+                "
+              >
+                {{ successClaimCode }}
+              </div>
+              <p style="font-size: 13px; color: var(--text-muted); line-height: 1.65">
+                They must register in the STREAM app using this exact email and enter this invite code to link their account.
+              </p>
+            </div>
+          </div>
 
           <!-- Footer -->
           <div
             class="flex justify-end modal-footer"
             style="padding: 16px 24px 20px; gap: 12px"
           >
-            <button
-              type="button"
-              @click="handleClose"
-              :disabled="isSubmitting"
-              class="btn-secondary"
-            >
-              Cancel
-            </button>
-            <button type="submit" @click="handleSubmit" :disabled="isSubmitting" class="btn-primary">
-              <span
-                v-if="isSubmitting"
-                class="spinner"
-                style="
-                  width: 16px;
-                  height: 16px;
-                  border: 2px solid #ffffff;
-                  border-top-color: transparent;
-                  border-radius: 50%;
-                  display: inline-block;
-                  margin-right: 8px;
-                "
-              ></span>
-              {{ isSubmitting ? 'Creating...' : 'Add Patient' }}
+            <template v-if="!isSuccess">
+              <button
+                type="button"
+                @click="handleClose"
+                :disabled="isSubmitting"
+                class="btn-secondary"
+              >
+                Cancel
+              </button>
+              <button type="button" @click="handleSubmit" :disabled="isSubmitting" class="btn-primary">
+                <span
+                  v-if="isSubmitting"
+                  class="spinner"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    border: 2px solid #ffffff;
+                    border-top-color: transparent;
+                    border-radius: 50%;
+                    display: inline-block;
+                    margin-right: 8px;
+                  "
+                ></span>
+                {{ isSubmitting ? 'Creating...' : 'Add Patient' }}
+              </button>
+            </template>
+            <button v-else type="button" @click="handleClose" class="btn-primary">
+              Done
             </button>
           </div>
         </div>
@@ -292,11 +274,10 @@
   </Teleport>
 </template>
 <script setup lang="ts">
-import { createClient } from '@supabase/supabase-js'
-import { ref, reactive, watch, computed } from 'vue'
-import { Eye, EyeOff, UserPlus, X } from 'lucide-vue-next'
+import { supabase } from '@/services/supabase'
+import { ref, reactive, watch } from 'vue'
+import { UserPlus, X, CheckCircle, AlertCircle } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/authStore'
-import type { Database } from '@/services/database.types'
 
 interface Props {
   isOpen: boolean
@@ -313,17 +294,17 @@ const emit = defineEmits<Emits>()
 
 const authStore = useAuthStore()
 const isSubmitting = ref(false)
-const showPassword = ref(false)
-const showConfirmPassword = ref(false)
+const isSuccess = ref(false)
+const successEmail = ref('')
+const successClaimCode = ref('')
 
-function createIsolatedSupabaseClient() {
-  return createClient<Database>(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY, {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-      detectSessionInUrl: false,
-    },
-  })
+// Excludes 0/O/1/I/L to avoid transcription errors when relayed by hand.
+const CLAIM_CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'
+const generateClaimCode = (): string => {
+  return Array.from(
+    { length: 6 },
+    () => CLAIM_CODE_ALPHABET[Math.floor(Math.random() * CLAIM_CODE_ALPHABET.length)],
+  ).join('')
 }
 
 const form = reactive({
@@ -332,8 +313,6 @@ const form = reactive({
   age: '',
   condition: '',
   strokeType: '',
-  password: '',
-  confirmPassword: '',
 })
 
 const errors = reactive({
@@ -341,17 +320,7 @@ const errors = reactive({
   email: '',
   age: '',
   condition: '',
-  password: '',
-  confirmPassword: '',
 })
-
-// Password validation checks
-const passwordChecks = computed(() => ({
-  length: form.password.length >= 8,
-  uppercase: /[A-Z]/.test(form.password),
-  lowercase: /[a-z]/.test(form.password),
-  number: /[0-9]/.test(form.password),
-}))
 
 watch(
   () => props.isOpen,
@@ -364,14 +333,6 @@ watch(
 
 const validateEmail = (email: string): boolean => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-}
-
-const validatePassword = (password: string): string | null => {
-  if (password.length < 8) return 'Password must be at least 8 characters'
-  if (!/[A-Z]/.test(password)) return 'Password must contain at least one uppercase letter'
-  if (!/[a-z]/.test(password)) return 'Password must contain at least one lowercase letter'
-  if (!/[0-9]/.test(password)) return 'Password must contain at least one number'
-  return null
 }
 
 const validateForm = (): boolean => {
@@ -397,8 +358,11 @@ const validateForm = (): boolean => {
     isValid = false
   }
 
-  if (form.age.trim()) {
-    const parsedAge = Number.parseInt(form.age, 10)
+  // Vue casts a type="number" input's v-model to a Number once a value is
+  // typed, even without the .number modifier, so form.age may be a string or a number here.
+  const ageStr = String(form.age).trim()
+  if (ageStr) {
+    const parsedAge = Number.parseInt(ageStr, 10)
     if (!Number.isInteger(parsedAge) || parsedAge < 0) {
       errors.age = 'Age must be a whole number'
       isValid = false
@@ -411,27 +375,6 @@ const validateForm = (): boolean => {
     isValid = false
   }
 
-  // Validate Password
-  if (!form.password) {
-    errors.password = 'Password is required'
-    isValid = false
-  } else {
-    const passwordError = validatePassword(form.password)
-    if (passwordError) {
-      errors.password = passwordError
-      isValid = false
-    }
-  }
-
-  // Validate Confirm Password
-  if (!form.confirmPassword) {
-    errors.confirmPassword = 'Please confirm password'
-    isValid = false
-  } else if (form.password !== form.confirmPassword) {
-    errors.confirmPassword = 'Passwords do not match'
-    isValid = false
-  }
-
   return isValid
 }
 
@@ -441,12 +384,14 @@ const resetForm = () => {
   form.age = ''
   form.condition = ''
   form.strokeType = ''
-  form.password = ''
-  form.confirmPassword = ''
 
   Object.keys(errors).forEach((key) => {
     errors[key as keyof typeof errors] = ''
   })
+
+  isSuccess.value = false
+  successEmail.value = ''
+  successClaimCode.value = ''
 }
 
 const handleClose = () => {
@@ -456,59 +401,25 @@ const handleClose = () => {
 }
 
 const handleSubmit = async () => {
-  if (!validateForm()) return
-
   isSubmitting.value = true
 
   try {
+    if (!validateForm()) return
+
     const therapistId = props.therapistId || authStore.therapistProfile?.id
     if (!therapistId) {
       throw new Error('Therapist profile is not loaded.')
     }
 
-    const patientClient = createIsolatedSupabaseClient()
-
-    // 1. Create Supabase auth user in an isolated client so the therapist session stays intact.
-    const { data: authData, error: authError } = await patientClient.auth.signUp({
-      email: form.email,
-      password: form.password,
-      options: {
-        emailRedirectTo: undefined,
-        data: {
-          role: 'patient',
-          name: form.fullName,
-        },
-      },
-    })
-
-    if (authError) throw new Error(authError.message)
-    if (!authData.user) throw new Error('Failed to create user account')
-    if (!authData.session) {
-      throw new Error(
-        'Patient auth user was created, but no signup session was returned. The portal cannot create the linked patient profile under the current RLS setup.',
-      )
-    }
-
-    // 2. Insert into public.users so patients.user_id can resolve correctly in the Android app.
-    const { error: userError } = await patientClient.from('users').upsert(
-      {
-        id: authData.user.id,
-        email: authData.user.email ?? form.email,
-        full_name: form.fullName.trim(),
-        role: 'patient',
-      },
-      { onConflict: 'id' },
-    )
-
-    if (userError) throw new Error(userError.message)
-
-    // 3. Insert the schema-aligned patient profile.
-    const parsedAge = form.age.trim() ? Number.parseInt(form.age, 10) : null
-    const { data: patientData, error: patientError } = await patientClient
+    const ageStr = String(form.age).trim()
+    const parsedAge = ageStr ? Number.parseInt(ageStr, 10) : null
+    const claimCode = generateClaimCode()
+    const { data: patientData, error: patientError } = await supabase
       .from('patients')
       .insert({
-        user_id: authData.user.id,
+        user_id: null,
         therapist_id: therapistId,
+        claim_code: claimCode,
         name: form.fullName,
         email: form.email,
         age: Number.isInteger(parsedAge) ? parsedAge : null,
@@ -526,9 +437,10 @@ const handleSubmit = async () => {
 
     if (patientError) throw new Error(patientError.message)
 
+    successEmail.value = form.email
+    successClaimCode.value = claimCode
+    isSuccess.value = true
     emit('patientAdded', patientData.id)
-    emit('close')
-    alert(`Patient "${form.fullName}" has been added successfully!`)
   } catch (error: any) {
     console.error('Error creating patient:', error)
     alert(`Failed to create patient: ${error.message}`)
