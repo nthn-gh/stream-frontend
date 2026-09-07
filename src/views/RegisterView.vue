@@ -267,7 +267,11 @@ const handleRegister = async () => {
 }
 
 .brand-title {
-  font-size: var(--font-size-5xl);
+  /* 56px doesn't fit the defined scale (5xl=48/no 6xl exists) and is
+     a one-off -- confirmed via a full grep of views/components, no
+     other font-size in the app exceeds 32px. Direct value instead of
+     forcing it onto 5xl and shrinking the brand wordmark by 8px. */
+  font-size: 56px;
   font-weight: 700;
   color: white;
   margin-bottom: var(--space-4);

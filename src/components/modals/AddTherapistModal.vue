@@ -101,7 +101,7 @@
         <AppButton variant="secondary" :disabled="isSubmitting" @click="handleClose">
           Cancel
         </AppButton>
-        <AppButton type="submit" form="add-therapist-form" variant="primary" class="btn-icon-gap" :disabled="isSubmitting" @click="handleSubmit">
+        <AppButton type="submit" form="add-therapist-form" variant="primary" class="btn-icon-gap" :disabled="isSubmitting">
           <span v-if="isSubmitting" class="spinner-inline"></span>
           {{ isSubmitting ? 'Creating...' : 'Create Therapist' }}
         </AppButton>

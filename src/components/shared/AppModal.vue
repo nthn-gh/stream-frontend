@@ -12,9 +12,10 @@
             class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col"
             role="dialog"
             aria-modal="true"
+            :aria-labelledby="title ? titleId : undefined"
           >
             <div v-if="title" class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-              <h3 class="text-xl font-bold text-slate-900">{{ title }}</h3>
+              <h3 :id="titleId" class="text-xl font-bold text-slate-900">{{ title }}</h3>
               <button
                 v-if="closable"
                 @click="handleClose"
@@ -41,6 +42,8 @@
 </template>
 
 <script setup lang="ts">
+import { useId } from 'vue'
+
 interface Props {
   modelValue: boolean
   title?: string
@@ -54,6 +57,10 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
 }>()
+
+// Unique per component instance (Vue 3.5+), so multiple AppModal
+// instances mounted at once never collide on this id.
+const titleId = useId()
 
 const handleClose = () => {
   if (props.closable) {
