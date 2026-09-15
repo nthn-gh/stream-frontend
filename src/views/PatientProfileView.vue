@@ -149,11 +149,11 @@
               <div>
                 <h4 class="list-title">{{ session.exercise?.name || 'Session' }}</h4>
                 <p class="list-meta">
-                  {{ formatDate(session.date) }} · {{ formatStatus(session.status || 'completed') }} ·
-                  {{ formatDuration(session.duration_seconds ?? (session.duration_minutes ?? 0) * 60) }}
+                  {{ formatDate(sessionDisplayDate(session)) }} · {{ formatStatus(session.status || 'completed') }} ·
+                  {{ formatDuration(session.duration_seconds ?? 0) }}
                 </p>
                 <p class="list-meta">
-                  Sets {{ session.sets_completed ?? 0 }} · Reps {{ session.reps_completed ?? 0 }} · Accuracy {{ formatPercent(sessionAccuracy(session)) }}
+                  Reps {{ session.reps_completed ?? 0 }} · Accuracy {{ formatPercent(sessionAccuracy(session)) }}
                 </p>
                 <p v-if="session.started_at || session.completed_at" class="list-meta">
                   {{ formatDateTime(session.started_at) }} to {{ formatDateTime(session.completed_at) }}
@@ -289,7 +289,7 @@
         <select id="note-session" v-model="noteForm.sessionId" class="form-input">
           <option value="">No linked session</option>
           <option v-for="session in patientSessions" :key="session.id" :value="session.id">
-            {{ formatDate(session.date) }} · {{ session.exercise?.name || 'Session' }}
+            {{ formatDate(sessionDisplayDate(session)) }} · {{ session.exercise?.name || 'Session' }}
           </option>
         </select>
       </div>
@@ -412,7 +412,7 @@ const romChartData = computed(() => ({
 const accuracyChartData = computed(() => {
   const recentSessions = [...patientSessions.value].slice(0, 6).reverse()
   return {
-    labels: recentSessions.map((session) => formatShortDate(session.date)),
+    labels: recentSessions.map((session) => formatShortDate(sessionDisplayDate(session))),
     datasets: [
       {
         label: 'Accuracy %',
@@ -498,6 +498,15 @@ function formatStatus(value: string) {
     .split('_')
     .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
     .join(' ')
+}
+
+// sessions.date was a pre-cutover column, dropped 2026-09-15 (never
+// written by any code since the 2026-09-06 session_logs rewrite --
+// see the migration file for why). started_at/completed_at are the
+// real timestamps for post-cutover sessions; created_at is the last
+// resort for a row that was created but never actually started.
+function sessionDisplayDate(session: Pick<SessionWithExercise, 'started_at' | 'completed_at' | 'created_at'>) {
+  return session.started_at ?? session.completed_at ?? session.created_at
 }
 
 function formatDate(value?: string | null) {

@@ -512,56 +512,41 @@ export type Database = {
       }
       sessions: {
         Row: {
-          accuracy_percent: number | null
           completed_at: string | null
           created_at: string | null
-          date: string
-          duration_minutes: number | null
           duration_seconds: number | null
           exercise_id: string | null
-          form_quality: string | null
           id: string
           notes: string | null
           patient_id: string
           plan_id: string | null
           reps_completed: number | null
-          sets_completed: number | null
           started_at: string | null
           status: string | null
         }
         Insert: {
-          accuracy_percent?: number | null
           completed_at?: string | null
           created_at?: string | null
-          date?: string
-          duration_minutes?: number | null
           duration_seconds?: number | null
           exercise_id?: string | null
-          form_quality?: string | null
           id?: string
           notes?: string | null
           patient_id: string
           plan_id?: string | null
           reps_completed?: number | null
-          sets_completed?: number | null
           started_at?: string | null
           status?: string | null
         }
         Update: {
-          accuracy_percent?: number | null
           completed_at?: string | null
           created_at?: string | null
-          date?: string
-          duration_minutes?: number | null
           duration_seconds?: number | null
           exercise_id?: string | null
-          form_quality?: string | null
           id?: string
           notes?: string | null
           patient_id?: string
           plan_id?: string | null
           reps_completed?: number | null
-          sets_completed?: number | null
           started_at?: string | null
           status?: string | null
         }
