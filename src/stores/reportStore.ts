@@ -55,18 +55,26 @@ export const useReportStore = defineStore('report', () => {
         .from('sessions')
         .select(`
           *,
-          exercise:exercises(name, category)
+          exercise:exercises(name, category),
+          session_logs(accuracy_score)
         `)
         .eq('patient_id', config.value.patient_id)
-        .gte('date', config.value.start_date)
-        .lte('date', config.value.end_date)
+        .gte('started_at', config.value.start_date)
+        .lte('started_at', config.value.end_date)
 
       if (sessionsError) throw sessionsError
 
       // Calculate metrics
       const totalSessions = sessions?.length || 0
-      const avgAccuracy = sessions?.length
-        ? sessions.reduce((sum, s) => sum + (s.accuracy_percent ?? 0), 0) / sessions.length
+      // accuracy now comes from session_logs.accuracy_score, not the legacy
+      // sessions.accuracy_percent column (never written by the current app —
+      // see reportStore accuracy investigation). Sessions with no logged
+      // accuracy are excluded from the average rather than counted as 0.
+      const loggedAccuracyScores = (sessions ?? [])
+        .flatMap((s) => (s.session_logs ?? []).map((log) => log.accuracy_score))
+        .filter((score): score is number => score !== null)
+      const avgAccuracy = loggedAccuracyScores.length
+        ? loggedAccuracyScores.reduce((sum, score) => sum + score, 0) / loggedAccuracyScores.length
         : 0
 
       // Calculate adherence rate (assuming scheduled sessions)
@@ -183,7 +191,9 @@ export const useReportStore = defineStore('report', () => {
     const weekMap = new Map<string, number>()
 
     sessions.forEach(session => {
-      const date = new Date(session.date)
+      const date = new Date(
+          session.started_at ?? session.completed_at ?? session.date
+        )
       const weekStart = new Date(date.setDate(date.getDate() - date.getDay()))
       const [weekKey = weekStart.toISOString()] = weekStart.toISOString().split('T')
 
@@ -197,22 +207,32 @@ export const useReportStore = defineStore('report', () => {
   }
 
   function calculateExerciseBreakdown(sessions: any[]) {
-    const exerciseMap = new Map<string, { count: number; totalAccuracy: number }>()
+    const exerciseMap = new Map<string, { count: number; totalAccuracy: number; accuracyCount: number }>()
 
     sessions.forEach(session => {
       const exerciseName = session.exercise?.name || 'Unknown'
-      const current = exerciseMap.get(exerciseName) || { count: 0, totalAccuracy: 0 }
+      const current = exerciseMap.get(exerciseName) || { count: 0, totalAccuracy: 0, accuracyCount: 0 }
+
+      // accuracy comes from session_logs.accuracy_score, not the legacy
+      // sessions.accuracy_percent column — see generateReport's avgAccuracy
+      // for the same fix. Sessions/logs with no accuracy score don't
+      // contribute to totalAccuracy or accuracyCount, so they're excluded
+      // from the average rather than counted as 0.
+      const accuracyScores = (session.session_logs ?? [])
+        .map((log: { accuracy_score: number | null }) => log.accuracy_score)
+        .filter((score: number | null): score is number => score !== null)
 
       exerciseMap.set(exerciseName, {
         count: current.count + 1,
-        totalAccuracy: current.totalAccuracy + (session.accuracy_percent ?? 0)
+        totalAccuracy: current.totalAccuracy + accuracyScores.reduce((sum: number, score: number) => sum + score, 0),
+        accuracyCount: current.accuracyCount + accuracyScores.length
       })
     })
 
     return Array.from(exerciseMap.entries()).map(([name, stats]) => ({
       exercise_name: name,
       sessions_count: stats.count,
-      avg_accuracy: stats.totalAccuracy / stats.count
+      avg_accuracy: stats.accuracyCount ? stats.totalAccuracy / stats.accuracyCount : 0
     }))
   }
 

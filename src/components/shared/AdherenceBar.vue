@@ -1,10 +1,10 @@
 <template>
   <div class="adherence-wrap">
     <div class="adherence-track">
-      <div 
-        class="adherence-fill" 
-        :style="{ width: `${value}%`, background: fillGradient }" 
-        role="progressbar" 
+      <div
+        class="adherence-fill"
+        :style="{ width: `${value}%`, background: fillColor }"
+        role="progressbar"
         :aria-valuenow="value" 
         aria-valuemin="0" 
         aria-valuemax="100" 
@@ -24,10 +24,14 @@ const props = defineProps({
   }
 })
 
-const fillGradient = computed(() => {
-  if (props.value >= 75) return 'var(--gradient-success)'
-  if (props.value >= 50) return 'var(--gradient-warning)'
-  return 'var(--gradient-danger)'
+// Flat status colors per the locked spec (design/stream-portal.html
+// .bar-fill: solid color, not a gradient -- e.g. the Patients table's
+// adherence column fills with var(--color-error)/-warning/success
+// directly based on the value, never a gradient).
+const fillColor = computed(() => {
+  if (props.value >= 75) return 'var(--color-teal)'
+  if (props.value >= 50) return 'var(--color-warning)'
+  return 'var(--color-error)'
 })
 </script>
 

@@ -318,6 +318,7 @@ import { supabase } from '@/services/supabase'
 import { useAuthStore } from '@/stores/authStore'
 import { usePatientStore } from '@/stores/patientStore'
 import { useAlertStore } from '@/stores/alertStore'
+import { useMessageStore } from '@/stores/messageStore'
 import { storeToRefs } from 'pinia'
 import AppCard from '@/components/shared/AppCard.vue'
 import AppBadge from '@/components/shared/AppBadge.vue'
@@ -330,6 +331,7 @@ const router = useRouter()
 const authStore = useAuthStore()
 const patientStore = usePatientStore()
 const alertStore = useAlertStore()
+const messageStore = useMessageStore()
 
 const { therapistProfile } = storeToRefs(authStore)
 const { patients, isLoading } = storeToRefs(patientStore)
@@ -485,6 +487,12 @@ const handlePatientAdded = async () => {
 onMounted(async () => {
   await patientStore.fetchPatients()
   await alertStore.fetchAlerts({ resolved: false })
+  // Populates the sidebar's Messages unread badge the same way the line
+  // above populates its Alerts badge -- both stores are Pinia
+  // singletons, so any component reading them (AppSidebar) sees this
+  // once it resolves, without Dashboard needing to render anything
+  // message-related itself.
+  await messageStore.fetchAllThreads()
 
   const patientIds = patients.value.map((p) => p.id)
   if (patientIds.length > 0) {

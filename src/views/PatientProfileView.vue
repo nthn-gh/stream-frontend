@@ -153,7 +153,7 @@
                   {{ formatDuration(session.duration_seconds ?? (session.duration_minutes ?? 0) * 60) }}
                 </p>
                 <p class="list-meta">
-                  Sets {{ session.sets_completed ?? 0 }} · Reps {{ session.reps_completed ?? 0 }} · Accuracy {{ formatPercent(session.accuracy_percent) }}
+                  Sets {{ session.sets_completed ?? 0 }} · Reps {{ session.reps_completed ?? 0 }} · Accuracy {{ formatPercent(sessionAccuracy(session)) }}
                 </p>
                 <p v-if="session.started_at || session.completed_at" class="list-meta">
                   {{ formatDateTime(session.started_at) }} to {{ formatDateTime(session.completed_at) }}
@@ -332,7 +332,7 @@ import AppModal from '@/components/shared/AppModal.vue'
 import { useExerciseStore } from '@/stores/exerciseStore'
 import { usePatientStore } from '@/stores/patientStore'
 import { resolveToken } from '@/services/designTokens'
-import type { PlanExerciseWithExercise } from '@/types'
+import type { PlanExerciseWithExercise, SessionWithExercise } from '@/types'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Legend, Tooltip, Filler)
 
@@ -403,6 +403,12 @@ const romChartData = computed(() => ({
   ],
 }))
 
+// Accuracy now comes from session_logs.accuracy_score (patientStore's
+// fetchPatientSessions joins session_logs onto each session), not the
+// legacy sessions.accuracy_percent column, which the current app never
+// writes -- reading it here always rendered a flat zero bar. A session
+// can have multiple logged sets; average their scores for one bar per
+// session, skipping sessions with no logged accuracy yet.
 const accuracyChartData = computed(() => {
   const recentSessions = [...patientSessions.value].slice(0, 6).reverse()
   return {
@@ -410,7 +416,13 @@ const accuracyChartData = computed(() => {
     datasets: [
       {
         label: 'Accuracy %',
-        data: recentSessions.map((session) => Number(session.accuracy_percent ?? 0)),
+        data: recentSessions.map((session) => {
+          const scores = (session.session_logs ?? [])
+            .map((log) => log.accuracy_score)
+            .filter((score): score is number => score !== null && score !== undefined)
+          if (!scores.length) return 0
+          return Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length)
+        }),
         backgroundColor: resolveToken('--teal', '#14b8a6'),
         borderRadius: 10,
       },
@@ -546,6 +558,17 @@ function formatDuration(totalSeconds: number) {
 
 function formatPercent(value?: number | string | null) {
   return `${Math.round(Number(value ?? 0))}%`
+}
+
+// Same session_logs-average approach as accuracyChartData above -- the
+// legacy sessions.accuracy_percent column this summary line used to
+// read is never written by the current app.
+function sessionAccuracy(session: SessionWithExercise) {
+  const scores = (session.session_logs ?? [])
+    .map((log) => log.accuracy_score)
+    .filter((score): score is number => score !== null && score !== undefined)
+  if (!scores.length) return 0
+  return scores.reduce((sum, score) => sum + score, 0) / scores.length
 }
 
 function formatDecimal(value?: number | string | null) {
@@ -951,10 +974,17 @@ onMounted(async () => {
 
 /* .btn-primary/.btn-secondary/.icon-btn removed: every button in this
    file now renders through AppButton's own primary/secondary variants
-   (dark-mode-safe as of the AppButton.vue fix). .modal-overlay/
-   .modal-card/.modal-header/.modal-footer/.modal-body/.modal-enter-*/
-   .modal-leave-* removed: AppModal now owns all of that chrome (see
-   .dash-modal override above). */
+   (dark-mode-safe as of the AppButton.vue fix). .modal-overlay,
+   .modal-card, .modal-header, .modal-footer, .modal-body, and the
+   .modal-enter/.modal-leave transition classes removed: AppModal now
+   owns all of that chrome (see .dash-modal override above).
+   NOTE: this comment previously ended a class name with an asterisk
+   immediately followed by a slash, which is the literal CSS
+   comment-close token -- it terminated this comment early and broke
+   the production build (Vite/postcss-selector-parser: "Expected a
+   pseudo-class or pseudo-element"), silently failing the GitHub Pages
+   CI deploy on every push since commit 04d3739. Never write that two-
+   character sequence adjacently inside a CSS comment again. */
 .status-message {
   padding: var(--space-16px) var(--space-16px);
   border-radius: 12px;

@@ -48,6 +48,13 @@
         <span>Alerts</span>
         <span v-if="unreadCount > 0" class="nav-badge">{{ unreadCount }}</span>
       </router-link>
+      <router-link to="/messages" class="nav-item" active-class="nav-item--active">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 5h16v11H8l-4 4z" />
+        </svg>
+        <span>Messages</span>
+        <span v-if="unreadMessageCount > 0" class="nav-badge">{{ unreadMessageCount }}</span>
+      </router-link>
       <router-link to="/reports" class="nav-item" active-class="nav-item--active">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -103,13 +110,28 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import { useAlertStore } from '@/stores/alertStore'
+import { useMessageStore } from '@/stores/messageStore'
+import { usePatientStore } from '@/stores/patientStore'
 import { storeToRefs } from 'pinia'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const alertStore = useAlertStore()
+const messageStore = useMessageStore()
+const patientStore = usePatientStore()
 const { therapistProfile, user } = storeToRefs(authStore)
 const { unreadCount } = storeToRefs(alertStore)
+const { patients } = storeToRefs(patientStore)
+
+// Populated once DashboardView (the post-login landing route) has
+// fetched message threads -- same singleton-store pattern unreadCount
+// above relies on for the Alerts badge.
+const unreadMessageCount = computed(() =>
+  patients.value.reduce((sum, patient) => {
+    if (!patient.user_id) return sum
+    return sum + messageStore.unreadCountFor(patient.user_id)
+  }, 0),
+)
 
 const initials = computed(() => {
   const name = therapistProfile.value?.name || user.value?.full_name

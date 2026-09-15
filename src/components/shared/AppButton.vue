@@ -48,8 +48,13 @@ const buttonClasses = computed(() => {
     icon: 'bg-transparent hover:bg-slate-100 text-slate-700'
   }
 
+  // Radius is a flat 12px (rounded-xl) across every button size per the
+  // locked spec (design/stream-portal.html .btn's border-radius:
+  // var(--radius-lg) = 12px, unconditioned on size) -- previously the
+  // small size dropped to 8px (rounded-lg), which was an unintentional
+  // one-off, not a spec size variant.
   const sizes = {
-    small: props.variant === 'icon' ? 'w-9 h-9 rounded-lg' : 'h-9 px-4 text-sm rounded-lg',
+    small: props.variant === 'icon' ? 'w-9 h-9 rounded-xl' : 'h-9 px-4 text-sm rounded-xl',
     medium: props.variant === 'icon' ? 'w-10 h-10 rounded-xl' : 'h-11 px-6 text-base rounded-xl',
     large: props.variant === 'icon' ? 'w-12 h-12 rounded-xl' : 'h-13 px-8 text-lg rounded-xl'
   }

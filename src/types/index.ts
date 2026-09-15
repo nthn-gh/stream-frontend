@@ -17,6 +17,12 @@ export type User = Row<'users'>
 export type UserInsert = Insert<'users'>
 export type UserUpdate = Update<'users'>
 
+export type Message = Row<'messages'>
+export type MessageInsert = Insert<'messages'>
+export type MessageUpdate = Update<'messages'>
+
+export type Notification = Row<'notifications'>
+
 export type TherapistProfile = Row<'therapist_profiles'>
 export type TherapistProfileInsert = Insert<'therapist_profiles'>
 export type TherapistProfileUpdate = Update<'therapist_profiles'>

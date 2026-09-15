@@ -1,85 +1,89 @@
 <template>
   <div class="page">
-    <!-- Page Header -->
     <div class="page-header">
       <div>
-        <h1 class="h2" style="display: flex; align-items: center; gap: var(--space-2);">
-          Movement Alerts
-          <span v-if="unreadCount > 0" class="unread-badge">
-            {{ unreadCount }} Unread
-          </span>
-        </h1>
-        <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-top: var(--space-half);">Monitor patient issues and take action</p>
-      </div>
-      
-      <div class="filter-tabs">
-        <button
-          v-for="filter in filters"
-          :key="filter.key"
-          @click="activeFilter = filter.key"
-          class="filter-tab"
-          :class="{ 'filter-tab--active': activeFilter === filter.key }"
-        >
-          {{ filter.label }}
-        </button>
+        <h1 class="t-h1">Alerts</h1>
+        <p class="text-secondary t-body" style="margin-top: 6px">
+          {{ unresolvedCount }} unresolved {{ unresolvedCount === 1 ? 'alert' : 'alerts' }} across your caseload.
+        </p>
       </div>
     </div>
-    
-    <!-- Content Area -->
-    <div class="alerts-content">
-      <div v-if="isLoading" class="loading-state">
-        <div class="spinner"></div>
-      </div>
-      
-      <div v-else-if="displayedAlerts.length === 0" class="empty-state">
-        <div class="empty-icon">
-          <CheckCircle :size="48" style="color: var(--success);" />
-        </div>
-        <h3 class="h3" style="margin-bottom: var(--space-1);">No alerts right now</h3>
-        <p style="color: var(--text-muted);">All patients are on track. Great work!</p>
-      </div>
-      
-      <div v-else class="alert-cards">
-        <div
-          v-for="alert in displayedAlerts"
-          :key="alert.id"
-          class="alert-card"
-          :class="{ 'alert-card--resolved': alert.resolved }"
-          :style="{ borderLeftColor: !alert.resolved ? getSeverityColor(alert.priority) : 'var(--border)' }"
-        >
-          <div class="alert-card-header">
-            <div class="alert-icon" :style="{ background: getIconBackground(alert.type) }">
-              <component :is="getAlertIcon(alert.type)" :size="20" style="color: white;" />
-            </div>
-            
-            <div class="alert-card-body">
-              <div class="alert-card-top">
-                <div class="alert-patient">
-                  <h3 class="h4">{{ alert.patient?.name || 'Unknown Patient' }}</h3>
-                  <AppBadge :variant="getPriorityVariant(alert.priority)">
-                    {{ alert.priority.toUpperCase() }}
-                  </AppBadge>
-                </div>
 
-                <div class="alert-actions">
-                  <AppButton variant="secondary" class="btn-ghost" @click="viewPatient(alert.patient_id)">
-                    View Patient
-                  </AppButton>
-                  <AppButton
-                    v-if="!alert.resolved"
-                    variant="primary"
-                    @click="handleResolve(alert.id)"
-                  >
-                    Mark Resolved
-                  </AppButton>
-                </div>
-              </div>
-              
-              <p class="alert-message">{{ alert.message }}</p>
-              <p class="caption" style="color: var(--text-muted); margin-top: var(--space-1);">
-                {{ formatTimestamp(alert.created_at) }}
-              </p>
-            </div>
+    <div class="row" style="display: flex; align-items: center; gap: 12px; margin-bottom: var(--spacing-5); flex-wrap: wrap">
+      <button
+        type="button"
+        class="sl-btn sl-btn-sm severity-chip"
+        style="background: var(--color-error-bg); border-color: transparent; color: var(--color-error-text)"
+        :class="{ 'is-active': activeFilter === 'high' }"
+        @click="toggleFilter('high')"
+      >
+        High &middot; {{ counts.high }}
+      </button>
+      <button
+        type="button"
+        class="sl-btn sl-btn-sm severity-chip"
+        style="background: var(--color-warning-bg); border-color: transparent; color: var(--color-warning-text)"
+        :class="{ 'is-active': activeFilter === 'moderate' }"
+        @click="toggleFilter('moderate')"
+      >
+        Moderate &middot; {{ counts.moderate }}
+      </button>
+      <button
+        type="button"
+        class="sl-btn sl-btn-sm severity-chip"
+        style="background: var(--accent-blue-soft); border-color: transparent; color: var(--color-primary)"
+        :class="{ 'is-active': activeFilter === 'low' }"
+        @click="toggleFilter('low')"
+      >
+        Low &middot; {{ counts.low }}
+      </button>
+      <div style="flex: 1"></div>
+      <label class="sl-checkbox-row">
+        <input v-model="showResolved" type="checkbox" />
+        Show resolved
+      </label>
+    </div>
+
+    <div v-if="error" class="sl-badge sl-badge-error" style="margin-bottom: var(--spacing-4); display: flex">
+      {{ error }}
+    </div>
+
+    <div v-if="isLoading" class="stack" style="display: flex; flex-direction: column; gap: 16px">
+      <AppSkeleton variant="card" height="100px" />
+      <AppSkeleton variant="card" height="100px" />
+      <AppSkeleton variant="card" height="100px" />
+    </div>
+
+    <div v-else-if="displayedAlerts.length === 0" class="sl-card sl-empty-state">
+      <CheckCircle :size="40" style="color: var(--color-success); margin-bottom: var(--spacing-4)" />
+      <p class="t-body-md">No alerts to show.</p>
+      <p class="t-body-sm text-secondary" style="margin-top: 4px">All patients are on track, or try a different filter.</p>
+    </div>
+
+    <div v-else style="display: flex; flex-direction: column; gap: var(--spacing-4)">
+      <div
+        v-for="alert in displayedAlerts"
+        :key="alert.id"
+        class="sl-alert-item"
+        :class="[`sev-${alert.priority}`, { 'is-resolved': alert.resolved }]"
+      >
+        <div class="sl-alert-item__icon" :style="{ background: iconBg(alert.type) }">
+          <component :is="alertIcon(alert.type)" :size="20" :style="{ color: iconColor(alert.type) }" />
+        </div>
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 8px">
+          <div style="display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap">
+            <strong class="t-body-md">{{ alert.patient?.name || 'Unknown patient' }}</strong>
+            <span class="t-caption">{{ formatTimestamp(alert.created_at) }}</span>
+          </div>
+          <p class="t-body-sm text-secondary">{{ alert.message }}</p>
+          <div v-if="alert.resolved" class="row" style="margin-top: 4px">
+            <span class="sl-badge sl-badge-neutral">Resolved</span>
+          </div>
+          <div v-else class="row" style="display: flex; gap: 8px; margin-top: 4px">
+            <AppButton size="small" @click="viewPatient(alert.patient_id)">View patient</AppButton>
+            <AppButton variant="secondary" size="small" :loading="resolvingId === alert.id" @click="handleResolve(alert.id)">
+              Mark resolved
+            </AppButton>
           </div>
         </div>
       </div>
@@ -90,82 +94,73 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
-import { AlertCircle, Activity, Clock, CheckCircle } from 'lucide-vue-next'
+import { AlertCircle, AlertTriangle, Info, CheckCircle } from 'lucide-vue-next'
 import { useAlertStore } from '@/stores/alertStore'
 import { storeToRefs } from 'pinia'
-import AppBadge from '@/components/shared/AppBadge.vue'
 import AppButton from '@/components/shared/AppButton.vue'
+import AppSkeleton from '@/components/shared/AppSkeleton.vue'
+import type { AlertWithPatient } from '@/types'
 
 const router = useRouter()
 const alertStore = useAlertStore()
 
-const { alerts, isLoading, unreadCount } = storeToRefs(alertStore)
+const { alerts, isLoading, error } = storeToRefs(alertStore)
 
-const activeFilter = ref('all')
+// DB CHECK constraint for alerts.priority is (high, moderate, low) --
+// the previous version of this view filtered on 'medium', which never
+// matches a real row, silently dropping every moderate-priority alert
+// from its severity coloring/filter.
+const activeFilter = ref<'high' | 'moderate' | 'low' | null>(null)
+const showResolved = ref(false)
+const resolvingId = ref<string | null>(null)
 
-const filters = [
-  { key: 'all', label: 'All' },
-  { key: 'unread', label: 'Unread' },
-  { key: 'high', label: 'High Priority' },
-  { key: 'resolved', label: 'Resolved' }
-]
+const unresolvedCount = computed(() => alerts.value.filter((a) => !a.resolved).length)
+
+const counts = computed(() => ({
+  high: alerts.value.filter((a) => !a.resolved && a.priority === 'high').length,
+  moderate: alerts.value.filter((a) => !a.resolved && a.priority === 'moderate').length,
+  low: alerts.value.filter((a) => !a.resolved && a.priority === 'low').length,
+}))
 
 const displayedAlerts = computed(() => {
-  let result = alerts.value
-
-  if (activeFilter.value === 'unread') {
-    result = result.filter(a => !a.resolved)
-  } else if (activeFilter.value === 'high') {
-    result = result.filter(a => a.priority === 'high')
-  } else if (activeFilter.value === 'resolved') {
-    result = result.filter(a => a.resolved)
-  }
-
-  return result
+  return alerts.value.filter((alert: AlertWithPatient) => {
+    if (!showResolved.value && alert.resolved) return false
+    if (activeFilter.value && alert.priority !== activeFilter.value) return false
+    return true
+  })
 })
 
-const getAlertIcon = (type: string) => {
-  switch (type) {
-    case 'missed_session':
-      return Clock
-    case 'low_adherence':
-      return Activity
-    case 'critical':
-      return AlertCircle
-    default:
-      return AlertCircle
-  }
+function toggleFilter(priority: 'high' | 'moderate' | 'low') {
+  activeFilter.value = activeFilter.value === priority ? null : priority
 }
 
-const getIconBackground = (type: string) => {
-  switch (type) {
-    case 'missed_session':
-      return 'var(--gradient-warning)'
-    case 'low_adherence':
-      return 'var(--gradient-danger)'
-    case 'critical':
-      return 'var(--gradient-danger)'
-    default:
-      return 'var(--gradient-info)'
-  }
+// alerts.type CHECK constraint is (missed_session, low_performance,
+// technical_issue) -- the previous version matched 'low_adherence' and
+// 'critical', neither of which is a real value, so those two branches
+// never fired and every alert fell through to the generic/info icon.
+function alertIcon(type: string) {
+  if (type === 'missed_session') return AlertCircle
+  if (type === 'low_performance') return AlertTriangle
+  if (type === 'technical_issue') return Info
+  return Info
 }
 
-const getSeverityColor = (priority: string) => {
-  if (priority === 'high') return 'var(--error)'
-  if (priority === 'medium') return 'var(--warning)'
-  return 'var(--info)'
+function iconBg(type: string) {
+  if (type === 'missed_session') return 'var(--color-error-bg)'
+  if (type === 'low_performance') return 'var(--color-warning-bg)'
+  return 'var(--accent-blue-soft)'
 }
 
-const getPriorityVariant = (priority: string): 'success' | 'warning' | 'error' | 'info' | 'neutral' => {
-  if (priority === 'high') return 'error'
-  if (priority === 'medium') return 'warning'
-  return 'info'
+function iconColor(type: string) {
+  if (type === 'missed_session') return 'var(--color-error)'
+  if (type === 'low_performance') return 'var(--color-warning)'
+  return 'var(--color-primary)'
 }
 
-const formatTimestamp = (timestamp: string) => {
+function formatTimestamp(timestamp: string | null) {
+  if (!timestamp) return ''
   const date = new Date(timestamp)
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
+  const diffMs = Date.now() - date.getTime()
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
 
@@ -175,12 +170,17 @@ const formatTimestamp = (timestamp: string) => {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
-const viewPatient = (patientId: string) => {
+function viewPatient(patientId: string) {
   router.push(`/patients/${patientId}`)
 }
 
-const handleResolve = async (alertId: string) => {
-  await alertStore.resolveAlert(alertId)
+async function handleResolve(alertId: string) {
+  resolvingId.value = alertId
+  try {
+    await alertStore.resolveAlert(alertId)
+  } finally {
+    resolvingId.value = null
+  }
 }
 
 onMounted(async () => {
@@ -194,171 +194,23 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.page {
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap);
-}
 .page-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--space-2);
-}
-.unread-badge {
-  font-size: var(--font-size-xs);
-  font-weight: 600;
-  padding: var(--space-half) var(--space-8px);
-  border-radius: var(--radius-pill);
-  background: var(--status-danger-bg);
-  color: var(--status-danger-text);
-}
-.filter-tabs {
-  display: flex;
-  gap: var(--space-2);
-}
-.filter-tab {
-  height: 36px;
-  padding: 0 var(--space-4);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  background: var(--bg-card);
-  color: var(--text-secondary);
-  font: inherit;
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.filter-tab:hover {
-  border-color: var(--primary);
-  color: var(--primary);
-}
-.filter-tab--active {
-  background: var(--gradient-primary);
-  color: white;
-  border-color: transparent;
-}
-.alerts-content {
-  flex: 1;
-}
-.loading-state {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-}
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid var(--border);
-  border-top-color: var(--primary);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-  text-align: center;
-  padding: var(--space-12) var(--space-4);
-  background: var(--bg-card);
-  border: 1px solid rgba(226, 232, 240, 0.6);
-  border-radius: var(--radius-lg);
-}
-.empty-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: var(--radius-pill);
-  background: var(--status-active-bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto var(--space-4);
-}
-.alert-cards {
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap);
-}
-.alert-card {
-  background: var(--bg-card);
-  border-radius: var(--radius-lg);
-  padding: var(--space-5);
-  box-shadow: var(--shadow-card);
-  border: 1px solid rgba(226, 232, 240, 0.6);
-  border-left: 4px solid;
-  transition: all 0.15s;
-}
-.alert-card:hover {
-  box-shadow: var(--shadow-elevated);
-}
-.alert-card--resolved {
-  opacity: 0.7;
-}
-.alert-card-header {
-  display: flex;
-  gap: var(--space-4);
-}
-.alert-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.alert-card-body {
-  flex: 1;
-  min-width: 0;
-}
-.alert-card-top {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: var(--space-4);
-  margin-bottom: var(--space-2);
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-8);
 }
-.alert-patient {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  flex: 1;
-  min-width: 0;
-}
-.alert-actions {
-  display: flex;
-  gap: var(--space-2);
-  flex-shrink: 0;
-}
-.alert-message {
-  color: var(--text-secondary);
-  margin-bottom: var(--space-1);
-}
-/* .btn-primary removed: "Mark Resolved" now renders through AppButton's
-   own native primary variant. .btn-ghost is kept -- no AppButton
-   variant matches its transparent-bg/primary-text/bordered look. */
-.btn-ghost {
-  background: none;
-  border: 1px solid var(--border);
+.severity-chip {
   cursor: pointer;
-  height: 36px;
-  padding: 0 var(--space-4);
-  border-radius: var(--radius-sm);
-  font: inherit;
-  font-size: var(--font-size-sm);
-  color: var(--primary);
-  font-weight: 600;
-  transition: background 0.15s, border-color 0.15s;
+  opacity: 0.55;
+  transition: opacity 0.15s ease;
 }
-.btn-ghost:hover {
-  background: var(--primary-light);
-  border-color: var(--primary);
+.severity-chip:hover,
+.severity-chip.is-active {
+  opacity: 1;
+}
+.sl-alert-item.is-resolved {
+  opacity: 0.7;
 }
 </style>

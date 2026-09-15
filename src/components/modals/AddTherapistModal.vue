@@ -233,8 +233,8 @@ async function handleSubmit() {
 </script>
 
 <style scoped>
-/* .modal-backdrop/.modal-card/.modal-header*/.modal-title-*/.close-btn*
-   removed: AppModal now owns all of that chrome. .modal-body is kept
+/* .modal-backdrop, .modal-card, .modal-header, .modal-title, and
+   .close-btn removed: AppModal now owns all of that chrome. .modal-body is kept
    but trimmed down to just the flex-column layout it still needs to
    provide for its own children (form-grid/form-group/etc.) -- padding,
    overflow-y, and flex:1 are now AppModal's own body wrapper's job.

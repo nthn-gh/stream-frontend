@@ -3,15 +3,27 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { supabase } from '@/services/supabase'
-import type { Patient, Session, ProgressMetric, SessionNote } from '@/types'
+import { useAuthStore } from '@/stores/authStore'
+import type {
+  Patient,
+  SessionLog,
+  ProgressMetric,
+  SessionNote,
+  SessionWithExercise,
+} from '@/types'
 
 export const usePatientStore = defineStore('patient', () => {
   // State
   const patients = ref<Patient[]>([])
   const selectedPatient = ref<Patient | null>(null)
-  const patientSessions = ref<Session[]>([])
+  // fetchPatientSessions joins exercise + session_logs onto each row, so
+  // this is SessionWithExercise (which declares session_logs), not the
+  // bare Session row type -- consumers like PatientProfileView's
+  // accuracy chart read session.session_logs.
+  const patientSessions = ref<SessionWithExercise[]>([])
   const patientProgress = ref<ProgressMetric[]>([])
   const patientNotes = ref<SessionNote[]>([])
+  const patientSessionLogs = ref<SessionLog[]>([])
   const isLoading = ref(false)
   const error = ref<string | null>(null)
 
@@ -21,7 +33,19 @@ export const usePatientStore = defineStore('patient', () => {
     error.value = null
 
     try {
-      let query = supabase.from('patients').select('*').order('name', { ascending: true })
+      const authStore = useAuthStore()
+      const therapistId = authStore.therapistProfile?.id
+      if (!therapistId) {
+        console.warn('fetchPatients: no therapist profile loaded, returning empty')
+        patients.value = []
+        return
+      }
+
+      let query = supabase
+        .from('patients')
+        .select('*')
+        .or(`therapist_id.eq.${therapistId},therapist_id.is.null`)
+        .order('name', { ascending: true })
 
       // Apply filters
       if (filters?.status && filters.status !== 'all') {
@@ -78,15 +102,20 @@ export const usePatientStore = defineStore('patient', () => {
         .select(
           `
           *,
-          exercise:exercises(name, category)
+          exercise:exercises(name, category),
+          session_logs(id, reps_completed, accuracy_score, range_of_motion, notes)
         `,
         )
         .eq('patient_id', patientId)
-        .order('date', { ascending: false })
+        .order('started_at', { ascending: false })
 
       if (fetchError) throw fetchError
 
-      patientSessions.value = data || []
+      // The session_logs sub-select only grabs a handful of columns, not
+      // every column SessionLogWithExercise's Row type declares -- this
+      // matches the pre-existing `as any[]` bypass, just typed for
+      // consumers instead of erasing the type entirely.
+      patientSessions.value = (data as unknown as SessionWithExercise[]) || []
     } catch (err: any) {
       error.value = err.message
       console.error('Error fetching sessions:', err)
@@ -149,6 +178,35 @@ export const usePatientStore = defineStore('patient', () => {
       console.error('Error fetching notes:', err)
     } finally {
       isLoading.value = false
+    }
+  }
+
+  async function fetchPatientSessionLogs(patientId: string) {
+    try {
+      const { data: sessions, error: sessionError } = await supabase
+        .from('sessions')
+        .select('id')
+        .eq('patient_id', patientId)
+
+      if (sessionError) throw sessionError
+
+      const ids = sessions?.map((s) => s.id) ?? []
+      if (!ids.length) {
+        patientSessionLogs.value = []
+        return
+      }
+
+      const { data, error: fetchError } = await supabase
+        .from('session_logs')
+        .select('*')
+        .in('session_id', ids)
+        .order('created_at', { ascending: false })
+
+      if (fetchError) throw fetchError
+      patientSessionLogs.value = (data as SessionLog[]) || []
+    } catch (err: any) {
+      error.value = err.message
+      console.error('Error fetching session logs:', err)
     }
   }
 
@@ -220,7 +278,7 @@ export const usePatientStore = defineStore('patient', () => {
       age?: number
       stroke_type?: string
     },
-    userId: string,
+    userId: string | null = null,
   ) {
     isLoading.value = true
     error.value = null
@@ -266,6 +324,7 @@ export const usePatientStore = defineStore('patient', () => {
     patientSessions,
     patientProgress,
     patientNotes,
+    patientSessionLogs,
     isLoading,
     error,
     // Actions
@@ -274,6 +333,7 @@ export const usePatientStore = defineStore('patient', () => {
     fetchPatientSessions,
     fetchPatientProgress,
     fetchPatientNotes,
+    fetchPatientSessionLogs,
     addNote,
     updatePatientStatus,
     createPatient,

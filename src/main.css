@@ -2,6 +2,7 @@
 
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+@import "./styles/stream-locked.css";
 
 :root {
   /* BACKGROUNDS */
@@ -54,17 +55,21 @@
   --border: #E2E8F0;
   --border-focus: #1A8FD1;
 
-  /* STATUS */
+  /* STATUS
+     Text values corrected to match the locked design spec
+     (design/stream-portal.html Section 6.1) exactly -- these were
+     transcribed slightly off (e.g. #064E3B instead of the spec's
+     #065F46) and fed every badge/alert/status color in the app. */
   --status-active-bg: #D1FAE5;
-  --status-active-text: #064E3B;
+  --status-active-text: #065F46;
   --status-warning-bg: #FEF3C7;
-  --status-warning-text: #78350F;
+  --status-warning-text: #92400E;
   --status-danger-bg: #FEE2E2;
-  --status-danger-text: #7F1D1D;
+  --status-danger-text: #991B1B;
   --status-info-bg: #DBEAFE;
-  --status-info-text: #1E3A8A;
-  --status-neutral-bg: #F3F4F6;
-  --status-neutral-text: #1F2937;
+  --status-info-text: #1E40AF;
+  --status-neutral-bg: #F1F5F9;
+  --status-neutral-text: #475569;
 
   /* SHADOWS */
   --shadow-card: 0 1px 4px rgba(15,23,42,0.06), 0 2px 8px rgba(15,23,42,0.04);

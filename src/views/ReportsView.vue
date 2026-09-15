@@ -1,288 +1,239 @@
 <template>
   <div class="page">
-    <!-- Page Header -->
     <div class="page-header">
       <div>
-        <h1 class="h2">Reports & Analytics</h1>
-        <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-top: var(--space-half)">
-          Generate insights and track patient progress
+        <h1 class="t-h1">Reports</h1>
+        <p class="text-secondary t-body" style="margin-top: 6px">
+          Generate and export clinical reports for patients, clinics, or funders.
         </p>
       </div>
     </div>
 
-    <!-- Stat Cards -->
-    <div class="stat-grid">
-      <StatCard
-        label="Total Patients"
-        :value="String(patients.length)"
-        gradient="var(--gradient-primary)"
-      >
-        <template #icon>
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="white"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-          </svg>
-        </template>
+    <div class="sl-grid sl-cols-4" style="margin-bottom: var(--spacing-6)">
+      <StatCard label="Total patients" :value="String(patients.length)" icon-bg="var(--accent-blue-soft)" icon-color="var(--color-primary)">
+        <template #icon><Users :size="20" /></template>
       </StatCard>
-      <StatCard
-        label="Sessions This Month"
-        :value="String(totalSessions)"
-        gradient="var(--gradient-success)"
-      >
-        <template #icon>
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="white"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-            <line x1="16" y1="2" x2="16" y2="6" />
-            <line x1="8" y1="2" x2="8" y2="6" />
-            <line x1="3" y1="10" x2="21" y2="10" />
-          </svg>
-        </template>
+      <StatCard label="Sessions this month" :value="String(totalSessions)" icon-bg="var(--accent-teal-bg)" icon-color="var(--color-teal)">
+        <template #icon><Calendar :size="20" /></template>
       </StatCard>
-      <StatCard
-        label="Avg Adherence Rate"
-        :value="`${averageAdherence}%`"
-        gradient="var(--gradient-success)"
-      >
-        <template #icon>
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="white"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-          </svg>
-        </template>
+      <StatCard label="Avg. adherence rate" :value="`${averageAdherence}%`" icon-bg="var(--accent-teal-bg)" icon-color="var(--color-teal)">
+        <template #icon><TrendingUp :size="20" /></template>
       </StatCard>
-      <StatCard
-        label="Active Care Plans"
-        :value="String(activePlans)"
-        gradient="var(--gradient-warning)"
-      >
-        <template #icon>
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="white"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M9 11l3 3L22 4" />
-            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-          </svg>
-        </template>
+      <StatCard label="Active care plans" :value="String(activePlans)" icon-bg="var(--accent-purple-bg)" icon-color="var(--accent-purple)">
+        <template #icon><CheckSquare :size="20" /></template>
       </StatCard>
     </div>
 
-    <!-- Patient Selector -->
-    <AppCard class="dash-card">
-      <div class="selector-header">
-        <h3 class="h3">Generate Patient Report</h3>
-      </div>
-      <div class="selector-row">
-        <select v-model="selectedPatient" class="table-select flex-1">
-          <option :value="null">Select a patient...</option>
-          <option v-for="patient in patients" :key="patient.id" :value="patient.id">
-            {{ patient.name }}
-          </option>
+    <div class="sl-card" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end">
+      <div class="sl-field" style="width: 200px">
+        <label for="rp-range">Date range</label>
+        <select id="rp-range" v-model="rangeKey" class="sl-select">
+          <option value="30">Last 30 days</option>
+          <option value="90">Last 90 days</option>
+          <option value="quarter">This quarter</option>
         </select>
-        <AppButton variant="primary" :disabled="!selectedPatient || isGenerating" @click="generateReport">
-          {{ isGenerating ? 'Generating...' : 'Generate Report' }}
-        </AppButton>
-        <AppButton
-          v-if="reportGenerated && selectedPatientData"
-          variant="secondary"
-          class="btn-secondary"
-          :disabled="isGenerating"
-          @click="exportToPDF"
-        >
-          <Download :size="16" style="margin-right: var(--space-8px);" />
-          Export PDF
-        </AppButton>
       </div>
-    </AppCard>
-
-    <!-- Empty State -->
-    <div v-if="!reportGenerated || !selectedPatient" class="empty-state">
-      <FileText :size="64" style="color: var(--text-muted)" />
-      <p style="color: var(--text-secondary); margin-top: var(--space-3)">
-        Select a patient and generate a report to view details
-      </p>
+      <div class="sl-field" style="width: 220px">
+        <label for="rp-patient">Patient</label>
+        <select id="rp-patient" v-model="selectedPatientId" class="sl-select">
+          <option :value="null">Select a patient…</option>
+          <option v-for="patient in patients" :key="patient.id" :value="patient.id">{{ patient.name }}</option>
+        </select>
+      </div>
+      <AppButton :disabled="!selectedPatientId || isGenerating" :loading="isGenerating" @click="applyFilters">
+        Apply filters
+      </AppButton>
     </div>
 
-    <!-- Report Display -->
-    <div v-else-if="selectedPatientData" ref="reportRef" class="report-grid">
-      <!-- Patient Info -->
-      <AppCard class="dash-card">
-        <h3 class="h3" style="margin-bottom: var(--space-4)">Patient Information</h3>
-        <div class="info-grid">
-          <div class="info-item">
-            <div class="info-label">NAME</div>
-            <div class="info-value">{{ selectedPatientData.name }}</div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">CONDITION</div>
-            <div class="info-value">{{ selectedPatientData.condition }}</div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">ADHERENCE RATE</div>
-            <div class="info-value">{{ selectedPatientData.adherence_rate }}%</div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">STATUS</div>
-            <div class="info-value" style="text-transform: capitalize">
-              {{ selectedPatientData.status?.replace('_', ' ') }}
+    <p v-if="reportError" class="t-body-sm" style="color: var(--color-error-text); margin-top: var(--spacing-3)">{{ reportError }}</p>
+    <p v-else-if="!selectedPatientId" class="t-body-sm text-secondary" style="margin-top: var(--spacing-3)">
+      Select a patient and apply filters to enable the reports below.
+    </p>
+
+    <div class="sl-grid sl-cols-2" style="margin-top: var(--spacing-6)">
+      <button
+        v-for="type in reportTypes"
+        :key="type.key"
+        type="button"
+        class="sl-card report-card"
+        :disabled="!reportData || isGenerating"
+        @click="downloadReport()"
+      >
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-3)">
+          <div style="display: flex; align-items: center; gap: 12px">
+            <div class="report-card__icon" :style="{ background: type.iconBg }">
+              <component :is="type.icon" :size="20" :style="{ color: type.iconColor }" />
             </div>
+            <h2 class="t-h4">{{ type.title }}</h2>
           </div>
+          <span class="sl-btn-icon" aria-hidden="true"><Download :size="18" /></span>
         </div>
-      </AppCard>
+        <p class="t-body-sm text-secondary" style="margin-top: var(--spacing-3); text-align: left">{{ type.description }}</p>
+      </button>
+    </div>
 
-      <!-- Progress Chart -->
-      <AppCard class="dash-card">
-        <h3 class="h3" style="margin-bottom: var(--space-4)">Progress Overview</h3>
-        <div class="chart-placeholder">
-          <Activity :size="32" style="color: var(--text-muted); margin-bottom: var(--space-2)" />
-          <p class="caption" style="color: var(--text-muted)">Chart visualization area</p>
+    <div v-if="reportData" id="report-detail" class="sl-card" style="margin-top: var(--spacing-6); display: flex; flex-direction: column; gap: var(--spacing-6)">
+      <div>
+        <h2 class="t-h4" style="margin-bottom: var(--spacing-4)">{{ reportData.patient.name }} — report summary</h2>
+        <div class="sl-grid sl-cols-4">
+          <div><div class="t-label text-secondary">Total sessions</div><div class="t-body-md">{{ reportData.metrics.total_sessions }}</div></div>
+          <div><div class="t-label text-secondary">Adherence</div><div class="t-body-md">{{ reportData.metrics.adherence }}%</div></div>
+          <div><div class="t-label text-secondary">Avg. accuracy</div><div class="t-body-md">{{ Math.round(reportData.metrics.avg_accuracy) }}%</div></div>
+          <div><div class="t-label text-secondary">ROM change</div><div class="t-body-md">{{ reportData.metrics.rom_improvement >= 0 ? '+' : '' }}{{ reportData.metrics.rom_improvement }}°</div></div>
         </div>
-      </AppCard>
+      </div>
 
-      <!-- Recent Activity -->
-      <AppCard class="dash-card">
-        <h3 class="h3" style="margin-bottom: var(--space-4)">Recent Activity</h3>
-        <div class="activity-list">
-          <div class="activity-item">
-            <div class="activity-dot success"></div>
-            <span class="caption">Completed exercise session - 2 days ago</span>
-          </div>
-          <div class="activity-item">
-            <div class="activity-dot info"></div>
-            <span class="caption">Attended follow-up appointment - 5 days ago</span>
-          </div>
-          <div class="activity-item">
-            <div class="activity-dot warning"></div>
-            <span class="caption">Missed scheduled session - 1 week ago</span>
-          </div>
+      <div v-if="romChartData.labels.length">
+        <h3 class="t-label text-secondary" style="margin-bottom: var(--spacing-3)">Range of motion over time</h3>
+        <div style="height: 220px">
+          <Line :data="romChartData" :options="chartOptions" />
         </div>
-      </AppCard>
+      </div>
+
+      <div v-if="reportData.exercise_breakdown.length">
+        <h3 class="t-label text-secondary" style="margin-bottom: var(--spacing-3)">Exercise breakdown</h3>
+        <AppTable :columns="[{ key: 'exercise', label: 'Exercise' }, { key: 'sessions', label: 'Sessions' }, { key: 'accuracy', label: 'Avg. accuracy' }]">
+          <tr v-for="row in reportData.exercise_breakdown" :key="row.exercise_name">
+            <td class="t-body-md">{{ row.exercise_name }}</td>
+            <td>{{ row.sessions_count }}</td>
+            <td>{{ Math.round(row.avg_accuracy) }}%</td>
+          </tr>
+        </AppTable>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { Activity, FileText, Download } from 'lucide-vue-next'
+import { Line } from 'vue-chartjs'
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend,
+} from 'chart.js'
+import {
+  Users,
+  Calendar,
+  TrendingUp,
+  CheckSquare,
+  Download,
+  Award,
+  Clipboard,
+} from 'lucide-vue-next'
 import { usePatientStore } from '@/stores/patientStore'
+import { useReportStore } from '@/stores/reportStore'
 import { storeToRefs } from 'pinia'
-import AppCard from '@/components/shared/AppCard.vue'
 import AppButton from '@/components/shared/AppButton.vue'
+import AppTable from '@/components/shared/AppTable.vue'
 import StatCard from '@/components/shared/StatCard.vue'
-import html2canvas from 'html2canvas'
-import { jsPDF } from 'jspdf'
-import { resolveToken } from '@/services/designTokens'
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend)
 
 const patientStore = usePatientStore()
+const reportStore = useReportStore()
 const { patients } = storeToRefs(patientStore)
+const { data: reportData, isGenerating, error: reportError } = storeToRefs(reportStore)
 
-const selectedPatient = ref<string | null>(null)
-const isGenerating = ref(false)
-const reportGenerated = ref(false)
-const reportRef = ref<HTMLElement | null>(null)
+const selectedPatientId = ref<string | null>(null)
+const rangeKey = ref<'30' | '90' | 'quarter'>('30')
 
-const selectedPatientData = computed(() => {
-  if (!selectedPatient.value) return null
-  return patients.value.find((p) => p.id === selectedPatient.value)
-})
+const reportTypes = [
+  {
+    key: 'progress',
+    title: 'Monthly progress summary',
+    description: 'Adherence, accuracy, and ROM change for the selected patient over the chosen date range.',
+    icon: TrendingUp,
+    iconBg: 'var(--accent-blue-soft)',
+    iconColor: 'var(--color-primary)',
+  },
+  {
+    key: 'adherence',
+    title: 'Adherence report',
+    description: 'Session completion vs. assigned schedule for the selected patient.',
+    icon: CheckSquare,
+    iconBg: 'var(--accent-teal-bg)',
+    iconColor: 'var(--color-teal)',
+  },
+  {
+    key: 'completion-log',
+    title: 'Exercise completion log',
+    description: 'Full session-by-session log with sets, reps, and accuracy for audit or insurance.',
+    icon: Clipboard,
+    iconBg: 'var(--accent-purple-bg)',
+    iconColor: 'var(--accent-purple)',
+  },
+  {
+    key: 'outcomes',
+    title: 'Clinical outcomes report',
+    description: 'ROM, strength, and balance score trends for referring physicians.',
+    icon: Award,
+    iconBg: 'var(--accent-orange-bg)',
+    iconColor: 'var(--accent-orange)',
+  },
+] as const
 
-const totalSessions = computed(() => {
-  return patients.value.reduce((sum, p) => sum + (p.total_sessions || 0), 0)
-})
-
+const totalSessions = computed(() => patients.value.reduce((sum, p) => sum + (p.total_sessions || 0), 0))
 const averageAdherence = computed(() => {
-  if (patients.value.length === 0) return 0
-  const sum = patients.value.reduce((acc, p) => acc + p.adherence_rate, 0)
-  return Math.round(sum / patients.value.length)
+  if (!patients.value.length) return 0
+  return Math.round(patients.value.reduce((sum, p) => sum + (p.adherence_rate ?? 0), 0) / patients.value.length)
 })
+const activePlans = computed(() => patients.value.filter((p) => p.status === 'active').length)
 
-const activePlans = computed(() => {
-  return patients.value.filter((p) => p.status === 'active').length
-})
-
-const generateReport = async () => {
-  if (!selectedPatient.value) return
-
-  isGenerating.value = true
-
-  // Simulate report generation with processing time
-  await new Promise((resolve) => setTimeout(resolve, 800))
-
-  reportGenerated.value = true
-  isGenerating.value = false
+function dateRange() {
+  const end = new Date()
+  const start = new Date()
+  if (rangeKey.value === '30') start.setDate(end.getDate() - 30)
+  else if (rangeKey.value === '90') start.setDate(end.getDate() - 90)
+  else start.setMonth(Math.floor(end.getMonth() / 3) * 3, 1)
+  const toIso = (d: Date) => d.toISOString().split('T')[0] as string
+  return { start: toIso(start), end: toIso(end) }
 }
 
-const exportToPDF = async () => {
-  if (!reportRef.value || !selectedPatientData.value) return
+async function applyFilters() {
+  if (!selectedPatientId.value) return
+  const { start, end } = dateRange()
+  reportStore.updateConfig({
+    type: 'progress',
+    patient_id: selectedPatientId.value,
+    start_date: start,
+    end_date: end,
+  })
+  await reportStore.generateReport()
+}
 
-  try {
-    isGenerating.value = true
-
-    // Create canvas from the report element
-    const canvas = await html2canvas(reportRef.value, {
-      scale: 2,
-      useCORS: true,
-      logging: false,
-      backgroundColor: resolveToken('--bg-card', '#ffffff'),
-    })
-
-    // Calculate PDF dimensions
-    const imgWidth = 210 // A4 width in mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width
-
-    // Create PDF
-    const pdf = new jsPDF('p', 'mm', 'a4')
-    const imgData = canvas.toDataURL('image/png')
-
-    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight)
-
-    // Generate filename with patient name and date
-    const patientName = selectedPatientData.value.name.replace(/\s+/g, '_')
-    const date = new Date().toISOString().split('T')[0]
-    const filename = `${patientName}_Report_${date}.pdf`
-
-    pdf.save(filename)
-
-    isGenerating.value = false
-  } catch (error) {
-    console.error('Error generating PDF:', error)
-    isGenerating.value = false
-    alert('Failed to generate PDF. Please try again.')
+async function downloadReport() {
+  if (!reportData.value) {
+    await applyFilters()
   }
+  if (!reportData.value) return
+  await reportStore.exportPDF('report-detail')
+}
+
+const romChartData = computed(() => ({
+  labels: (reportData.value?.chart_data.rom_progress ?? []).map((p) =>
+    new Date(p.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+  ),
+  datasets: [
+    {
+      label: 'ROM (degrees)',
+      data: (reportData.value?.chart_data.rom_progress ?? []).map((p) => p.value),
+      borderColor: '#0EA5E9',
+      backgroundColor: 'rgba(14,165,233,0.12)',
+      tension: 0.3,
+      fill: true,
+    },
+  ],
+}))
+
+const chartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: { legend: { display: false } },
 }
 
 onMounted(async () => {
@@ -291,170 +242,36 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* AppCard hardcodes bg-white/border-slate-200/shadow-md with no
-   dark-mode handling (same gap fixed in DashboardView.vue). */
-.dash-card {
-  background: var(--bg-card);
-  border-color: var(--border);
-  box-shadow: var(--shadow-card);
-}
-
-.page {
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap);
-}
-
 .page-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: var(--space-2);
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-8);
 }
-
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--gap);
-}
-
-.selector-header {
-  margin-bottom: var(--space-3);
-}
-
-.selector-row {
-  display: flex;
-  gap: var(--space-2);
-  align-items: center;
-}
-
-.table-select {
-  height: 36px;
-  padding: 0 var(--space-3);
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
-  font-size: var(--font-size-sm);
-  font-family: inherit;
-  outline: none;
-}
-
-.table-select:focus {
-  border-color: var(--border-focus);
-}
-
-/* .btn-primary removed: "Generate Report" now renders through
-   AppButton's own native primary variant. .btn-secondary is kept --
-   it's a primary-outline look (white bg, primary border/text), not
-   AppButton's neutral bordered-card secondary, so no native match. */
-.btn-secondary {
-  background: white;
-  color: var(--primary);
-  border: 1px solid var(--primary);
+.report-card {
+  text-align: left;
   cursor: pointer;
-  height: 36px;
-  padding: 0 var(--space-5);
-  border-radius: var(--radius-sm);
-  font: inherit;
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  transition: all 0.15s;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  border: 1px solid var(--color-slate-200);
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
-
-.btn-secondary:hover {
-  background: var(--primary-light);
+.report-card:hover:not(:disabled) {
+  border-color: var(--color-slate-300);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
 }
-
-.btn-secondary:disabled {
-  opacity: 0.5;
+.report-card:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
 }
-
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-12) var(--space-4);
-  background: var(--bg-card);
-  border: 1px solid var(--border);
+.report-card__icon {
+  width: 40px;
+  height: 40px;
   border-radius: var(--radius-lg);
-}
-
-.report-grid {
   display: flex;
-  flex-direction: column;
-  gap: var(--gap);
-}
-
-.info-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-4);
-}
-
-.info-item {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.info-label {
-  font-size: var(--font-size-xs);
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
-.info-value {
-  font-size: var(--font-size-sm);
-  color: var(--text-primary);
-}
-
-.chart-placeholder {
-  display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 200px;
-  background: var(--bg-hover);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-}
-
-.activity-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.activity-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.activity-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
   flex-shrink: 0;
-}
-
-.activity-dot.success {
-  background: var(--success);
-}
-
-.activity-dot.info {
-  background: var(--info);
-}
-
-.activity-dot.warning {
-  background: var(--warning);
 }
 </style>
