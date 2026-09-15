@@ -43,7 +43,18 @@
               <div class="avatar-large">
                 {{ initials }}
               </div>
-              <AppButton variant="secondary" class="btn-ghost" style="margin-top: var(--space-3)" @click="changePhoto">Change Photo</AppButton>
+              <AppButton
+                variant="secondary"
+                class="btn-ghost"
+                style="margin-top: var(--space-3)"
+                disabled
+                title="Photo upload isn't available yet"
+              >
+                Change Photo
+              </AppButton>
+              <p class="caption" style="color: var(--text-muted); margin-top: var(--space-2); text-align: center">
+                Not available yet
+              </p>
             </div>
 
             <!-- Form Fields -->
@@ -113,9 +124,10 @@
             Add an extra layer of security to your account
           </p>
 
-          <AppButton variant="secondary" class="btn-ghost" :disabled="isSaving" @click="enable2FA">
-            {{ isSaving ? 'Enabling...' : 'Enable 2FA' }}
+          <AppButton variant="secondary" class="btn-ghost" disabled title="Two-factor authentication isn't available yet">
+            Enable 2FA
           </AppButton>
+          <p class="caption" style="color: var(--text-muted); margin-top: var(--space-2)">Not available yet</p>
         </AppCard>
       </div>
 
@@ -259,15 +271,15 @@ const securityForm = ref({
 })
 
 const notificationForm = ref({
-  patientAlerts: true,
-  emailNotifications: true,
-  sessionReminders: true,
+  patientAlerts: therapistProfile.value?.in_app_alerts ?? true,
+  emailNotifications: therapistProfile.value?.email_alerts ?? true,
+  sessionReminders: therapistProfile.value?.session_reminders_enabled ?? true,
 })
 
 const preferencesForm = ref({
   theme: theme.value,
-  dateFormat: 'MM/DD/YYYY',
-  timeFormat: '12h',
+  dateFormat: therapistProfile.value?.date_format || 'MM/DD/YYYY',
+  timeFormat: therapistProfile.value?.time_format || '12h',
 })
 
 // Watch for theme changes and apply immediately
@@ -302,7 +314,7 @@ const saveProfile = async () => {
     })
 
     if (!result.success) {
-      throw new Error(result.error)
+      throw new Error(result.error ?? 'Unknown error')
     }
 
     showSuccess('Profile updated successfully!')
@@ -340,7 +352,7 @@ const updatePassword = async () => {
     )
 
     if (!result.success) {
-      throw new Error(result.error)
+      throw new Error(result.error ?? 'Unknown error')
     }
 
     // Clear form
@@ -359,37 +371,20 @@ const updatePassword = async () => {
   }
 }
 
-const enable2FA = async () => {
-  isSaving.value = true
-
-  try {
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 800))
-
-    // In a real app, this would call:
-    // await authStore.enable2FA()
-
-    console.log('2FA enabled')
-    showSuccess('Two-factor authentication has been enabled!')
-  } catch (error) {
-    console.error('Error enabling 2FA:', error)
-    alert('Failed to enable 2FA. Please try again.')
-  } finally {
-    isSaving.value = false
-  }
-}
-
 const saveNotifications = async () => {
   isSaving.value = true
 
   try {
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 800))
+    const result = await authStore.updateProfile({
+      email_alerts: notificationForm.value.emailNotifications,
+      in_app_alerts: notificationForm.value.patientAlerts,
+      session_reminders_enabled: notificationForm.value.sessionReminders,
+    })
 
-    // In a real app, this would call:
-    // await authStore.updateNotificationPreferences(notificationForm.value)
+    if (!result.success) {
+      throw new Error(result.error ?? 'Unknown error')
+    }
 
-    console.log('Notification preferences updated:', notificationForm.value)
     showSuccess('Notification preferences saved!')
   } catch (error) {
     console.error('Error updating notifications:', error)
@@ -403,14 +398,18 @@ const savePreferences = async () => {
   isSaving.value = true
 
   try {
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 800))
+    // Theme applies live via the watch above and is its own real (if
+    // localStorage-only, not therapist_profiles-backed) persistence --
+    // only date/time format go through the profile update here.
+    const result = await authStore.updateProfile({
+      date_format: preferencesForm.value.dateFormat,
+      time_format: preferencesForm.value.timeFormat,
+    })
 
-    // Theme is already applied via the watch, so we just need to save other preferences
-    // In a real app, this would call:
-    // await authStore.updatePreferences(preferencesForm.value)
+    if (!result.success) {
+      throw new Error(result.error ?? 'Unknown error')
+    }
 
-    console.log('Preferences updated:', preferencesForm.value)
     showSuccess('Display preferences saved!')
   } catch (error) {
     console.error('Error updating preferences:', error)
@@ -418,11 +417,6 @@ const savePreferences = async () => {
   } finally {
     isSaving.value = false
   }
-}
-
-const changePhoto = () => {
-  // In a real app, this would open a file picker and handle upload
-  alert('Photo upload functionality would be implemented here')
 }
 
 const resetProfileForm = () => {

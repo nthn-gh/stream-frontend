@@ -7,7 +7,16 @@ import type { TherapistProfile, TherapistProfileUpdate, User } from '@/types'
 
 type AllowedProfileUpdates = Pick<
   TherapistProfileUpdate,
-  'avatar_url' | 'clinic_name' | 'email_alerts' | 'in_app_alerts' | 'license_number' | 'name' | 'weekly_summary'
+  | 'avatar_url'
+  | 'clinic_name'
+  | 'date_format'
+  | 'email_alerts'
+  | 'in_app_alerts'
+  | 'license_number'
+  | 'name'
+  | 'session_reminders_enabled'
+  | 'time_format'
+  | 'weekly_summary'
 >
 
 function createIsolatedSupabaseClient() {

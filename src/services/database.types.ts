@@ -579,12 +579,15 @@ export type Database = {
           avatar_url: string | null
           clinic_name: string | null
           created_at: string | null
+          date_format: string
           email_alerts: boolean | null
           id: string
           in_app_alerts: boolean | null
           is_active: boolean
           license_number: string | null
           name: string
+          session_reminders_enabled: boolean
+          time_format: string
           updated_at: string | null
           user_id: string
           weekly_summary: boolean | null
@@ -593,12 +596,15 @@ export type Database = {
           avatar_url?: string | null
           clinic_name?: string | null
           created_at?: string | null
+          date_format?: string
           email_alerts?: boolean | null
           id?: string
           in_app_alerts?: boolean | null
           is_active?: boolean
           license_number?: string | null
           name: string
+          session_reminders_enabled?: boolean
+          time_format?: string
           updated_at?: string | null
           user_id: string
           weekly_summary?: boolean | null
@@ -607,12 +613,15 @@ export type Database = {
           avatar_url?: string | null
           clinic_name?: string | null
           created_at?: string | null
+          date_format?: string
           email_alerts?: boolean | null
           id?: string
           in_app_alerts?: boolean | null
           is_active?: boolean
           license_number?: string | null
           name?: string
+          session_reminders_enabled?: boolean
+          time_format?: string
           updated_at?: string | null
           user_id?: string
           weekly_summary?: boolean | null
