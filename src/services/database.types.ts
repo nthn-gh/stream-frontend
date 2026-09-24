@@ -243,15 +243,23 @@ export type Database = {
           current_streak: number | null
           email: string
           enrolled_date: string | null
+          haptic_feedback_enabled: boolean
+          high_contrast_enabled: boolean
           id: string
+          large_text_enabled: boolean
           last_session: string | null
           name: string
+          reminders_enabled: boolean
+          session_summaries_enabled: boolean
           status: string | null
           stroke_type: string | null
           therapist_id: string | null
+          therapist_messages_enabled: boolean
           total_sessions: number | null
           updated_at: string | null
           user_id: string | null
+          voice_guidance_enabled: boolean
+          weekly_reports_enabled: boolean
         }
         Insert: {
           adherence_rate?: number | null
@@ -264,15 +272,23 @@ export type Database = {
           current_streak?: number | null
           email: string
           enrolled_date?: string | null
+          haptic_feedback_enabled?: boolean
+          high_contrast_enabled?: boolean
           id?: string
+          large_text_enabled?: boolean
           last_session?: string | null
           name: string
+          reminders_enabled?: boolean
+          session_summaries_enabled?: boolean
           status?: string | null
           stroke_type?: string | null
           therapist_id?: string | null
+          therapist_messages_enabled?: boolean
           total_sessions?: number | null
           updated_at?: string | null
           user_id?: string | null
+          voice_guidance_enabled?: boolean
+          weekly_reports_enabled?: boolean
         }
         Update: {
           adherence_rate?: number | null
@@ -285,15 +301,23 @@ export type Database = {
           current_streak?: number | null
           email?: string
           enrolled_date?: string | null
+          haptic_feedback_enabled?: boolean
+          high_contrast_enabled?: boolean
           id?: string
+          large_text_enabled?: boolean
           last_session?: string | null
           name?: string
+          reminders_enabled?: boolean
+          session_summaries_enabled?: boolean
           status?: string | null
           stroke_type?: string | null
           therapist_id?: string | null
+          therapist_messages_enabled?: boolean
           total_sessions?: number | null
           updated_at?: string | null
           user_id?: string | null
+          voice_guidance_enabled?: boolean
+          weekly_reports_enabled?: boolean
         }
         Relationships: [
           {
