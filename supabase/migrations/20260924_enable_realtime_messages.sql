@@ -1,0 +1,43 @@
+-- ============================================================
+-- Enable Realtime replication for public.messages
+--
+-- Context: the STREAM Android app's MessageRepository.kt already
+-- imported postgresChangeFlow/Realtime but never used them -- the
+-- patient messaging screen only ever updated via a one-shot re-fetch,
+-- so a message from the therapist didn't appear until the screen was
+-- manually reopened. Wiring up a real postgres_changes subscription
+-- (see the STREAM commit that wires MessageRepository/MessagesViewModel)
+-- would still receive nothing without this: Realtime only broadcasts
+-- changes for tables explicitly added to the `supabase_realtime`
+-- publication, and confirmed live via pg_publication_tables that this
+-- publication had ZERO tables in it -- not just messages, nothing in
+-- this project had Realtime enabled yet.
+--
+-- This is a one-time project-level config change, not a schema
+-- change -- no columns, constraints, or data are touched. Captured as
+-- a migration purely so a fresh clone of this project (via
+-- `supabase db push` against a new environment) reproduces working
+-- Realtime instead of silently missing it.
+--
+-- RLS was already confirmed compatible before this was applied:
+-- messages' SELECT policy (sender_id = auth.uid() OR
+-- receiver_id = auth.uid()) is evaluated by Realtime the same way it
+-- is for a normal query, using the auth.uid() from the client's own
+-- JWT on the realtime socket -- no policy change was needed here.
+-- ============================================================
+
+ALTER PUBLICATION supabase_realtime ADD TABLE public.messages;
+
+-- ============================================================
+-- POST-FLIGHT -- run after applying:
+--
+--   -- expect exactly one row: (public, messages)
+--   SELECT schemaname, tablename FROM pg_publication_tables
+--   WHERE pubname = 'supabase_realtime';
+-- ============================================================
+
+-- ============================================================
+-- ROLLBACK: ALTER PUBLICATION supabase_realtime DROP TABLE
+-- public.messages; -- safe, reverts to no live message push, same as
+-- before this migration. No data at risk either way.
+-- ============================================================
