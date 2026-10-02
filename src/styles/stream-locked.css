@@ -38,7 +38,7 @@
   --color-slate-100: #F1F5F9;
   --color-slate-200: #E2E8F0;
   --color-slate-300: #CBD5E1;
-  --color-slate-400: #94A3B8;
+  --color-slate-400: #5D718C; /* tertiary text tier: deliberately NOT Tailwind slate-400 (#94A3B8, 2.3-2.6:1); >=4.5:1 on white/slate-50/page/input */
   --color-slate-600: #475569;
   --color-slate-700: #334155;
   --color-slate-900: #0F172A;
