@@ -27,7 +27,7 @@
   --purple-dark: #7C3AED;
   --purple-bg: #E1D5FE;
 
-  /* Flat aliases matching tailwind.config.ts's success/warning/error --
+  /* Flat aliases for the semantic success/warning/error colors --
      needed so var(--error)/var(--warning)/var(--success) resolve;
      previously only the --status-*-bg/-text pairs and gradients existed. */
   --error: #EF4444;
@@ -76,37 +76,10 @@
   --shadow-elevated: 0 4px 16px rgba(15,23,42,0.10);
   --shadow-sidebar: 2px 0 8px rgba(15,23,42,0.06);
 
-  /* SHAPE */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-pill: 9999px;
-
-  /* SPACING (legacy scale -- kept as-is; BaseCard.vue/DashboardView.vue
-     still consume these exact values. Superseded by the true 8px-grid
-     scale below; migrate consumers over in a later step, then remove
-     this block. */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-8: 32px;
-  --space-10: 40px;
-  --space-12: 48px;
-
-  /* SPACING (Section 6 -- true 8px grid, canonical going forward).
-     Named by literal pixel value to avoid any collision with the
-     legacy --space-N index-based names above. */
-  --space-half: 4px;
-  --space-8px: 8px;
-  --space-16px: 16px;
-  --space-24px: 24px;
-  --space-32px: 32px;
-  --space-40px: 40px;
-  --space-48px: 48px;
-  --space-64px: 64px;
+  /* SHAPE / SPACING: the legacy --radius-sm/md/lg/pill and --space-* /
+     --space-<px> scales were removed. Radius and spacing now come only from
+     the canonical spec tokens in styles/stream-locked.css (--radius-*,
+     --spacing-*), so there is exactly one definition of each name. */
 
   /* FONT SIZE SCALE (Section 6) */
   --font-size-xs: 12px;
@@ -119,14 +92,17 @@
   --font-size-4xl: 36px;
   --font-size-5xl: 48px;
 
-  --padding-page: 28px;
-  --padding-card: 20px;
-  --gap: 16px;
+  /* LAYOUT -- spec density (design/stream-portal.html): page padding 32px,
+     header 72px. Card padding and grid gap are the spec's 24px
+     (--spacing-6) and are used directly; the old --padding-card/--gap
+     tokens were removed. Sidebar width stays 224px (deferred to the
+     responsive-layout pass). */
+  --padding-page: var(--spacing-8);
 
   /* SIDEBAR */
   --sidebar-width: 224px;
   --sidebar-collapsed: 64px;
-  --header-height: 60px;
+  --header-height: 72px;
 }
 
 /* DARK MODE */
@@ -200,16 +176,15 @@
   --color-stream-blue-light: #E0F2FE;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+/* No global `* { margin:0; padding:0 }` reset here on purpose: Tailwind's own
+   preflight (@import "tailwindcss", @layer base) already resets margin,
+   padding, border and box-sizing. An unlayered `*` rule beats every
+   @layer utilities class and silently zeroed all p-*/m-*/space-* utilities. */
 
 body {
   font-family: 'DM Sans', system-ui, sans-serif;
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: 16px;
+  line-height: 1.5;
   color: var(--text-primary);
   background: var(--bg-app);
   min-height: 100vh;
@@ -219,63 +194,65 @@ body {
 *:focus-visible {
   outline: 2px solid var(--border-focus);
   outline-offset: 2px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
 }
 
-/* Typography scale */
+/* Typography scale -- the legacy class names, now mapped onto the locked spec
+   scale (design/stream-portal.html Section 6.2; same values as the .t-* classes
+   in styles/stream-locked.css). */
 .h1 {
-  font-size: 24px;
+  font-size: 36px;
   font-weight: 700;
-  line-height: 1.25;
-  letter-spacing: -0.02em;
+  line-height: 47px;
+  letter-spacing: -0.01em;
 }
 
 .h2 {
-  font-size: 20px;
+  font-size: 30px;
   font-weight: 700;
-  line-height: 1.3;
+  line-height: 42px;
   letter-spacing: -0.01em;
 }
 
 .h3 {
-  font-size: 16px;
+  font-size: 24px;
   font-weight: 600;
-  line-height: 1.4;
+  line-height: 34px;
 }
 
 .h4 {
-  font-size: 14px;
+  font-size: 20px;
   font-weight: 600;
-  line-height: 1.4;
+  line-height: 30px;
 }
 
 .body-lg {
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 400;
-  line-height: 1.6;
+  line-height: 27px;
 }
 
 .body {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
-  line-height: 1.6;
+  line-height: 24px;
 }
 
 .label {
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 21px;
 }
 
 .caption {
   font-size: 12px;
   font-weight: 400;
-  line-height: 1.5;
+  line-height: 17px;
 }
 
 .mono {
   font-family: 'DM Mono', monospace;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 /* Utility classes */

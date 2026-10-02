@@ -125,7 +125,7 @@ onBeforeUnmount(() => {
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
-  gap: var(--space-6);
+  gap: var(--spacing-6);
   padding: 0 var(--padding-page);
   z-index: 100;
   backdrop-filter: blur(8px);
@@ -146,12 +146,12 @@ onBeforeUnmount(() => {
 .search-bar {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--spacing-2);
   background: var(--primary-light);
   border: 1px solid var(--border);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-full);
   height: 38px;
-  padding: 0 var(--space-4);
+  padding: 0 var(--spacing-4);
 }
 .search-bar input {
   flex: 1;
@@ -172,7 +172,7 @@ onBeforeUnmount(() => {
 .header-right {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--spacing-3);
   margin-left: auto;
 }
 .header-clock {
@@ -184,7 +184,7 @@ onBeforeUnmount(() => {
 }
 
 .header-date {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-muted);
 }
 
@@ -200,7 +200,7 @@ onBeforeUnmount(() => {
   color: var(--text-secondary);
   width: 40px;
   height: 40px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -224,7 +224,7 @@ onBeforeUnmount(() => {
 .header-avatar {
   width: 36px;
   height: 36px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-full);
   background: var(--gradient-primary);
   color: white;
   font-size: 12px;

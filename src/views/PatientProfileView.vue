@@ -698,7 +698,7 @@ onMounted(async () => {
 .page {
   display: flex;
   flex-direction: column;
-  gap: var(--gap);
+  gap: var(--spacing-6);
 }
 
 .page-header,
@@ -780,7 +780,7 @@ onMounted(async () => {
 
 .stat-card {
   min-width: 120px;
-  padding: var(--space-16px) var(--space-16px);
+  padding: var(--spacing-4) var(--spacing-4);
   border-radius: 16px;
   background: var(--bg-hover);
 }
@@ -793,7 +793,7 @@ onMounted(async () => {
 }
 
 .stat-value {
-  margin-top: var(--space-8px);
+  margin-top: var(--spacing-2);
   color: var(--text-primary);
   font-size: var(--font-size-2xl);
   font-weight: 700;
@@ -827,21 +827,21 @@ onMounted(async () => {
 .overview-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--gap);
+  gap: var(--spacing-6);
 }
 
 .detail-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
-  margin-top: var(--space-16px);
+  margin-top: var(--spacing-4);
 }
 
 .detail-item {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: var(--space-16px) var(--space-16px);
+  padding: var(--spacing-4) var(--spacing-4);
   border: 1px solid var(--border);
   border-radius: 16px;
 }
@@ -863,7 +863,7 @@ onMounted(async () => {
 
 .chart-wrap {
   height: 280px;
-  margin-top: var(--space-16px);
+  margin-top: var(--spacing-4);
 }
 
 .chart-wrap--tall {
@@ -876,14 +876,14 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  margin-top: var(--space-16px);
+  margin-top: var(--spacing-4);
 }
 
 .list-card,
 .session-card,
 .plan-row,
 .log-row {
-  padding: var(--space-16px);
+  padding: var(--spacing-4);
   border-radius: 18px;
   border: 1px solid var(--border);
   background: var(--bg-card);
@@ -911,7 +911,7 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   gap: 1px;
-  margin-top: var(--space-16px);
+  margin-top: var(--spacing-4);
   border: 1px solid var(--border);
   border-radius: 16px;
   overflow: hidden;
@@ -921,7 +921,7 @@ onMounted(async () => {
   display: grid;
   grid-template-columns: 1.3fr repeat(4, 1fr);
   gap: 12px;
-  padding: var(--space-16px) var(--space-16px);
+  padding: var(--spacing-4) var(--spacing-4);
   background: var(--bg-card);
 }
 
@@ -935,8 +935,8 @@ onMounted(async () => {
 }
 
 .empty-card {
-  margin-top: var(--space-16px);
-  padding: var(--space-16px);
+  margin-top: var(--spacing-4);
+  padding: var(--spacing-4);
   border: 1px dashed var(--border);
   border-radius: 16px;
   text-align: center;
@@ -966,11 +966,11 @@ onMounted(async () => {
 
 .form-input {
   height: 44px;
-  padding: 0 var(--space-16px);
+  padding: 0 var(--spacing-4);
 }
 
 .form-textarea {
-  padding: var(--space-16px) var(--space-16px);
+  padding: var(--spacing-4) var(--spacing-4);
   resize: vertical;
 }
 
@@ -995,7 +995,7 @@ onMounted(async () => {
    CI deploy on every push since commit 04d3739. Never write that two-
    character sequence adjacently inside a CSS comment again. */
 .status-message {
-  padding: var(--space-16px) var(--space-16px);
+  padding: var(--spacing-4) var(--spacing-4);
   border-radius: 12px;
   font-size: var(--font-size-sm);
 }

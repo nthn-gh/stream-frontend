@@ -11,7 +11,7 @@
     <div class="page-header">
       <div>
         <h1 class="h2">Settings</h1>
-        <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-top: var(--space-half)">
+        <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-top: var(--spacing-1)">
           Manage your profile and preferences
         </p>
       </div>
@@ -35,7 +35,7 @@
       <!-- Profile Tab -->
       <div v-if="activeTab === 'profile'">
         <AppCard class="dash-card">
-          <h3 class="h3" style="margin-bottom: var(--space-6)">Profile Information</h3>
+          <h3 class="h3" style="margin-bottom: var(--spacing-6)">Profile Information</h3>
 
           <div class="profile-layout">
             <!-- Avatar -->
@@ -46,13 +46,13 @@
               <AppButton
                 variant="secondary"
                 class="btn-ghost"
-                style="margin-top: var(--space-3)"
+                style="margin-top: var(--spacing-3)"
                 disabled
                 title="Photo upload isn't available yet"
               >
                 Change Photo
               </AppButton>
-              <p class="caption" style="color: var(--text-muted); margin-top: var(--space-2); text-align: center">
+              <p class="caption" style="color: var(--text-muted); margin-top: var(--spacing-2); text-align: center">
                 Not available yet
               </p>
             </div>
@@ -91,7 +91,7 @@
       <!-- Security Tab -->
       <div v-if="activeTab === 'security'" class="settings-section">
         <AppCard class="dash-card">
-          <h3 class="h3" style="margin-bottom: var(--space-4)">Change Password</h3>
+          <h3 class="h3" style="margin-bottom: var(--spacing-4)">Change Password</h3>
 
           <div class="form-container">
             <div class="form-group">
@@ -119,28 +119,28 @@
         </AppCard>
 
         <AppCard class="dash-card">
-          <h3 class="h3" style="margin-bottom: var(--space-2)">Two-Factor Authentication</h3>
-          <p class="caption" style="color: var(--text-muted); margin-bottom: var(--space-4)">
+          <h3 class="h3" style="margin-bottom: var(--spacing-2)">Two-Factor Authentication</h3>
+          <p class="caption" style="color: var(--text-muted); margin-bottom: var(--spacing-4)">
             Add an extra layer of security to your account
           </p>
 
           <AppButton variant="secondary" class="btn-ghost" disabled title="Two-factor authentication isn't available yet">
             Enable 2FA
           </AppButton>
-          <p class="caption" style="color: var(--text-muted); margin-top: var(--space-2)">Not available yet</p>
+          <p class="caption" style="color: var(--text-muted); margin-top: var(--spacing-2)">Not available yet</p>
         </AppCard>
       </div>
 
       <!-- Notifications Tab -->
       <div v-if="activeTab === 'notifications'">
         <AppCard class="dash-card">
-          <h3 class="h3" style="margin-bottom: var(--space-6)">Notification Preferences</h3>
+          <h3 class="h3" style="margin-bottom: var(--spacing-6)">Notification Preferences</h3>
 
           <div class="notification-list">
             <div class="notification-item">
               <div class="notification-info">
                 <p class="h4">Patient Alerts</p>
-                <p class="caption" style="color: var(--text-muted); margin-top: var(--space-half)">
+                <p class="caption" style="color: var(--text-muted); margin-top: var(--spacing-1)">
                   Get notified when patients miss sessions or show low adherence
                 </p>
               </div>
@@ -153,7 +153,7 @@
             <div class="notification-item">
               <div class="notification-info">
                 <p class="h4">Email Notifications</p>
-                <p class="caption" style="color: var(--text-muted); margin-top: var(--space-half)">
+                <p class="caption" style="color: var(--text-muted); margin-top: var(--spacing-1)">
                   Receive email updates about your practice
                 </p>
               </div>
@@ -166,7 +166,7 @@
             <div class="notification-item">
               <div class="notification-info">
                 <p class="h4">Session Reminders</p>
-                <p class="caption" style="color: var(--text-muted); margin-top: var(--space-half)">
+                <p class="caption" style="color: var(--text-muted); margin-top: var(--spacing-1)">
                   Get reminders about upcoming patient sessions
                 </p>
               </div>
@@ -180,7 +180,7 @@
           <div
             class="form-actions"
             style="
-              margin-top: var(--space-6);
+              margin-top: var(--spacing-6);
               border-top: 1px solid var(--border);
             "
           >
@@ -194,7 +194,7 @@
       <!-- Preferences Tab -->
       <div v-if="activeTab === 'preferences'">
         <AppCard class="dash-card">
-          <h3 class="h3" style="margin-bottom: var(--space-4)">Display Preferences</h3>
+          <h3 class="h3" style="margin-bottom: var(--spacing-4)">Display Preferences</h3>
 
           <div class="form-container">
             <div class="form-group">
@@ -448,25 +448,25 @@ const resetSecurityForm = () => {
 .page {
   display: flex;
   flex-direction: column;
-  gap: var(--gap);
+  gap: var(--spacing-6);
 }
 
 .page-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--spacing-2);
 }
 
 .settings-tabs {
   display: flex;
-  gap: var(--space-2);
+  gap: var(--spacing-2);
   border-bottom: 2px solid var(--border);
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--spacing-4);
 }
 
 .tab-button {
-  padding: var(--space-3) var(--space-4);
+  padding: var(--spacing-3) var(--spacing-4);
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
@@ -494,13 +494,13 @@ const resetSecurityForm = () => {
 .settings-section {
   display: flex;
   flex-direction: column;
-  gap: var(--gap);
+  gap: var(--spacing-6);
 }
 
 /* Profile Layout */
 .profile-layout {
   display: flex;
-  gap: var(--space-8);
+  gap: var(--spacing-8);
 }
 
 .avatar-section {
@@ -513,7 +513,7 @@ const resetSecurityForm = () => {
 .avatar-large {
   width: 96px;
   height: 96px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   background: var(--primary-light);
   display: flex;
   align-items: center;
@@ -527,26 +527,26 @@ const resetSecurityForm = () => {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--spacing-5);
 }
 
 .form-container {
   max-width: 480px;
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--spacing-5);
 }
 
 .form-row {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: var(--gap);
+  gap: var(--spacing-6);
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--spacing-2);
 }
 
 .form-label {
@@ -558,10 +558,10 @@ const resetSecurityForm = () => {
 .form-input,
 .form-textarea {
   height: 40px;
-  padding: 0 var(--space-3);
+  padding: 0 var(--spacing-3);
   background: var(--bg-input);
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   color: var(--text-primary);
   font-size: var(--font-size-sm);
   font-family: inherit;
@@ -576,15 +576,15 @@ const resetSecurityForm = () => {
 
 .form-textarea {
   height: auto;
-  padding: var(--space-3);
+  padding: var(--spacing-3);
   resize: vertical;
 }
 
 .form-actions {
   display: flex;
   justify-content: flex-end;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-2);
 }
 
 /* .btn-primary removed: every "primary" action button in this file now
@@ -597,8 +597,8 @@ const resetSecurityForm = () => {
   border: 1px solid var(--border);
   cursor: pointer;
   height: 40px;
-  padding: 0 var(--space-4);
-  border-radius: var(--radius-sm);
+  padding: 0 var(--spacing-4);
+  border-radius: var(--radius-md);
   font: inherit;
   font-size: var(--font-size-sm);
   color: var(--text-secondary);
@@ -623,15 +623,15 @@ const resetSecurityForm = () => {
 .notification-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--spacing-5);
 }
 
 .notification-item {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: var(--space-4);
-  padding: var(--space-4) 0;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4) 0;
 }
 
 .notification-info {
@@ -661,7 +661,7 @@ const resetSecurityForm = () => {
   right: 0;
   bottom: 0;
   background-color: var(--border);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-full);
   transition: 0.3s;
 }
 
@@ -692,12 +692,12 @@ const resetSecurityForm = () => {
 /* Success Toast */
 .success-toast {
   position: fixed;
-  top: var(--space-24px);
-  right: var(--space-24px);
+  top: var(--spacing-6);
+  right: var(--spacing-6);
   background: var(--gradient-success);
   color: white;
-  padding: var(--space-3) var(--space-5);
-  border-radius: var(--radius-sm);
+  padding: var(--spacing-3) var(--spacing-5);
+  border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
   font-weight: 600;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);

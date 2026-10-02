@@ -44,19 +44,19 @@ const buttonClasses = computed(() => {
   const variants = {
     primary: 'app-button--primary text-white active:scale-[0.98] shadow-sm',
     secondary: 'app-button--secondary border',
-    destructive: 'bg-error text-white hover:bg-red-600 shadow-sm',
+    destructive: 'app-button--destructive text-white shadow-sm',
     icon: 'bg-transparent hover:bg-slate-100 text-slate-700'
   }
 
-  // Radius is a flat 12px (rounded-xl) across every button size per the
-  // locked spec (design/stream-portal.html .btn's border-radius:
-  // var(--radius-lg) = 12px, unconditioned on size) -- previously the
-  // small size dropped to 8px (rounded-lg), which was an unintentional
-  // one-off, not a spec size variant.
+  // Radius is a flat 12px (rounded-lg, i.e. spec --radius-lg) across every
+  // button size per the locked spec (design/stream-portal.html .btn's
+  // border-radius: var(--radius-lg) = 12px, unconditioned on size). Spec
+  // tokens are canonical now (stream-locked.css), so rounded-lg resolves to
+  // 12px; rounded-xl would be 16px.
   const sizes = {
-    small: props.variant === 'icon' ? 'w-9 h-9 rounded-xl' : 'h-9 px-4 text-sm rounded-xl',
-    medium: props.variant === 'icon' ? 'w-10 h-10 rounded-xl' : 'h-11 px-6 text-base rounded-xl',
-    large: props.variant === 'icon' ? 'w-12 h-12 rounded-xl' : 'h-13 px-8 text-lg rounded-xl'
+    small: props.variant === 'icon' ? 'w-9 h-9 rounded-lg' : 'h-9 px-4 text-sm rounded-lg',
+    medium: props.variant === 'icon' ? 'w-10 h-10 rounded-lg' : 'h-11 px-6 text-base rounded-lg',
+    large: props.variant === 'icon' ? 'w-12 h-12 rounded-lg' : 'h-13 px-8 text-lg rounded-lg'
   }
 
   return `${base} ${variants[props.variant]} ${sizes[props.size]}`
@@ -73,6 +73,15 @@ const buttonClasses = computed(() => {
 }
 .app-button--primary:hover:not(:disabled) {
   opacity: 0.9;
+}
+/* Destructive variant: driven by the --color-error / --color-error-hover
+   tokens (stream-locked.css), not Tailwind's bg-error -- that utility only
+   existed in the old tailwind.config.ts, which Tailwind v4 never loaded. */
+.app-button--destructive {
+  background: var(--color-error);
+}
+.app-button--destructive:hover:not(:disabled) {
+  background: var(--color-error-hover);
 }
 /* Secondary variant: same reasoning as primary above -- was
    bg-white/border-slate-200/text-slate-900 (no dark-mode handling at

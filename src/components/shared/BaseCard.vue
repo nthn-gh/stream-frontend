@@ -16,8 +16,8 @@ defineProps({
 <style scoped>
 .base-card {
   background: var(--bg-card);
-  border-radius: var(--radius-lg);
-  padding: var(--padding-card);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-6);
   box-shadow: var(--shadow-card);
   border: 1px solid rgba(226, 232, 240, 0.6);
 }

@@ -39,22 +39,22 @@ const fillColor = computed(() => {
 .adherence-wrap {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--spacing-2);
 }
 .adherence-track {
   flex: 1;
   height: 8px;
   background: var(--border);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-full);
   overflow: hidden;
 }
 .adherence-fill {
   height: 100%;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-full);
   transition: width 0.4s ease;
 }
 .adherence-label {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--text-secondary);
   white-space: nowrap;

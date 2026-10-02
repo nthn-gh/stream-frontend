@@ -71,7 +71,7 @@
               "
             >
               <AlertCircle :size="18" style="color: var(--warning); flex-shrink: 0; margin-top: 1px" />
-              <p style="font-size: 13px; color: var(--text-primary); line-height: 1.5">
+              <p style="font-size: 14px; color: var(--text-primary); line-height: 1.5">
                 <strong>Important:</strong> Patients created here must self-register in the STREAM Android app using the same email address to link their account.
               </p>
             </div>
@@ -204,7 +204,7 @@
                   background: var(--bg-input);
                   border-radius: 12px;
                   padding: 12px 20px;
-                  font-size: 15px;
+                  font-size: 16px;
                   font-weight: 600;
                   color: var(--text-primary);
                   margin-bottom: 12px;
@@ -227,7 +227,7 @@
               >
                 {{ successClaimCode }}
               </div>
-              <p style="font-size: 13px; color: var(--text-muted); line-height: 1.65">
+              <p style="font-size: 14px; color: var(--text-muted); line-height: 1.65">
                 They must register in the STREAM app using this exact email and enter this invite code to link their account.
               </p>
             </div>
@@ -510,7 +510,7 @@ const handleSubmit = async () => {
   width: 100%;
   height: 48px;
   padding: 0 16px;
-  font-size: 15px;
+  font-size: 16px;
   color: var(--text-primary);
   background: var(--bg-input);
   border: 2px solid transparent;
@@ -579,7 +579,7 @@ select.input-field {
 .btn-secondary {
   height: 44px;
   padding: 0 24px;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--text-primary);
   background: var(--bg-card);
@@ -602,7 +602,7 @@ select.input-field {
 .btn-primary {
   height: 44px;
   padding: 0 24px;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--text-on-primary);
   background: var(--primary);

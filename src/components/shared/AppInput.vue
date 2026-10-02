@@ -101,7 +101,7 @@ function handleInput(event: Event) {
   background: transparent;
   color: var(--text-primary);
   font: inherit;
-  font-size: 15px;
+  font-size: 16px;
   padding: 0 16px;
 }
 

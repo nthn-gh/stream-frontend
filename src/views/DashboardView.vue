@@ -12,7 +12,7 @@
     <div class="page-header">
       <div>
         <h1 class="h2">Good {{ timeOfDay }}, {{ therapistName }} 👋</h1>
-        <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-top: var(--space-half)">
+        <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-top: var(--spacing-1)">
           Here's what's happening with your patients today.
         </p>
       </div>
@@ -142,7 +142,7 @@
               <tr v-if="isLoading">
                 <td
                   colspan="6"
-                  style="text-align: center; padding: var(--space-8); color: var(--text-muted)"
+                  style="text-align: center; padding: var(--spacing-8); color: var(--text-muted)"
                 >
                   Loading patients...
                 </td>
@@ -150,7 +150,7 @@
               <tr v-else-if="paginatedPatients.length === 0">
                 <td
                   colspan="6"
-                  style="text-align: center; padding: var(--space-8); color: var(--text-muted)"
+                  style="text-align: center; padding: var(--spacing-8); color: var(--text-muted)"
                 >
                   No patients found
                 </td>
@@ -214,7 +214,7 @@
       <div class="dashboard-aside">
         <!-- Quick Actions -->
         <AppCard class="dash-card">
-          <h3 class="h4" style="margin-bottom: var(--space-3)">Quick Actions</h3>
+          <h3 class="h4" style="margin-bottom: var(--spacing-3)">Quick Actions</h3>
           <div class="quick-actions">
             <AppButton variant="secondary" class="quick-action-btn" @click="addPatient">+ Add New Patient</AppButton>
             <AppButton variant="secondary" class="quick-action-btn" @click="$router.push('/assign-exercise')">
@@ -240,7 +240,7 @@
               v-if="recentAlerts.length === 0"
               style="
                 text-align: center;
-                padding: var(--space-4);
+                padding: var(--spacing-4);
                 color: var(--text-muted);
                 font-size: var(--font-size-sm);
               "
@@ -262,13 +262,13 @@
 
         <!-- Today's Sessions -->
         <AppCard class="dash-card">
-          <h3 class="h4" style="margin-bottom: var(--space-3)">Today's Sessions</h3>
+          <h3 class="h4" style="margin-bottom: var(--spacing-3)">Today's Sessions</h3>
           <div class="session-list">
             <div
               v-if="todaySessions.length === 0"
               style="
                 text-align: center;
-                padding: var(--space-4);
+                padding: var(--spacing-4);
                 color: var(--text-muted);
                 font-size: var(--font-size-sm);
               "
@@ -288,7 +288,7 @@
 
         <!-- Adherence Overview -->
         <AppCard class="dash-card">
-          <h3 class="h4" style="margin-bottom: var(--space-3)">Patient Adherence Overview</h3>
+          <h3 class="h4" style="margin-bottom: var(--spacing-3)">Patient Adherence Overview</h3>
           <div class="adherence-stats">
             <div class="adherence-stat-row">
               <span class="caption" style="color: var(--text-secondary)"
@@ -525,23 +525,25 @@ onMounted(async () => {
 .dashboard {
   display: flex;
   flex-direction: column;
-  gap: var(--gap);
+  gap: var(--spacing-6);
 }
 .page-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--spacing-2);
 }
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--gap);
+  /* auto-fit instead of a fixed 4 columns: StatCard has min-width 200px, so a
+     hard repeat(4, 1fr) overflowed the content area below ~1128px viewport. */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-6);
 }
 .dashboard-body {
   display: grid;
   grid-template-columns: 1fr 280px;
-  gap: var(--gap);
+  gap: var(--spacing-6);
   align-items: start;
 }
 .dashboard-main {
@@ -550,7 +552,7 @@ onMounted(async () => {
 .dashboard-aside {
   display: flex;
   flex-direction: column;
-  gap: var(--gap);
+  gap: var(--spacing-6);
 }
 
 /* Table */
@@ -558,18 +560,18 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--spacing-4);
 }
 .table-controls {
   display: flex;
-  gap: var(--space-2);
+  gap: var(--spacing-2);
 }
 .table-search,
 .table-select {
   height: 36px;
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 0 var(--space-3);
+  border-radius: var(--radius-md);
+  padding: 0 var(--spacing-3);
   font: inherit;
   font-size: var(--font-size-sm);
   background: var(--bg-input);
@@ -594,12 +596,12 @@ onMounted(async () => {
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--text-muted);
-  padding: var(--space-2) var(--space-4);
+  padding: var(--spacing-2) var(--spacing-4);
   background: var(--bg-hover);
   border-bottom: 1px solid var(--border);
 }
 .data-table td {
-  padding: var(--space-3) var(--space-4);
+  padding: var(--spacing-3) var(--spacing-4);
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
 }
@@ -616,12 +618,12 @@ onMounted(async () => {
 .patient-cell {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--spacing-3);
 }
 .patient-avatar {
   width: 34px;
   height: 34px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-full);
   background: var(--gradient-primary);
   color: white;
   font-size: var(--font-size-xs);
@@ -634,7 +636,7 @@ onMounted(async () => {
 .patient-avatar-img {
   width: 34px;
   height: 34px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-full);
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -656,13 +658,13 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: var(--space-4);
-  margin-top: var(--space-4);
+  padding-top: var(--spacing-4);
+  margin-top: var(--spacing-4);
   border-top: 1px solid var(--border);
 }
 .pagination {
   display: flex;
-  gap: var(--space-2);
+  gap: var(--spacing-2);
 }
 
 /* Buttons */
@@ -678,8 +680,8 @@ onMounted(async () => {
   border: 1px solid var(--border);
   cursor: pointer;
   height: 32px;
-  padding: 0 var(--space-4);
-  border-radius: var(--radius-sm);
+  padding: 0 var(--spacing-4);
+  border-radius: var(--radius-md);
   font: inherit;
   font-size: var(--font-size-sm);
   color: var(--primary);
@@ -701,7 +703,7 @@ onMounted(async () => {
 .quick-actions {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--spacing-2);
 }
 .quick-action-btn {
   width: 100%;
@@ -711,8 +713,8 @@ onMounted(async () => {
   color: var(--primary);
   border: none;
   cursor: pointer;
-  border-radius: var(--radius-sm);
-  padding: 0 var(--space-4);
+  border-radius: var(--radius-md);
+  padding: 0 var(--spacing-4);
   font: inherit;
   font-size: var(--font-size-sm);
   font-weight: 600;
@@ -730,7 +732,7 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--spacing-3);
 }
 .text-link {
   font-size: var(--font-size-sm);
@@ -744,12 +746,12 @@ onMounted(async () => {
 .alert-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--spacing-2);
 }
 .alert-row {
   border-left: 3px solid;
-  padding: var(--space-2) var(--space-3);
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
   background: var(--bg-hover);
 }
 .alert-text {
@@ -760,25 +762,25 @@ onMounted(async () => {
 .alert-sub {
   font-size: var(--font-size-xs);
   color: var(--text-muted);
-  margin-top: var(--space-half);
+  margin-top: var(--spacing-1);
 }
 
 /* Sessions */
 .session-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--spacing-2);
 }
 .session-row {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-2) 0;
+  gap: var(--spacing-3);
+  padding: var(--spacing-2) 0;
 }
 .session-avatar {
   width: 32px;
   height: 32px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-full);
   background: var(--gradient-primary);
   color: white;
   font-size: var(--font-size-xs);
@@ -813,7 +815,7 @@ onMounted(async () => {
 .adherence-stats {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--spacing-2);
 }
 .adherence-stat-row {
   display: flex;

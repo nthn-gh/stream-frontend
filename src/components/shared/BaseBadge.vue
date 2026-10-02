@@ -20,7 +20,7 @@ defineProps({
   align-items: center;
   gap: 5px;
   padding: 3px 10px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-full);
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;

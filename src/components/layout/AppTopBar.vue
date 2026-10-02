@@ -12,7 +12,7 @@
           type="text"
           placeholder="Search patients..."
           class="w-full pl-10 pr-4 text-sm focus:outline-none"
-          style="height: 38px; background: var(--primary-light); border: 1px solid var(--border); border-radius: var(--radius-pill); color: var(--text-primary);"
+          style="height: 38px; background: var(--primary-light); border: 1px solid var(--border); border-radius: var(--radius-full); color: var(--text-primary);"
           @keyup.enter="handleSearch"
         />
       </div>
@@ -54,7 +54,7 @@
     <div
       v-if="showUserMenu"
       class="absolute right-6 py-2 z-[100]"
-      style="top: 60px; width: 176px; background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-elevated); border: 1px solid var(--border);"
+      style="top: 60px; width: 176px; background: var(--bg-card); border-radius: var(--radius-xl); box-shadow: var(--shadow-elevated); border: 1px solid var(--border);"
     >
       <router-link to="/settings" class="block px-4 py-2 text-sm" style="color: var(--text-secondary);" @mouseover="(e) => e.currentTarget.style.background = 'var(--bg-hover)'" @mouseleave="(e) => e.currentTarget.style.background = 'transparent'"
         >Settings</router-link

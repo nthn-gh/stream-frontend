@@ -12,7 +12,7 @@
     <div class="page-header">
       <div>
         <h1 class="h2">Patients</h1>
-        <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-top: var(--space-half);">Manage and monitor all your patients</p>
+        <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-top: var(--spacing-1);">Manage and monitor all your patients</p>
       </div>
       <div class="header-actions">
         <AppButton variant="secondary" class="btn-secondary btn-icon-gap" @click="showAddPatientModal = true">
@@ -62,7 +62,7 @@
       <!-- Empty State -->
       <div v-else-if="filteredPatients.length === 0" class="empty-state-inline">
         <Users :size="48" style="color: var(--text-muted);" />
-        <p style="color: var(--text-secondary); margin-top: var(--space-2);">No patients found</p>
+        <p style="color: var(--text-secondary); margin-top: var(--spacing-2);">No patients found</p>
       </div>
 
       <!-- Table -->
@@ -235,19 +235,19 @@ onMounted(async () => {
 .page {
   display: flex;
   flex-direction: column;
-  gap: var(--gap);
+  gap: var(--spacing-6);
 }
 
 .page-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--spacing-2);
 }
 
 .header-actions {
   display: flex;
-  gap: var(--space-2);
+  gap: var(--spacing-2);
 }
 
 /* .dash-card: AppCard hardcodes bg-white/border-slate-200/shadow-md
@@ -259,7 +259,7 @@ onMounted(async () => {
 }
 
 .btn-icon-gap {
-  gap: var(--space-2);
+  gap: var(--spacing-2);
 }
 
 /* .btn-primary removed: the header's "Assign Exercise" button now
@@ -273,15 +273,15 @@ onMounted(async () => {
   border: 1px solid var(--primary);
   cursor: pointer;
   height: 40px;
-  padding: 0 var(--space-5);
-  border-radius: var(--radius-sm);
+  padding: 0 var(--spacing-5);
+  border-radius: var(--radius-md);
   font: inherit;
   font-size: var(--font-size-sm);
   font-weight: 600;
   transition: all 0.15s;
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--spacing-2);
 }
 
 .btn-secondary:hover {
@@ -292,12 +292,12 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--spacing-4);
 }
 
 .table-controls {
   display: flex;
-  gap: var(--space-2);
+  gap: var(--spacing-2);
 }
 
 .search-input {
@@ -307,7 +307,7 @@ onMounted(async () => {
 
 .search-icon {
   position: absolute;
-  left: var(--space-3);
+  left: var(--spacing-3);
   top: 50%;
   transform: translateY(-50%);
   color: var(--text-muted);
@@ -317,10 +317,10 @@ onMounted(async () => {
 .search-input input {
   width: 100%;
   height: 36px;
-  padding: 0 var(--space-3) 0 calc(var(--space-3) * 2 + 16px);
+  padding: 0 var(--spacing-3) 0 calc(var(--spacing-3) * 2 + 16px);
   background: var(--bg-input);
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   color: var(--text-primary);
   font-size: var(--font-size-sm);
   outline: none;
@@ -332,10 +332,10 @@ onMounted(async () => {
 
 .table-select {
   height: 36px;
-  padding: 0 var(--space-3);
+  padding: 0 var(--spacing-3);
   background: var(--bg-input);
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   color: var(--text-primary);
   font-size: var(--font-size-sm);
   font-family: inherit;
@@ -368,7 +368,7 @@ onMounted(async () => {
 
 .empty-state-inline {
   text-align: center;
-  padding: var(--space-12) var(--space-4);
+  padding: var(--spacing-12) var(--spacing-4);
 }
 
 .data-table {
@@ -383,13 +383,13 @@ onMounted(async () => {
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--text-muted);
-  padding: var(--space-2) var(--space-4);
+  padding: var(--spacing-2) var(--spacing-4);
   background: var(--bg-hover);
   border-bottom: 1px solid var(--border);
 }
 
 .data-table td {
-  padding: var(--space-3) var(--space-4);
+  padding: var(--spacing-3) var(--spacing-4);
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
 }
@@ -410,13 +410,13 @@ onMounted(async () => {
 .patient-cell {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--spacing-3);
 }
 
 .patient-avatar {
   width: 34px;
   height: 34px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-full);
   background: var(--gradient-primary);
   color: white;
   font-size: var(--font-size-xs);
@@ -430,7 +430,7 @@ onMounted(async () => {
 .patient-avatar-img {
   width: 34px;
   height: 34px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-full);
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -456,8 +456,8 @@ onMounted(async () => {
   background: none;
   border: 1px solid var(--border);
   cursor: pointer;
-  padding: 0 var(--space-4);
-  border-radius: var(--radius-sm);
+  padding: 0 var(--spacing-4);
+  border-radius: var(--radius-md);
   font: inherit;
   font-size: var(--font-size-sm);
   color: var(--primary);
@@ -483,13 +483,13 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: var(--space-4);
-  margin-top: var(--space-4);
+  padding-top: var(--spacing-4);
+  margin-top: var(--spacing-4);
   border-top: 1px solid var(--border);
 }
 
 .pagination {
   display: flex;
-  gap: var(--space-2);
+  gap: var(--spacing-2);
 }
 </style>

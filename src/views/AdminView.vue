@@ -50,7 +50,7 @@
     <div class="page-header">
       <div>
         <h1 class="h2">Admin Panel</h1>
-        <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-top: var(--space-half);">Manage therapists and monitor platform activity</p>
+        <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-top: var(--spacing-1);">Manage therapists and monitor platform activity</p>
       </div>
       <div class="header-actions">
         <AppButton variant="primary" class="btn-icon-gap" @click="showAddModal = true">
@@ -133,7 +133,7 @@
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--text-muted)">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
         </svg>
-        <p style="color: var(--text-secondary); margin-top: var(--space-2)">No therapists found</p>
+        <p style="color: var(--text-secondary); margin-top: var(--spacing-2)">No therapists found</p>
       </div>
 
       <!-- Table -->
@@ -384,43 +384,43 @@ onMounted(async () => {
 }
 
 .btn-icon-gap {
-  gap: var(--space-2);
+  gap: var(--spacing-2);
 }
 
 .page {
   display: flex;
   flex-direction: column;
-  gap: var(--gap);
+  gap: var(--spacing-6);
 }
 
 .page-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--spacing-2);
 }
 
 .header-actions {
   display: flex;
-  gap: var(--space-2);
+  gap: var(--spacing-2);
 }
 
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--gap);
+  gap: var(--spacing-6);
 }
 
 .table-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--spacing-4);
 }
 
 .table-controls {
   display: flex;
-  gap: var(--space-2);
+  gap: var(--spacing-2);
 }
 
 .search-input {
@@ -430,7 +430,7 @@ onMounted(async () => {
 
 .search-icon {
   position: absolute;
-  left: var(--space-3);
+  left: var(--spacing-3);
   top: 50%;
   transform: translateY(-50%);
   color: var(--text-muted);
@@ -440,10 +440,10 @@ onMounted(async () => {
 .search-input input {
   width: 100%;
   height: 36px;
-  padding: 0 var(--space-3) 0 calc(var(--space-3) * 2 + 16px);
+  padding: 0 var(--spacing-3) 0 calc(var(--spacing-3) * 2 + 16px);
   background: var(--bg-input);
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   color: var(--text-primary);
   font-size: var(--font-size-sm);
   outline: none;
@@ -456,10 +456,10 @@ onMounted(async () => {
 
 .table-select {
   height: 36px;
-  padding: 0 var(--space-3);
+  padding: 0 var(--spacing-3);
   background: var(--bg-input);
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   color: var(--text-primary);
   font-size: var(--font-size-sm);
   font-family: inherit;
@@ -492,7 +492,7 @@ onMounted(async () => {
 
 .empty-state-inline {
   text-align: center;
-  padding: var(--space-12) var(--space-4);
+  padding: var(--spacing-12) var(--spacing-4);
 }
 
 .data-table {
@@ -507,13 +507,13 @@ onMounted(async () => {
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--text-muted);
-  padding: var(--space-2) var(--space-4);
+  padding: var(--spacing-2) var(--spacing-4);
   background: var(--bg-hover);
   border-bottom: 1px solid var(--border);
 }
 
 .data-table td {
-  padding: var(--space-3) var(--space-4);
+  padding: var(--spacing-3) var(--spacing-4);
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
 }
@@ -533,13 +533,13 @@ onMounted(async () => {
 .therapist-cell {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--spacing-3);
 }
 
 .therapist-avatar {
   width: 34px;
   height: 34px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-full);
   background: var(--gradient-primary);
   color: white;
   font-size: var(--font-size-xs);
@@ -563,7 +563,7 @@ onMounted(async () => {
 
 .action-buttons {
   display: flex;
-  gap: var(--space-2);
+  gap: var(--spacing-2);
   align-items: center;
 }
 
@@ -571,8 +571,8 @@ onMounted(async () => {
   background: none;
   border: 1px solid var(--border);
   cursor: pointer;
-  padding: 0 var(--space-4);
-  border-radius: var(--radius-sm);
+  padding: 0 var(--spacing-4);
+  border-radius: var(--radius-md);
   font: inherit;
   font-size: var(--font-size-sm);
   color: var(--primary);
@@ -589,8 +589,8 @@ onMounted(async () => {
   background: none;
   border: 1px solid var(--error);
   cursor: pointer;
-  padding: 0 var(--space-4);
-  border-radius: var(--radius-sm);
+  padding: 0 var(--spacing-4);
+  border-radius: var(--radius-md);
   font: inherit;
   font-size: var(--font-size-sm);
   color: var(--error);
@@ -606,8 +606,8 @@ onMounted(async () => {
   background: none;
   border: 1px solid var(--success);
   cursor: pointer;
-  padding: 0 var(--space-4);
-  border-radius: var(--radius-sm);
+  padding: 0 var(--spacing-4);
+  border-radius: var(--radius-md);
   font: inherit;
   font-size: var(--font-size-sm);
   color: var(--success);
@@ -634,14 +634,14 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: var(--space-4);
-  margin-top: var(--space-4);
+  padding-top: var(--spacing-4);
+  margin-top: var(--spacing-4);
   border-top: 1px solid var(--border);
 }
 
 .pagination {
   display: flex;
-  gap: var(--space-2);
+  gap: var(--spacing-2);
 }
 
 /* Edit Modal shared styles -- backdrop/card/header/close-button/body/
@@ -708,7 +708,7 @@ onMounted(async () => {
   background: rgba(239, 68, 68, 0.08);
   border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: 10px;
-  padding: var(--space-8px) var(--space-16px);
+  padding: var(--spacing-2) var(--spacing-4);
   font-size: var(--font-size-sm);
   color: var(--status-danger-text);
 }

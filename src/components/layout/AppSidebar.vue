@@ -32,7 +32,7 @@
         <span>Patients</span>
       </router-link>
 
-      <div class="nav-section-label" style="margin-top: var(--space-4)">MANAGEMENT</div>
+      <div class="nav-section-label" style="margin-top: var(--spacing-4)">MANAGEMENT</div>
       <router-link to="/assign-exercise" class="nav-item" active-class="nav-item--active">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M9 11l3 3L22 4"/>
@@ -67,7 +67,7 @@
       </router-link>
 
       <template v-if="user?.role === 'admin'">
-        <div class="nav-section-label" style="margin-top: var(--space-4)">ADMINISTRATION</div>
+        <div class="nav-section-label" style="margin-top: var(--spacing-4)">ADMINISTRATION</div>
         <router-link to="/admin" class="nav-item" active-class="nav-item--active">
           <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -77,7 +77,7 @@
         </router-link>
       </template>
 
-      <div class="nav-section-label" style="margin-top: var(--space-4)">SETTINGS</div>
+      <div class="nav-section-label" style="margin-top: var(--spacing-4)">SETTINGS</div>
       <router-link to="/settings" class="nav-item" active-class="nav-item--active">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="3"/>
@@ -167,8 +167,8 @@ const handleLogout = async () => {
 .sidebar-logo {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  padding: 0 var(--space-5);
+  gap: var(--spacing-3);
+  padding: 0 var(--spacing-5);
   height: var(--header-height);
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
@@ -176,7 +176,7 @@ const handleLogout = async () => {
 .logo-icon {
   width: 32px;
   height: 32px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   background: var(--gradient-primary);
   display: flex;
   align-items: center;
@@ -184,7 +184,7 @@ const handleLogout = async () => {
   flex-shrink: 0;
 }
 .logo-text {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   letter-spacing: 0.1em;
   color: var(--text-primary);
@@ -192,26 +192,26 @@ const handleLogout = async () => {
 .sidebar-nav {
   flex: 1;
   overflow-y: auto;
-  padding: var(--space-4) var(--space-3);
+  padding: var(--spacing-4) var(--spacing-3);
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 .nav-section-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.08em;
   color: var(--text-muted);
-  padding: var(--space-3) var(--space-3) var(--space-1);
+  padding: var(--spacing-3) var(--spacing-3) var(--spacing-1);
   text-transform: uppercase;
 }
 .nav-item {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--spacing-3);
   height: 44px;
-  padding: 0 var(--space-3);
-  border-radius: var(--radius-sm);
+  padding: 0 var(--spacing-3);
+  border-radius: var(--radius-md);
   text-decoration: none;
   color: var(--text-secondary);
   font-size: 14px;
@@ -236,11 +236,11 @@ const handleLogout = async () => {
   margin-left: auto;
   background: #EF4444;
   color: white;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   min-width: 20px;
   height: 20px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -249,15 +249,15 @@ const handleLogout = async () => {
 .sidebar-user {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-4) var(--space-4);
+  gap: var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-4);
   border-top: 1px solid var(--border);
   flex-shrink: 0;
 }
 .user-avatar {
   width: 36px;
   height: 36px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-full);
   background: var(--gradient-primary);
   color: white;
   font-size: 12px;
@@ -268,12 +268,12 @@ const handleLogout = async () => {
   flex-shrink: 0;
 }
 .user-name {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--text-primary);
 }
 .user-role {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-muted);
 }
 .user-info {
@@ -285,8 +285,8 @@ const handleLogout = async () => {
   border: none;
   cursor: pointer;
   color: var(--text-muted);
-  padding: var(--space-2);
-  border-radius: var(--radius-sm);
+  padding: var(--spacing-2);
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;

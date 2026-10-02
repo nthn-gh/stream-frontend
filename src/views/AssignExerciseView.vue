@@ -627,7 +627,7 @@ onMounted(async () => {
 .page {
   display: flex;
   flex-direction: column;
-  gap: var(--gap);
+  gap: var(--spacing-6);
 }
 
 .page-header {
@@ -650,20 +650,20 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-4);
+  gap: var(--spacing-4);
   flex-wrap: wrap;
 }
 
 .step-item {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--spacing-2);
 }
 
 .step-number {
   width: 40px;
   height: 40px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   background: var(--bg-hover);
   color: var(--text-muted);
   display: flex;
@@ -693,14 +693,14 @@ onMounted(async () => {
 }
 
 .section-header {
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--spacing-4);
 }
 
 .state-card,
 .empty-state {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--spacing-2);
   align-items: flex-start;
 }
 
@@ -717,7 +717,7 @@ onMounted(async () => {
 
 .search-icon {
   position: absolute;
-  left: var(--space-3);
+  left: var(--spacing-3);
   top: 50%;
   transform: translateY(-50%);
   color: var(--text-muted);
@@ -727,10 +727,10 @@ onMounted(async () => {
 .search-input input {
   width: 100%;
   height: 40px;
-  padding: 0 var(--space-3) 0 calc(var(--space-3) * 2 + 16px);
+  padding: 0 var(--spacing-3) 0 calc(var(--spacing-3) * 2 + 16px);
   background: var(--bg-input);
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   color: var(--text-primary);
   font-size: var(--font-size-sm);
   outline: none;
@@ -740,22 +740,22 @@ onMounted(async () => {
 .exercise-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: var(--gap);
-  margin-top: var(--space-4);
+  gap: var(--spacing-6);
+  margin-top: var(--spacing-4);
 }
 
 .patient-card,
 .exercise-card,
 .exercise-config-card {
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   background: var(--bg-card);
 }
 
 .patient-card {
   display: flex;
-  gap: var(--space-3);
-  padding: var(--space-4);
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
   cursor: pointer;
   text-align: left;
 }
@@ -769,7 +769,7 @@ onMounted(async () => {
 .patient-avatar {
   width: 48px;
   height: 48px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   background: var(--gradient-primary);
   color: white;
   display: flex;
@@ -797,9 +797,9 @@ onMounted(async () => {
 .selection-note,
 .selected-summary,
 .message-box {
-  margin-top: var(--space-4);
-  padding: var(--space-4);
-  border-radius: var(--radius-md);
+  margin-top: var(--spacing-4);
+  padding: var(--spacing-4);
+  border-radius: var(--radius-lg);
   border: 1px solid var(--border);
   background: var(--bg-hover);
 }
@@ -813,7 +813,7 @@ onMounted(async () => {
 .form-grid,
 .form-grid-small {
   display: grid;
-  gap: var(--gap);
+  gap: var(--spacing-6);
 }
 
 .filters-row {
@@ -822,7 +822,7 @@ onMounted(async () => {
 
 .form-grid {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--spacing-6);
 }
 
 .form-grid-small {
@@ -833,7 +833,7 @@ onMounted(async () => {
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--spacing-2);
 }
 
 .filter-label,
@@ -847,7 +847,7 @@ onMounted(async () => {
 .form-input,
 .form-textarea {
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   background: var(--bg-input);
   color: var(--text-primary);
   font-size: var(--font-size-sm);
@@ -858,46 +858,46 @@ onMounted(async () => {
 .table-select,
 .form-input {
   height: 40px;
-  padding: 0 var(--space-3);
+  padding: 0 var(--spacing-3);
 }
 
 .form-textarea {
-  padding: var(--space-3);
+  padding: var(--spacing-3);
   resize: vertical;
 }
 
 .exercise-card {
-  padding: var(--space-4);
+  padding: var(--spacing-4);
 }
 
 .exercise-header,
 .config-header {
   display: flex;
-  gap: var(--space-3);
+  gap: var(--spacing-3);
   justify-content: space-between;
 }
 
 .exercise-badges {
   display: flex;
-  gap: var(--space-2);
-  margin-top: var(--space-3);
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-3);
 }
 
 .selected-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-2);
 }
 
 .selected-tag {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
   background: var(--bg-input);
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
 }
 
 .tag-remove {
@@ -912,15 +912,15 @@ onMounted(async () => {
 .exercise-config-list {
   display: flex;
   flex-direction: column;
-  gap: var(--gap);
+  gap: var(--spacing-6);
 }
 
 .exercise-config-card {
-  padding: var(--space-4);
+  padding: var(--spacing-4);
 }
 
 .instructions-group {
-  margin-top: var(--space-3);
+  margin-top: var(--spacing-3);
 }
 
 .message-box.info {
@@ -935,18 +935,18 @@ onMounted(async () => {
 }
 
 .log-list {
-  margin: var(--space-2) 0 0 var(--space-4);
+  margin: var(--spacing-2) 0 0 var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: var(--spacing-1);
 }
 
 .step-actions,
 .success-actions {
   display: flex;
   justify-content: flex-end;
-  gap: var(--space-2);
-  margin-top: var(--space-4);
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-4);
 }
 
 /* .btn-primary removed: every "primary" action button in this file now
@@ -958,8 +958,8 @@ onMounted(async () => {
 .btn-secondary {
   cursor: pointer;
   height: 40px;
-  padding: 0 var(--space-5);
-  border-radius: var(--radius-sm);
+  padding: 0 var(--spacing-5);
+  border-radius: var(--radius-md);
   font: inherit;
   font-size: var(--font-size-sm);
   font-weight: 600;
@@ -976,23 +976,23 @@ onMounted(async () => {
 
 .success-state {
   text-align: center;
-  padding: var(--space-8) var(--space-4);
+  padding: var(--spacing-8) var(--spacing-4);
 }
 
 .success-icon {
   width: 80px;
   height: 80px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   background: var(--status-active-bg);
   color: var(--success);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto var(--space-4);
+  margin: 0 auto var(--spacing-4);
 }
 
 .success-details {
-  margin-top: var(--space-3);
+  margin-top: var(--spacing-3);
 }
 
 @media (max-width: 768px) {

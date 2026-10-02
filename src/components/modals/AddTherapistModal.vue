@@ -61,7 +61,7 @@
                   :type="showPassword ? 'text' : 'password'"
                   placeholder="Min. 8 characters"
                   :class="['input-field', { 'input-error': errors.password }]"
-                  style="padding-right: var(--space-48px)"
+                  style="padding-right: var(--spacing-12)"
                 />
                 <button type="button" class="eye-toggle" @click="showPassword = !showPassword">
                   <EyeOff v-if="showPassword" :size="18" />
@@ -254,19 +254,19 @@ async function handleSubmit() {
 .modal-body {
   display: flex;
   flex-direction: column;
-  gap: var(--space-16px);
+  gap: var(--spacing-4);
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-16px);
+  gap: var(--spacing-4);
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: var(--space-8px);
+  gap: var(--spacing-2);
 }
 
 .input-label {
@@ -317,14 +317,14 @@ async function handleSubmit() {
 
 .eye-toggle {
   position: absolute;
-  right: var(--space-16px);
+  right: var(--spacing-4);
   top: 50%;
   transform: translateY(-50%);
   background: transparent;
   border: none;
   color: var(--text-muted);
   cursor: pointer;
-  padding: var(--space-half);
+  padding: var(--spacing-1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -345,7 +345,7 @@ async function handleSubmit() {
   background: rgba(239, 68, 68, 0.08);
   border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: 10px;
-  padding: var(--space-8px) var(--space-16px);
+  padding: var(--spacing-2) var(--spacing-4);
   font-size: var(--font-size-sm);
   color: var(--status-danger-text);
 }
@@ -353,7 +353,7 @@ async function handleSubmit() {
 .success-body {
   align-items: center;
   text-align: center;
-  padding: var(--space-32px) var(--space-24px);
+  padding: var(--spacing-8) var(--spacing-6);
 }
 
 .success-icon-wrap {
@@ -383,18 +383,18 @@ async function handleSubmit() {
 .credentials-box {
   background: var(--bg-input);
   border-radius: 12px;
-  padding: var(--space-16px) var(--space-24px);
+  padding: var(--spacing-4) var(--spacing-6);
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: var(--space-8px);
+  gap: var(--spacing-2);
 }
 
 .credential-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-16px);
+  gap: var(--spacing-4);
 }
 
 .credential-label {
@@ -426,7 +426,7 @@ async function handleSubmit() {
    directly, no override needed. .btn-icon-gap replaces .btn-primary's
    gap: 8px for the spinner+label layout on the submit button. */
 .btn-icon-gap {
-  gap: var(--space-8px);
+  gap: var(--spacing-2);
 }
 
 .spinner-inline {

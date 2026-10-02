@@ -41,6 +41,7 @@
   --color-success: #10B981; --color-success-bg: #D1FAE5; --color-success-text: #065F46;
   --color-warning: #F59E0B; --color-warning-bg: #FEF3C7; --color-warning-text: #92400E;
   --color-error: #EF4444;   --color-error-bg: #FEE2E2;   --color-error-text: #991B1B;
+  --color-error-hover: #DC2626;
   --color-destructive: #D4183D;
   --color-info-bg: #DBEAFE; --color-info-text: #1E40AF;
 
@@ -102,7 +103,7 @@
 .sl-btn-secondary{ background:#fff; color:var(--color-slate-900); border:1px solid var(--color-slate-200); box-shadow:none; }
 .sl-btn-secondary:hover:not(:disabled){ background:var(--color-slate-50); }
 .sl-btn-destructive{ background:var(--color-error); color:#fff; }
-.sl-btn-destructive:hover:not(:disabled){ background:#DC2626; }
+.sl-btn-destructive:hover:not(:disabled){ background:var(--color-error-hover); }
 .sl-btn-sm{ height:36px; font-size:14px; padding:8px 16px; border-radius:var(--radius-md); }
 .sl-btn-icon{ width:40px; height:40px; padding:0; border-radius:var(--radius-lg); background:transparent; border:1px solid var(--color-slate-200); color:var(--color-slate-600); box-shadow:none; }
 .sl-btn-icon:hover:not(:disabled){ background:var(--color-slate-50); }

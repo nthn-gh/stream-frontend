@@ -18,7 +18,7 @@
       <div class="form-container">
         <div class="form-header">
           <h2 class="h1">Create Account</h2>
-          <p style="color: var(--text-muted); margin-top: var(--space-2);">Register as a therapist</p>
+          <p style="color: var(--text-muted); margin-top: var(--spacing-2);">Register as a therapist</p>
         </div>
         
         <form @submit.prevent="handleRegister" class="login-form">
@@ -240,7 +240,7 @@ const handleRegister = async () => {
   width: 50%;
   align-items: center;
   justify-content: center;
-  padding: var(--space-12);
+  padding: var(--spacing-12);
 }
 
 @media (min-width: 1024px) {
@@ -259,22 +259,20 @@ const handleRegister = async () => {
   height: 128px;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(8px);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto var(--space-8);
+  margin: 0 auto var(--spacing-8);
 }
 
 .brand-title {
-  /* 56px doesn't fit the defined scale (5xl=48/no 6xl exists) and is
-     a one-off -- confirmed via a full grep of views/components, no
-     other font-size in the app exceeds 32px. Direct value instead of
-     forcing it onto 5xl and shrinking the brand wordmark by 8px. */
-  font-size: 56px;
+  /* Spec Display Large (design/stream-portal.html .t-display-lg): 48px / 58px. */
+  font-size: var(--font-size-5xl);
+  line-height: 58px;
   font-weight: 700;
   color: white;
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--spacing-4);
   letter-spacing: 0.1em;
 }
 
@@ -288,7 +286,7 @@ const handleRegister = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-8);
+  padding: var(--spacing-8);
   background: var(--bg-card);
 }
 
@@ -299,7 +297,7 @@ const handleRegister = async () => {
 
 .form-header {
   text-align: center;
-  margin-bottom: var(--space-8);
+  margin-bottom: var(--spacing-8);
 }
 
 .form-header .h1 {
@@ -309,7 +307,7 @@ const handleRegister = async () => {
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--spacing-6);
 }
 
 /* .btn-login kept, trimmed to just width/height: AppButton's native
@@ -337,9 +335,9 @@ const handleRegister = async () => {
   color: var(--status-danger-text);
   font-size: var(--font-size-sm);
   text-align: center;
-  padding: var(--space-3);
+  padding: var(--spacing-3);
   background: var(--status-danger-bg);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
 }
 
 .signup-link {
@@ -362,7 +360,7 @@ const handleRegister = async () => {
   border: none;
   cursor: pointer;
   color: var(--text-muted);
-  padding: var(--space-1);
+  padding: var(--spacing-1);
   display: flex;
   align-items: center;
   justify-content: center;
