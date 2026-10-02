@@ -23,8 +23,13 @@
 
 :root {
   --color-primary: #0EA5E9;
-  --color-primary-hover: rgba(14, 165, 233, .9);
-  --color-primary-active: rgba(14, 165, 233, .8);
+  /* Fill for primary BUTTONS that carry white text. #0EA5E9 itself gives only 2.77:1
+     with white (fails WCAG AA 4.5:1; the spec documents 4.8:1, which is wrong). This is
+     the same hue/saturation (199deg/89%) darkened to L=36%: white on it = 4.83:1.
+     --color-primary stays the brand blue for links, borders, focus rings, icons. */
+  --color-primary-solid: #0A79AD;
+  --color-primary-hover: #096F9F;   /* white on it = 5.55:1 */
+  --color-primary-active: #08628D;  /* white on it = 6.68:1 */
   --color-teal: #14B8A6;
   --color-navy: #030213;
 
@@ -96,7 +101,7 @@
   white-space:nowrap; line-height:1;
 }
 .sl-btn:active{ transform:scale(.98); }
-.sl-btn-primary{ background:var(--color-primary); color:#fff; }
+.sl-btn-primary{ background:var(--color-primary-solid); color:#fff; }
 .sl-btn-primary:hover:not(:disabled){ background:var(--color-primary-hover); }
 .sl-btn-primary:active:not(:disabled){ background:var(--color-primary-active); }
 .sl-btn-primary:disabled{ background:var(--color-slate-300); color:var(--color-slate-400); box-shadow:none; cursor:not-allowed; }

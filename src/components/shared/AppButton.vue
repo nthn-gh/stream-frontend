@@ -64,15 +64,18 @@ const buttonClasses = computed(() => {
 </script>
 
 <style scoped>
-/* Primary variant and its focus ring go through the canonical CSS var
-   token (--primary), not a Tailwind utility, so they track main.css's
-   corrected value automatically. Ring-offset uses --bg-card instead of
+/* Primary variant fill uses --color-primary-solid (white text on it = 4.83:1),
+   NOT --primary: --primary is the brand blue (2.77:1 with white, and it flips to
+   a lighter #38BDF8 in dark mode, 2.14:1), which fails WCAG AA for button text.
+   Hover is a darker solid instead of the old opacity:.9, which lightened the fill
+   under the (still fully white) text and dropped the contrast below 4.5:1.
+   The focus ring below still uses --primary. Ring-offset uses --bg-card instead of
    Tailwind's hardcoded white so it still shows correctly in dark mode. */
 .app-button--primary {
-  background: var(--primary);
+  background: var(--color-primary-solid);
 }
 .app-button--primary:hover:not(:disabled) {
-  opacity: 0.9;
+  background: var(--color-primary-hover);
 }
 /* Destructive variant: driven by the --color-error / --color-error-hover
    tokens (stream-locked.css), not Tailwind's bg-error -- that utility only

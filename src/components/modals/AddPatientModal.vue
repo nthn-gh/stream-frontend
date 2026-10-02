@@ -605,7 +605,7 @@ select.input-field {
   font-size: 16px;
   font-weight: 600;
   color: var(--text-on-primary);
-  background: var(--primary);
+  background: var(--color-primary-solid);
   border: none;
   border-radius: 12px;
   cursor: pointer;
@@ -616,7 +616,7 @@ select.input-field {
 }
 
 .btn-primary:hover:not(:disabled) {
-  opacity: 0.9;
+  background: var(--color-primary-hover);
 }
 
 .btn-primary:active:not(:disabled) {
