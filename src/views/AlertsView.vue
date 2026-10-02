@@ -1,13 +1,10 @@
 <template>
   <div class="page">
-    <div class="page-header">
-      <div>
-        <h1 class="t-h1">Alerts</h1>
-        <p class="text-secondary t-body" style="margin-top: 6px">
-          {{ unresolvedCount }} unresolved {{ unresolvedCount === 1 ? 'alert' : 'alerts' }} across your caseload.
-        </p>
-      </div>
-    </div>
+    <PageHeader title="Alerts">
+      <template #subtitle>
+        {{ unresolvedCount }} unresolved {{ unresolvedCount === 1 ? 'alert' : 'alerts' }} across your caseload.
+      </template>
+    </PageHeader>
 
     <div class="row" style="display: flex; align-items: center; gap: 12px; margin-bottom: var(--spacing-5); flex-wrap: wrap">
       <button
@@ -99,6 +96,7 @@ import { useAlertStore } from '@/stores/alertStore'
 import { storeToRefs } from 'pinia'
 import AppButton from '@/components/shared/AppButton.vue'
 import AppSkeleton from '@/components/shared/AppSkeleton.vue'
+import PageHeader from '@/components/shared/PageHeader.vue'
 import type { AlertWithPatient } from '@/types'
 
 const router = useRouter()
@@ -194,13 +192,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.page-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--spacing-4);
-  margin-bottom: var(--spacing-8);
-}
 .severity-chip {
   cursor: pointer;
   opacity: 0.55;

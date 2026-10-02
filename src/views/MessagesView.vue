@@ -1,11 +1,6 @@
 <template>
   <div class="page">
-    <div class="page-header">
-      <div>
-        <h1 class="t-h1">Messages</h1>
-        <p class="text-secondary t-body" style="margin-top: 6px">Secure messaging with patients and caregivers.</p>
-      </div>
-    </div>
+    <PageHeader title="Messages" subtitle="Secure messaging with patients and caregivers." />
 
     <p v-if="error" class="t-body-sm" style="color: var(--color-error-text); margin-bottom: var(--spacing-4)">{{ error }}</p>
 
@@ -91,6 +86,7 @@ import { useMessageStore, type ConversationSummary } from '@/stores/messageStore
 import { useAuthStore } from '@/stores/authStore'
 import AppAvatar from '@/components/shared/AppAvatar.vue'
 import AppSkeleton from '@/components/shared/AppSkeleton.vue'
+import PageHeader from '@/components/shared/PageHeader.vue'
 
 const patientStore = usePatientStore()
 const messageStore = useMessageStore()
@@ -173,9 +169,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.page-header {
-  margin-bottom: var(--spacing-8);
-}
 .input-icon-wrap {
   position: relative;
   display: flex;

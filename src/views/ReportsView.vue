@@ -1,13 +1,9 @@
 <template>
   <div class="page">
-    <div class="page-header">
-      <div>
-        <h1 class="t-h1">Reports</h1>
-        <p class="text-secondary t-body" style="margin-top: 6px">
-          Generate and export clinical reports for patients, clinics, or funders.
-        </p>
-      </div>
-    </div>
+    <PageHeader
+      title="Reports"
+      subtitle="Generate and export clinical reports for patients, clinics, or funders."
+    />
 
     <div class="sl-grid sl-cols-4" style="margin-bottom: var(--spacing-6)">
       <StatCard label="Total patients" :value="String(patients.length)" icon-bg="var(--accent-blue-soft)" icon-color="var(--color-primary)">
@@ -131,6 +127,7 @@ import { storeToRefs } from 'pinia'
 import AppButton from '@/components/shared/AppButton.vue'
 import AppTable from '@/components/shared/AppTable.vue'
 import StatCard from '@/components/shared/StatCard.vue'
+import PageHeader from '@/components/shared/PageHeader.vue'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend)
 
@@ -242,13 +239,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.page-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--spacing-4);
-  margin-bottom: var(--spacing-8);
-}
 .report-card {
   text-align: left;
   cursor: pointer;

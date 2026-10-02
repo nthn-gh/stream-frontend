@@ -7,15 +7,7 @@
       </div>
     </transition>
 
-    <!-- Page Header -->
-    <div class="page-header">
-      <div>
-        <h1 class="h2">Settings</h1>
-        <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-top: var(--spacing-1)">
-          Manage your profile and preferences
-        </p>
-      </div>
-    </div>
+    <PageHeader title="Settings" subtitle="Manage your profile and preferences" />
 
     <!-- Tabs -->
     <div class="settings-tabs">
@@ -35,7 +27,7 @@
       <!-- Profile Tab -->
       <div v-if="activeTab === 'profile'">
         <AppCard class="dash-card">
-          <h3 class="h3" style="margin-bottom: var(--spacing-6)">Profile Information</h3>
+          <h3 class="h4" style="margin-bottom: var(--spacing-6)">Profile Information</h3>
 
           <div class="profile-layout">
             <!-- Avatar -->
@@ -91,7 +83,7 @@
       <!-- Security Tab -->
       <div v-if="activeTab === 'security'" class="settings-section">
         <AppCard class="dash-card">
-          <h3 class="h3" style="margin-bottom: var(--spacing-4)">Change Password</h3>
+          <h3 class="h4" style="margin-bottom: var(--spacing-4)">Change Password</h3>
 
           <div class="form-container">
             <div class="form-group">
@@ -119,7 +111,7 @@
         </AppCard>
 
         <AppCard class="dash-card">
-          <h3 class="h3" style="margin-bottom: var(--spacing-2)">Two-Factor Authentication</h3>
+          <h3 class="h4" style="margin-bottom: var(--spacing-2)">Two-Factor Authentication</h3>
           <p class="caption" style="color: var(--text-muted); margin-bottom: var(--spacing-4)">
             Add an extra layer of security to your account
           </p>
@@ -134,7 +126,7 @@
       <!-- Notifications Tab -->
       <div v-if="activeTab === 'notifications'">
         <AppCard class="dash-card">
-          <h3 class="h3" style="margin-bottom: var(--spacing-6)">Notification Preferences</h3>
+          <h3 class="h4" style="margin-bottom: var(--spacing-6)">Notification Preferences</h3>
 
           <div class="notification-list">
             <div class="notification-item">
@@ -194,12 +186,12 @@
       <!-- Preferences Tab -->
       <div v-if="activeTab === 'preferences'">
         <AppCard class="dash-card">
-          <h3 class="h3" style="margin-bottom: var(--spacing-4)">Display Preferences</h3>
+          <h3 class="h4" style="margin-bottom: var(--spacing-4)">Display Preferences</h3>
 
           <div class="form-container">
             <div class="form-group">
               <label class="form-label">Theme</label>
-              <select v-model="preferencesForm.theme" class="form-input">
+              <select v-model="preferencesForm.theme" class="sl-select">
                 <option value="light">Light</option>
                 <option value="dark">Dark</option>
                 <option value="system">System</option>
@@ -208,7 +200,7 @@
 
             <div class="form-group">
               <label class="form-label">Date Format</label>
-              <select v-model="preferencesForm.dateFormat" class="form-input">
+              <select v-model="preferencesForm.dateFormat" class="sl-select">
                 <option value="MM/DD/YYYY">MM/DD/YYYY</option>
                 <option value="DD/MM/YYYY">DD/MM/YYYY</option>
                 <option value="YYYY-MM-DD">YYYY-MM-DD</option>
@@ -217,7 +209,7 @@
 
             <div class="form-group">
               <label class="form-label">Time Format</label>
-              <select v-model="preferencesForm.timeFormat" class="form-input">
+              <select v-model="preferencesForm.timeFormat" class="sl-select">
                 <option value="12h">12 Hour</option>
                 <option value="24h">24 Hour</option>
               </select>
@@ -241,6 +233,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { storeToRefs } from 'pinia'
 import AppCard from '@/components/shared/AppCard.vue'
 import AppButton from '@/components/shared/AppButton.vue'
+import PageHeader from '@/components/shared/PageHeader.vue'
 import { useTheme, type Theme } from '@/composables/useTheme'
 
 const authStore = useAuthStore()
@@ -448,14 +441,9 @@ const resetSecurityForm = () => {
 .page {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-6);
-}
-
-.page-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--spacing-2);
+  /* published so PageHeader can subtract the flex gap from its 32px bottom margin */
+  --page-gap: var(--spacing-6);
+  gap: var(--page-gap);
 }
 
 .settings-tabs {

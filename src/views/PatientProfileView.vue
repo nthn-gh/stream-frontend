@@ -1,17 +1,15 @@
 <template>
   <div class="page">
-    <div class="page-header">
-      <div>
-        <h1 class="h2">Patient Profile</h1>
-        <p class="page-subtitle">View real plans, sessions, progress, and clinical notes from Supabase.</p>
-      </div>
-
-      <div class="header-actions">
-        <AppButton variant="secondary" @click="router.push('/patients')">Back</AppButton>
+    <PageHeader
+      :title="patient?.name || 'Patient Profile'"
+      subtitle="View real plans, sessions, progress, and clinical notes from Supabase."
+      back-to="/patients"
+    >
+      <template #actions>
         <AppButton variant="secondary" @click="openNoteModal">Add Clinical Note</AppButton>
         <AppButton variant="primary" @click="router.push(`/assign-exercise?patientId=${patientId}`)">Assign Exercise</AppButton>
-      </div>
-    </div>
+      </template>
+    </PageHeader>
 
     <AppCard v-if="isLoading" class="state-card dash-card">
       <p class="state-text">Loading patient details...</p>
@@ -64,7 +62,7 @@
 
       <div v-if="activeTab === 'overview'" class="overview-grid">
         <AppCard class="dash-card">
-          <h3 class="h3">Patient Snapshot</h3>
+          <h3 class="h4">Patient Snapshot</h3>
           <div class="detail-grid">
             <div class="detail-item">
               <span class="detail-label">Age</span>
@@ -88,7 +86,7 @@
         <AppCard class="dash-card">
           <div class="card-header">
             <div>
-              <h3 class="h3">ROM Progress</h3>
+              <h3 class="h4">ROM Progress</h3>
               <p class="card-copy">Based on `progress_metrics.rom_degrees`.</p>
             </div>
           </div>
@@ -101,7 +99,7 @@
         <AppCard class="dash-card">
           <div class="card-header">
             <div>
-              <h3 class="h3">Recent Session Accuracy</h3>
+              <h3 class="h4">Recent Session Accuracy</h3>
               <p class="card-copy">Pulled from recorded sessions.</p>
             </div>
           </div>
@@ -112,7 +110,7 @@
         </AppCard>
 
         <AppCard class="dash-card">
-          <h3 class="h3">Active Plan Exercises</h3>
+          <h3 class="h4">Active Plan Exercises</h3>
           <div v-if="activePlanExercises.length" class="list-stack">
             <article v-for="exercise in activePlanExercises" :key="exercise.planExerciseId" class="list-card">
               <div class="list-card-head">
@@ -138,7 +136,7 @@
       <AppCard v-if="activeTab === 'sessions'" class="dash-card">
         <div class="card-header">
           <div>
-            <h3 class="h3">Session History</h3>
+            <h3 class="h4">Session History</h3>
             <p class="card-copy">Loaded from `sessions` and `session_logs`.</p>
           </div>
         </div>
@@ -184,7 +182,7 @@
       <AppCard v-if="activeTab === 'progress'" class="dash-card">
         <div class="card-header">
           <div>
-            <h3 class="h3">Progress Metrics</h3>
+            <h3 class="h4">Progress Metrics</h3>
             <p class="card-copy">Tracked from `progress_metrics`.</p>
           </div>
         </div>
@@ -215,7 +213,7 @@
       <AppCard v-if="activeTab === 'notes'" class="dash-card">
         <div class="card-header">
           <div>
-            <h3 class="h3">Clinical Notes</h3>
+            <h3 class="h4">Clinical Notes</h3>
             <p class="card-copy">Therapist-authored entries saved to `session_notes`.</p>
           </div>
           <AppButton variant="primary" @click="openNoteModal">Add Clinical Note</AppButton>
@@ -239,7 +237,7 @@
       <AppCard v-if="activeTab === 'plans'" class="dash-card">
         <div class="card-header">
           <div>
-            <h3 class="h3">Exercise Plans</h3>
+            <h3 class="h4">Exercise Plans</h3>
             <p class="card-copy">Real plan metadata with ROM-aware plan exercise configuration.</p>
           </div>
           <AppButton variant="primary" @click="router.push(`/assign-exercise?patientId=${patientId}`)">Assign New</AppButton>
@@ -286,7 +284,7 @@
       <p class="card-copy">Save a therapist note directly to `session_notes`.</p>
       <div class="form-group">
         <label class="form-label" for="note-session">Link to session (optional)</label>
-        <select id="note-session" v-model="noteForm.sessionId" class="form-input">
+        <select id="note-session" v-model="noteForm.sessionId" class="sl-select">
           <option value="">No linked session</option>
           <option v-for="session in patientSessions" :key="session.id" :value="session.id">
             {{ formatDate(sessionDisplayDate(session)) }} · {{ session.exercise?.name || 'Session' }}
@@ -329,6 +327,7 @@ import AppBadge from '@/components/shared/AppBadge.vue'
 import AppCard from '@/components/shared/AppCard.vue'
 import AppButton from '@/components/shared/AppButton.vue'
 import AppModal from '@/components/shared/AppModal.vue'
+import PageHeader from '@/components/shared/PageHeader.vue'
 import { useExerciseStore } from '@/stores/exerciseStore'
 import { usePatientStore } from '@/stores/patientStore'
 import { resolveToken } from '@/services/designTokens'
@@ -698,11 +697,11 @@ onMounted(async () => {
 .page {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-6);
+  /* published so PageHeader can subtract the flex gap from its 32px bottom margin */
+  --page-gap: var(--spacing-6);
+  gap: var(--page-gap);
 }
 
-.page-header,
-.header-actions,
 .card-header,
 .list-card-head {
   display: flex;
@@ -711,11 +710,6 @@ onMounted(async () => {
   gap: 12px;
 }
 
-.header-actions {
-  align-items: center;
-}
-
-.page-subtitle,
 .profile-meta,
 .card-copy,
 .state-text,

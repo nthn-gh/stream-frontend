@@ -35,8 +35,8 @@ const badgeClasses = computed(() => {
    anywhere in tailwind.config.ts -- those three variants rendered with
    no background/text color at all. info/neutral weren't broken, but
    were hardcoded to raw Tailwind grays/blues rather than the token
-   system; fixed here too for consistency. Mapping mirrors BaseBadge.vue
-   exactly (success~active, error~danger). */
+   system; fixed here too for consistency. Mapping: success~active,
+   error~danger. */
 .app-badge--success {
   background: var(--status-active-bg);
   color: var(--status-active-text);

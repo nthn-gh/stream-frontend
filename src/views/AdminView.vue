@@ -46,19 +46,14 @@
       </template>
     </AppModal>
 
-    <!-- Page Header -->
-    <div class="page-header">
-      <div>
-        <h1 class="h2">Admin Panel</h1>
-        <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-top: var(--spacing-1);">Manage therapists and monitor platform activity</p>
-      </div>
-      <div class="header-actions">
+    <PageHeader title="Admin Panel" subtitle="Manage therapists and monitor platform activity">
+      <template #actions>
         <AppButton variant="primary" class="btn-icon-gap" @click="showAddModal = true">
           <UserPlus :size="16" />
           <span>Add Therapist</span>
         </AppButton>
-      </div>
-    </div>
+      </template>
+    </PageHeader>
 
     <!-- Stats Bar -->
     <div class="stats-grid">
@@ -105,7 +100,7 @@
     <!-- Therapist Table -->
     <AppCard class="dash-card">
       <div class="table-header">
-        <h3 class="h3">Therapist Management</h3>
+        <h3 class="h4">Therapist Management</h3>
         <div class="table-controls">
           <div class="search-input">
             <Search :size="16" class="search-icon" />
@@ -115,7 +110,7 @@
               placeholder="Search by name or email..."
             />
           </div>
-          <select v-model="statusFilter" class="table-select">
+          <select v-model="statusFilter" class="sl-select sl-select-sm">
             <option value="all">All Status</option>
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
@@ -218,6 +213,7 @@ import AppBadge from '@/components/shared/AppBadge.vue'
 import AppButton from '@/components/shared/AppButton.vue'
 import AppModal from '@/components/shared/AppModal.vue'
 import StatCard from '@/components/shared/StatCard.vue'
+import PageHeader from '@/components/shared/PageHeader.vue'
 import AddTherapistModal from '@/components/modals/AddTherapistModal.vue'
 
 const adminStore = useAdminStore()
@@ -390,19 +386,9 @@ onMounted(async () => {
 .page {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-6);
-}
-
-.page-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--spacing-2);
-}
-
-.header-actions {
-  display: flex;
-  gap: var(--spacing-2);
+  /* published so PageHeader can subtract the flex gap from its 32px bottom margin */
+  --page-gap: var(--spacing-6);
+  gap: var(--page-gap);
 }
 
 .stats-grid {
@@ -451,22 +437,6 @@ onMounted(async () => {
 }
 
 .search-input input:focus {
-  border-color: var(--border-focus);
-}
-
-.table-select {
-  height: 36px;
-  padding: 0 var(--spacing-3);
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  color: var(--text-primary);
-  font-size: var(--font-size-sm);
-  font-family: inherit;
-  outline: none;
-}
-
-.table-select:focus {
   border-color: var(--border-focus);
 }
 

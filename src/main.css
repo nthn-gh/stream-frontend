@@ -169,6 +169,15 @@
   --shadow-sidebar: 2px 0 8px rgba(0,0,0,0.24);
 }
 
+/* Native selects use the spec's .sl-select (stream-locked.css, light-only). Keep them on
+   the themed input surface in dark mode, as the pre-restyle selects were, with a light
+   chevron so the arrow stays visible on the dark fill. */
+.dark .sl-select {
+  background-color: var(--bg-input);
+  color: var(--text-primary);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'><path d='M6 9l6 6 6-6' fill='none' stroke='%23CBD5E1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+}
+
 @theme {
   /* Extend Tailwind with CSS variables */
   --color-stream-blue: #1A8FD1;
@@ -179,7 +188,8 @@
 /* No global `* { margin:0; padding:0 }` reset here on purpose: Tailwind's own
    preflight (@import "tailwindcss", @layer base) already resets margin,
    padding, border and box-sizing. An unlayered `*` rule beats every
-   @layer utilities class and silently zeroed all p-*/m-*/space-* utilities. */
+   @layer utilities class and silently zeroed every padding, margin and space-x/y
+   utility (p-4, mt-2, space-y-3, ...). */
 
 body {
   font-family: 'DM Sans', system-ui, sans-serif;

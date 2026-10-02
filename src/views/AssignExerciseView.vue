@@ -1,11 +1,9 @@
 <template>
   <div class="page">
-    <div class="page-header">
-      <div>
-        <h1 class="h2">Assign Exercise Plan</h1>
-        <p class="page-subtitle">Create a real Supabase-backed plan that the Android patient app can load immediately.</p>
-      </div>
-    </div>
+    <PageHeader
+      title="Assign Exercise Plan"
+      subtitle="Create a real Supabase-backed plan that the Android patient app can load immediately."
+    />
 
     <AppCard class="dash-card">
       <div class="step-indicator">
@@ -94,7 +92,7 @@
         <div class="filters-row">
           <div class="filter-group">
             <label class="filter-label">Category</label>
-            <select v-model="filters.category" class="table-select">
+            <select v-model="filters.category" class="sl-select sl-select-md">
               <option value="all">All Categories</option>
               <option value="upper_body">Upper Body</option>
               <option value="lower_body">Lower Body</option>
@@ -105,7 +103,7 @@
 
           <div class="filter-group">
             <label class="filter-label">Difficulty</label>
-            <select v-model="filters.difficulty" class="table-select">
+            <select v-model="filters.difficulty" class="sl-select sl-select-md">
               <option value="">All Levels</option>
               <option value="easy">Easy</option>
               <option value="medium">Medium</option>
@@ -229,7 +227,7 @@
 
               <div class="form-group">
                 <label class="form-label">Difficulty</label>
-                <select v-model="exerciseConfig[exercise.id]!.difficulty" class="form-input">
+                <select v-model="exerciseConfig[exercise.id]!.difficulty" class="sl-select sl-select-md">
                   <option value="easy">Easy</option>
                   <option value="medium">Medium</option>
                   <option value="hard">Hard</option>
@@ -314,6 +312,7 @@ import { useAuthStore } from '@/stores/authStore'
 import AppCard from '@/components/shared/AppCard.vue'
 import AppBadge from '@/components/shared/AppBadge.vue'
 import AppButton from '@/components/shared/AppButton.vue'
+import PageHeader from '@/components/shared/PageHeader.vue'
 import type { Exercise, ExerciseDifficulty, Patient } from '@/types'
 
 const router = useRouter()
@@ -627,16 +626,11 @@ onMounted(async () => {
 .page {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-6);
+  /* published so PageHeader can subtract the flex gap from its 32px bottom margin */
+  --page-gap: var(--spacing-6);
+  gap: var(--page-gap);
 }
 
-.page-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.page-subtitle,
 .section-copy,
 .state-copy,
 .patient-email,
@@ -843,7 +837,6 @@ onMounted(async () => {
   color: var(--text-primary);
 }
 
-.table-select,
 .form-input,
 .form-textarea {
   border: 1px solid var(--border);
@@ -855,7 +848,6 @@ onMounted(async () => {
   outline: none;
 }
 
-.table-select,
 .form-input {
   height: 40px;
   padding: 0 var(--spacing-3);

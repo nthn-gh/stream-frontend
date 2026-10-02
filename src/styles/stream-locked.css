@@ -181,6 +181,8 @@ table.sl-data-table{ width:100%; border-collapse:collapse; min-width:560px; }
   box-shadow:0 0 0 3px rgba(14,165,233,.2);
 }
 .sl-select{ appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'><path d='M6 9l6 6 6-6' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>"); background-repeat:no-repeat; background-position:right 14px center; padding-right:40px; }
+.sl-select-sm{ width:auto; height:36px; padding-top:0; padding-bottom:0; padding-left:var(--spacing-3); font-size:14px; border-radius:var(--radius-md); }
+.sl-select-md{ height:40px; padding-top:0; padding-bottom:0; padding-left:var(--spacing-3); font-size:14px; border-radius:var(--radius-md); }
 .sl-textarea{ height:auto; min-height:120px; max-height:300px; resize:vertical; }
 .sl-checkbox-row{ display:flex; align-items:center; gap:10px; font-size:14px; color:var(--color-slate-700); cursor:pointer; }
 .sl-checkbox-row input{ width:18px; height:18px; accent-color:var(--color-primary); }

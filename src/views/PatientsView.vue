@@ -8,13 +8,8 @@
       @patientAdded="handlePatientAdded" 
     />
 
-    <!-- Page Header -->
-    <div class="page-header">
-      <div>
-        <h1 class="h2">Patients</h1>
-        <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-top: var(--spacing-1);">Manage and monitor all your patients</p>
-      </div>
-      <div class="header-actions">
+    <PageHeader title="Patients" subtitle="Manage and monitor all your patients">
+      <template #actions>
         <AppButton variant="secondary" class="btn-secondary btn-icon-gap" @click="showAddPatientModal = true">
           <UserPlus :size="16" />
           <span>Add Patient</span>
@@ -23,14 +18,14 @@
           <Plus :size="16" />
           <span>Assign Exercise</span>
         </AppButton>
-      </div>
-    </div>
+      </template>
+    </PageHeader>
 
     <!-- Content -->
     <AppCard class="dash-card">
       <!-- Toolbar -->
       <div class="table-header">
-        <h3 class="h3">Patient List</h3>
+        <h3 class="h4">Patient List</h3>
         <div class="table-controls">
           <div class="search-input">
             <Search :size="16" class="search-icon" />
@@ -43,7 +38,7 @@
           </div>
           <select
             v-model="statusFilter"
-            class="table-select"
+            class="sl-select sl-select-sm"
             @change="filterPatients"
           >
             <option value="all">All Status</option>
@@ -143,6 +138,7 @@ import AppCard from '@/components/shared/AppCard.vue'
 import AppBadge from '@/components/shared/AppBadge.vue'
 import AppButton from '@/components/shared/AppButton.vue'
 import AdherenceBar from '@/components/shared/AdherenceBar.vue'
+import PageHeader from '@/components/shared/PageHeader.vue'
 import AddPatientModal from '@/components/modals/AddPatientModal.vue'
 
 const router = useRouter()
@@ -235,19 +231,9 @@ onMounted(async () => {
 .page {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-6);
-}
-
-.page-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--spacing-2);
-}
-
-.header-actions {
-  display: flex;
-  gap: var(--spacing-2);
+  /* published so PageHeader can subtract the flex gap from its 32px bottom margin */
+  --page-gap: var(--spacing-6);
+  gap: var(--page-gap);
 }
 
 /* .dash-card: AppCard hardcodes bg-white/border-slate-200/shadow-md
@@ -327,22 +313,6 @@ onMounted(async () => {
 }
 
 .search-input input:focus {
-  border-color: var(--border-focus);
-}
-
-.table-select {
-  height: 36px;
-  padding: 0 var(--spacing-3);
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  color: var(--text-primary);
-  font-size: var(--font-size-sm);
-  font-family: inherit;
-  outline: none;
-}
-
-.table-select:focus {
   border-color: var(--border-focus);
 }
 

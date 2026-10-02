@@ -8,16 +8,14 @@
       @patientAdded="handlePatientAdded"
     />
 
-    <!-- Page Header -->
-    <div class="page-header">
-      <div>
-        <h1 class="h2">Good {{ timeOfDay }}, {{ therapistName }} 👋</h1>
-        <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-top: var(--spacing-1)">
-          Here's what's happening with your patients today.
-        </p>
-      </div>
-      <AppButton variant="primary" @click="showAddPatientModal = true">+ Add Patient</AppButton>
-    </div>
+    <PageHeader
+      :title="`Good ${timeOfDay}, ${therapistName} 👋`"
+      subtitle="Here's what's happening with your patients today."
+    >
+      <template #actions>
+        <AppButton variant="primary" @click="showAddPatientModal = true">+ Add Patient</AppButton>
+      </template>
+    </PageHeader>
 
     <!-- Stat Cards -->
     <div class="stats-grid">
@@ -110,7 +108,7 @@
       <div class="dashboard-main">
         <AppCard class="dash-card">
           <div class="table-header">
-            <h2 class="h3">Active Patients</h2>
+            <h2 class="h4">Active Patients</h2>
             <div class="table-controls">
               <input
                 v-model="searchQuery"
@@ -119,7 +117,7 @@
                 placeholder="Search patients..."
                 @input="filterPatients"
               />
-              <select v-model="statusFilter" class="table-select" @change="filterPatients">
+              <select v-model="statusFilter" class="sl-select sl-select-sm" @change="filterPatients">
                 <option value="all">All Status</option>
                 <option value="active">Active</option>
                 <option value="needs_attention">Needs Attention</option>
@@ -325,6 +323,7 @@ import AppBadge from '@/components/shared/AppBadge.vue'
 import AppButton from '@/components/shared/AppButton.vue'
 import AdherenceBar from '@/components/shared/AdherenceBar.vue'
 import StatCard from '@/components/shared/StatCard.vue'
+import PageHeader from '@/components/shared/PageHeader.vue'
 import AddPatientModal from '@/components/modals/AddPatientModal.vue'
 
 const router = useRouter()
@@ -525,13 +524,9 @@ onMounted(async () => {
 .dashboard {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-6);
-}
-.page-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--spacing-2);
+  /* published so PageHeader can subtract the flex gap from its 32px bottom margin */
+  --page-gap: var(--spacing-6);
+  gap: var(--page-gap);
 }
 .stats-grid {
   display: grid;
@@ -566,8 +561,7 @@ onMounted(async () => {
   display: flex;
   gap: var(--spacing-2);
 }
-.table-search,
-.table-select {
+.table-search {
   height: 36px;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -581,8 +575,7 @@ onMounted(async () => {
 .table-search {
   width: 180px;
 }
-.table-search:focus,
-.table-select:focus {
+.table-search:focus {
   border-color: var(--border-focus);
 }
 .data-table {

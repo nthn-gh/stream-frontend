@@ -51,8 +51,13 @@ onMounted(() => {
 }
 .app-content {
   flex: 1;
+  /* Spec content column (design/stream-portal.html .page): max-width 1160px
+     INCLUDING the 32px page padding (= 1096px inner), centered. border-box comes
+     from Tailwind preflight. Every authenticated route renders through here. */
+  width: 100%;
+  max-width: 1160px;
   padding: var(--padding-page);
-  margin-top: var(--header-height);
+  margin: var(--header-height) auto 0;
   min-height: calc(100vh - var(--header-height));
 }
 </style>

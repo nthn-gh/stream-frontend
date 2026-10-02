@@ -1,8 +1,5 @@
 <template>
   <header class="app-header">
-    <div class="header-left">
-      <h1 class="page-title">{{ pageTitle }}</h1>
-    </div>
     <div class="header-center">
       <div class="search-bar">
         <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
@@ -37,12 +34,11 @@
 
 <script setup lang="ts">
 import { ref, computed, onBeforeUnmount, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import { useAlertStore } from '@/stores/alertStore'
 import { storeToRefs } from 'pinia'
 
-const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 const alertStore = useAlertStore()
@@ -52,23 +48,6 @@ const { unreadCount } = storeToRefs(alertStore)
 const searchQuery = ref('')
 const now = ref(new Date())
 let clockTimer: number | null = null
-
-const pageTitles: Record<string, string> = {
-  '/dashboard': 'Dashboard',
-  '/patients': 'Patients',
-  '/assign-exercise': 'Assign Exercise',
-  '/alerts': 'Alerts',
-  '/reports': 'Reports',
-  '/settings': 'Settings',
-}
-
-const pageTitle = computed(() => {
-  const path = route.path
-  if (path.startsWith('/patients/') && path !== '/patients') {
-    return 'Patient Profile'
-  }
-  return pageTitles[path] || 'STREAM'
-})
 
 const today = computed(() =>
   now.value.toLocaleDateString('en-US', {
@@ -130,18 +109,12 @@ onBeforeUnmount(() => {
   z-index: 100;
   backdrop-filter: blur(8px);
 }
-.header-left {
-  flex-shrink: 0;
-}
-.page-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text-primary);
-}
 .header-center {
   flex: 1;
   max-width: 360px;
-  margin: 0 auto;
+  /* The page title moved out of the app header (PageHeader owns it), so the search
+     bar now sits at the start of the bar, like the spec's .topbar. */
+  margin: 0;
 }
 .search-bar {
   display: flex;
