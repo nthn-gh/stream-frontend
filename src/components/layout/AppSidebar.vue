@@ -171,8 +171,8 @@ const handleLogout = async () => {
   flex-shrink: 0;
 }
 .logo-mark {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   object-fit: contain;
   flex-shrink: 0;
 }
