@@ -2,11 +2,7 @@
   <aside class="sidebar">
     <!-- Logo -->
     <div class="sidebar-logo">
-      <div class="logo-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
-          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-        </svg>
-      </div>
+      <img :src="logoMark" alt="" aria-hidden="true" class="logo-mark" />
       <span class="logo-text">STREAM</span>
     </div>
 
@@ -113,6 +109,7 @@ import { useAlertStore } from '@/stores/alertStore'
 import { useMessageStore } from '@/stores/messageStore'
 import { usePatientStore } from '@/stores/patientStore'
 import { storeToRefs } from 'pinia'
+import logoMark from '@/assets/brand/stream-mark.png'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -173,14 +170,10 @@ const handleLogout = async () => {
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
 }
-.logo-icon {
+.logo-mark {
   width: 32px;
   height: 32px;
-  border-radius: var(--radius-md);
-  background: var(--gradient-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  object-fit: contain;
   flex-shrink: 0;
 }
 .logo-text {

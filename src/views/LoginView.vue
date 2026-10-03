@@ -3,11 +3,7 @@
     <!-- Left Panel - Brand -->
     <div class="brand-panel">
       <div class="brand-content">
-        <div class="brand-icon">
-          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-          </svg>
-        </div>
+        <img :src="logoMarkWhite" alt="" aria-hidden="true" class="brand-mark" />
         <h1 class="brand-title">STREAM</h1>
         <p class="brand-subtitle">Your recovery, guided by AI</p>
       </div>
@@ -90,6 +86,7 @@ import { Eye, EyeOff } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/authStore'
 import AppInput from '@/components/shared/AppInput.vue'
 import AppButton from '@/components/shared/AppButton.vue'
+import logoMarkWhite from '@/assets/brand/stream-mark-white.png'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -185,15 +182,11 @@ const handleLogin = async () => {
   text-align: center;
 }
 
-.brand-icon {
-  width: 128px;
-  height: 128px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(8px);
-  border-radius: var(--radius-xl);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.brand-mark {
+  display: block;
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
   margin: 0 auto var(--spacing-8);
 }
 
