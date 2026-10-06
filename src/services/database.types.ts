@@ -701,6 +701,13 @@ export type Database = {
         Returns: undefined
       }
       create_missed_session_alerts: { Args: never; Returns: undefined }
+      get_my_therapist: {
+        Args: never
+        Returns: {
+          full_name: string
+          user_id: string
+        }[]
+      }
       is_admin: { Args: never; Returns: boolean }
       recalculate_patient_stats: {
         Args: { p_patient_id: string }
