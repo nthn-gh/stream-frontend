@@ -68,7 +68,6 @@
               <th>PATIENT</th>
               <th>CONDITION</th>
               <th>LAST SESSION</th>
-              <th>ADHERENCE</th>
               <th>STATUS</th>
               <th>ACTIONS</th>
             </tr>
@@ -89,7 +88,6 @@
               </td>
               <td>{{ patient.condition }}</td>
               <td style="color: var(--text-muted)">{{ formatDate(patient.last_session) }}</td>
-              <td><AdherenceBar :value="patient.adherence_rate" /></td>
               <td><AppBadge :variant="getStatusVariant(patient.status)">{{ formatStatus(patient.status) }}</AppBadge></td>
               <td>
                 <AppButton variant="secondary" class="btn-ghost btn-sm" @click.stop="viewPatient(patient.id)">View</AppButton>
@@ -137,7 +135,6 @@ import { storeToRefs } from 'pinia'
 import AppCard from '@/components/shared/AppCard.vue'
 import AppBadge from '@/components/shared/AppBadge.vue'
 import AppButton from '@/components/shared/AppButton.vue'
-import AdherenceBar from '@/components/shared/AdherenceBar.vue'
 import PageHeader from '@/components/shared/PageHeader.vue'
 import AddPatientModal from '@/components/modals/AddPatientModal.vue'
 
@@ -167,7 +164,7 @@ const filteredPatients = computed(() => {
       (p) =>
         p.name.toLowerCase().includes(query) ||
         p.email.toLowerCase().includes(query) ||
-        p.condition.toLowerCase().includes(query),
+        (p.condition ?? '').toLowerCase().includes(query),
     )
   }
 
@@ -194,7 +191,7 @@ const getInitials = (name: string) => {
     .slice(0, 2)
 }
 
-const formatDate = (date?: string) => {
+const formatDate = (date?: string | null) => {
   if (!date) return 'No sessions'
   return new Date(date).toLocaleDateString('en-US', {
     month: 'short',
@@ -202,11 +199,11 @@ const formatDate = (date?: string) => {
   })
 }
 
-const formatStatus = (status: string) => {
-  return status.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+const formatStatus = (status: string | null) => {
+  return (status ?? 'unknown').split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
 }
 
-const getStatusVariant = (status: string): 'success' | 'warning' | 'error' | 'info' | 'neutral' => {
+const getStatusVariant = (status: string | null): 'success' | 'warning' | 'error' | 'info' | 'neutral' => {
   if (status === 'active') return 'success'
   if (status === 'needs_attention') return 'warning'
   return 'neutral'

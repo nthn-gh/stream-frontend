@@ -1,12 +1,14 @@
-import type {
-  Database,
-  ExerciseDifficulty,
-  ExercisePlanStatus,
-  PatientStatus,
-  SessionFormQuality,
-  SessionStatus,
-  UserRole,
-} from '@/services/database.types'
+import type { Database } from '@/services/database.types'
+
+// The generated database.types.ts has no enums (the columns are plain text with CHECK constraints), so the
+// allowed values are written here, as they were before the types were regenerated from the live schema.
+// sessions.status: CHECK in the live database (in_progress, completed, paused, cancelled).
+export type ExercisePlanStatus = 'active' | 'completed' | 'draft'
+export type ExerciseDifficulty = 'easy' | 'medium' | 'hard'
+export type PatientStatus = 'active' | 'needs_attention' | 'inactive'
+export type SessionFormQuality = 'excellent' | 'good' | 'needs_work'
+export type SessionStatus = 'in_progress' | 'completed' | 'paused' | 'cancelled'
+export type UserRole = 'therapist' | 'patient' | 'admin'
 
 type Tables = Database['public']['Tables']
 type Row<T extends keyof Tables> = Tables[T]['Row']
@@ -127,7 +129,7 @@ export interface ExerciseAssignmentDraft {
 }
 
 export interface Report {
-  type: 'progress' | 'adherence' | 'performance'
+  type: 'progress' | 'sessions' | 'performance'
   patient_id: string
   start_date: string
   end_date: string
@@ -138,19 +140,20 @@ export interface Report {
 export interface ReportData {
   patient: Patient
   metrics: {
-    adherence: number
-    avg_accuracy: number
+    /** mean of the scored logs of completed sessions; null = nothing scored yet (shown as a dash, never 0) */
+    avg_accuracy: number | null
+    /** completed sessions only */
     total_sessions: number
     rom_improvement: number
   }
   chart_data: {
     rom_progress: Array<{ date: string; value: number }>
-    weekly_adherence: Array<{ week: string; value: number }>
+    weekly_sessions: Array<{ week: string; value: number }>
   }
   exercise_breakdown: Array<{
     exercise_name: string
     sessions_count: number
-    avg_accuracy: number
+    avg_accuracy: number | null
   }>
 }
 
@@ -216,11 +219,3 @@ export interface ToastMessage {
   duration?: number
 }
 
-export type {
-  ExerciseDifficulty,
-  ExercisePlanStatus,
-  PatientStatus,
-  SessionFormQuality,
-  SessionStatus,
-  UserRole,
-}

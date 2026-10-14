@@ -145,7 +145,9 @@ export const useAlertStore = defineStore('alert', () => {
           table: 'alerts',
         },
         (payload: RealtimePostgresChangesPayload<{ patient_id: string }>) => {
-          const changedPatientId = payload.new?.patient_id ?? payload.old?.patient_id
+          const changedPatientId =
+            (payload.new as { patient_id?: string } | undefined)?.patient_id ??
+            (payload.old as { patient_id?: string } | undefined)?.patient_id
 
           if (changedPatientId && patientIds.value.includes(changedPatientId)) {
             void fetchAlerts()

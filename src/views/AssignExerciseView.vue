@@ -444,7 +444,7 @@ function toggleExercise(exercise: Exercise) {
     sets: 3,
     reps: 10,
     durationSeconds: exercise.duration_seconds || Math.max(60, (exercise.duration_minutes || 10) * 60),
-    difficulty: exercise.difficulty,
+    difficulty: exercise.difficulty as ExerciseDifficulty,
     romMinDegrees: null,
     romMaxDegrees: null,
     specialInstructions: '',

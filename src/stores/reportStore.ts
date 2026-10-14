@@ -56,7 +56,7 @@ export const useReportStore = defineStore('report', () => {
         .select(`
           *,
           exercise:exercises(name, category),
-          session_logs(accuracy_score)
+          session_logs(accuracy_score, range_of_motion)
         `)
         .eq('patient_id', config.value.patient_id)
         .gte('started_at', config.value.start_date)
@@ -64,21 +64,23 @@ export const useReportStore = defineStore('report', () => {
 
       if (sessionsError) throw sessionsError
 
+      // Only completed sessions count: an in_progress or paused row is an attempt that was left (the app
+      // writes nothing when the patient leaves), and the database marks a finished one with completed_at.
+      const completedSessions = (sessions ?? []).filter((s) => s.status === 'completed' && s.completed_at)
+
       // Calculate metrics
-      const totalSessions = sessions?.length || 0
+      const totalSessions = completedSessions.length
       // accuracy now comes from session_logs.accuracy_score, not the legacy
       // sessions.accuracy_percent column (never written by the current app —
       // see reportStore accuracy investigation). Sessions with no logged
       // accuracy are excluded from the average rather than counted as 0.
-      const loggedAccuracyScores = (sessions ?? [])
-        .flatMap((s) => (s.session_logs ?? []).map((log) => log.accuracy_score))
-        .filter((score): score is number => score !== null)
+      const loggedAccuracyScores = completedSessions.flatMap((s) => scoredLogs(s.session_logs))
+      // null (a dash on screen), not 0, when nothing has been scored yet
       const avgAccuracy = loggedAccuracyScores.length
         ? loggedAccuracyScores.reduce((sum, score) => sum + score, 0) / loggedAccuracyScores.length
-        : 0
+        : null
 
-      // Calculate adherence rate (assuming scheduled sessions)
-      const adherence = patient.adherence_rate || 0
+      // No adherence figure: assigned plans store no frequency, so there is nothing to measure it against.
 
       // Calculate ROM improvement
       const romImprovement = progressData && progressData.length > 1
@@ -91,24 +93,23 @@ export const useReportStore = defineStore('report', () => {
         value: p.rom_degrees ?? 0
       })) || []
 
-      // Group sessions by week for weekly adherence
-      const weeklyAdherence = groupSessionsByWeek(sessions || [])
+      // Completed sessions per week
+      const weeklySessions = groupSessionsByWeek(completedSessions)
 
       // Exercise breakdown
-      const exerciseBreakdown = calculateExerciseBreakdown(sessions || [])
+      const exerciseBreakdown = calculateExerciseBreakdown(completedSessions)
 
       // Assemble report data
       data.value = {
         patient,
         metrics: {
-          adherence,
           avg_accuracy: avgAccuracy,
           total_sessions: totalSessions,
           rom_improvement: romImprovement
         },
         chart_data: {
           rom_progress: romProgress,
-          weekly_adherence: weeklyAdherence
+          weekly_sessions: weeklySessions
         },
         exercise_breakdown: exerciseBreakdown
       }
@@ -187,6 +188,19 @@ export const useReportStore = defineStore('report', () => {
   }
 
   // Helper functions
+
+  /**
+   * The scores of the logs that are a real measurement. An exercise that is not counted automatically is
+   * stored with score 0 and no range of motion; averaging those 0s in would drag the average down for doing
+   * exercises the app cannot score, so a score of 0 with no range of motion (and a null score) is left out.
+   */
+  function scoredLogs(
+    logs: Array<{ accuracy_score: number | null; range_of_motion: number | null }> | null | undefined,
+  ): number[] {
+    return (logs ?? [])
+      .filter((log) => log.accuracy_score !== null && !(log.accuracy_score === 0 && log.range_of_motion === null))
+      .map((log) => log.accuracy_score as number)
+  }
   function groupSessionsByWeek(sessions: any[]) {
     const weekMap = new Map<string, number>()
 
@@ -218,9 +232,7 @@ export const useReportStore = defineStore('report', () => {
       // for the same fix. Sessions/logs with no accuracy score don't
       // contribute to totalAccuracy or accuracyCount, so they're excluded
       // from the average rather than counted as 0.
-      const accuracyScores = (session.session_logs ?? [])
-        .map((log: { accuracy_score: number | null }) => log.accuracy_score)
-        .filter((score: number | null): score is number => score !== null)
+      const accuracyScores = scoredLogs(session.session_logs)
 
       exerciseMap.set(exerciseName, {
         count: current.count + 1,
@@ -232,7 +244,7 @@ export const useReportStore = defineStore('report', () => {
     return Array.from(exerciseMap.entries()).map(([name, stats]) => ({
       exercise_name: name,
       sessions_count: stats.count,
-      avg_accuracy: stats.accuracyCount ? stats.totalAccuracy / stats.accuracyCount : 0
+      avg_accuracy: stats.accuracyCount ? stats.totalAccuracy / stats.accuracyCount : null
     }))
   }
 

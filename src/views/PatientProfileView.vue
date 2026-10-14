@@ -37,18 +37,16 @@
             </div>
           </div>
 
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-label">Adherence</div>
-              <div class="stat-value">{{ patient.adherence_rate ?? 0 }}%</div>
-            </div>
+          <div v-if="PATIENT_STATS_SHOWN" class="stats-grid">
+            <!-- No "Adherence" (plans store no frequency). Sessions and the average are hidden until
+                 the patient_stats view exists: the stored columns are stale (composables/patientStats.ts). -->
             <div class="stat-card">
               <div class="stat-label">Sessions</div>
-              <div class="stat-value">{{ patient.total_sessions ?? patientSessions.length }}</div>
+              <div class="stat-value">{{ countText(patient.total_sessions) }}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-label">Average Accuracy</div>
-              <div class="stat-value">{{ formatPercent(patient.avg_accuracy) }}</div>
+              <div class="stat-label">Average Score</div>
+              <div class="stat-value">{{ percentText(patient.avg_accuracy) }}</div>
             </div>
           </div>
         </div>
@@ -197,14 +195,12 @@
             <span>ROM</span>
             <span>Strength</span>
             <span>Balance</span>
-            <span>Adherence</span>
           </div>
           <div v-for="metric in orderedProgress" :key="metric.id" class="metrics-row">
             <span>{{ formatDate(metric.date) }}</span>
             <span>{{ metric.rom_degrees ?? 0 }} deg</span>
             <span>{{ metric.strength_score ?? 0 }}</span>
             <span>{{ metric.balance_score ?? 0 }}</span>
-            <span>{{ metric.adherence_percent ?? 0 }}%</span>
           </div>
         </div>
         <div v-else class="empty-card">No progress metrics recorded yet.</div>
@@ -223,7 +219,7 @@
           <article v-for="note in patientNotes" :key="note.id" class="list-card">
             <div class="list-card-head">
               <div>
-                <h4 class="list-title">{{ note.therapist?.name || 'Therapist' }}</h4>
+                <h4 class="list-title">{{ (note as { therapist?: { name?: string } | null }).therapist?.name || 'Therapist' }}</h4>
                 <p class="list-meta">{{ formatDateTime(note.created_at) }}</p>
                 <p v-if="note.session_id" class="list-meta">Linked session: {{ note.session_id }}</p>
               </div>
@@ -322,6 +318,7 @@ import {
   Tooltip,
 } from 'chart.js'
 import { computed, onMounted, reactive, ref } from 'vue'
+import { PATIENT_STATS_SHOWN, countText, percentText } from '@/composables/patientStats'
 import { useRoute, useRouter } from 'vue-router'
 import AppBadge from '@/components/shared/AppBadge.vue'
 import AppCard from '@/components/shared/AppCard.vue'
@@ -330,6 +327,7 @@ import AppModal from '@/components/shared/AppModal.vue'
 import PageHeader from '@/components/shared/PageHeader.vue'
 import { useExerciseStore } from '@/stores/exerciseStore'
 import { usePatientStore } from '@/stores/patientStore'
+import { useAuthStore } from '@/stores/authStore'
 import { resolveToken } from '@/services/designTokens'
 import type { PlanExerciseWithExercise, SessionWithExercise } from '@/types'
 
@@ -628,7 +626,10 @@ async function saveNote() {
   isSavingNote.value = true
 
   try {
-    const result = await patientStore.addNote(patientId, noteForm.note.trim(), noteForm.sessionId || null)
+    // (the call used to pass the note text where the therapist id belongs, so saving a note could not work)
+    const therapistId = useAuthStore().therapistProfile?.id
+    if (!therapistId) throw new Error('Your therapist profile is not loaded. Reload the page and try again.')
+    const result = await patientStore.addNote(patientId, therapistId, noteForm.note.trim(), noteForm.sessionId || null)
 
     if (!result.success) {
       throw new Error(result.error ?? 'Unable to save note.')

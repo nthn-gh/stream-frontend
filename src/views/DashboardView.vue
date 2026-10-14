@@ -131,7 +131,6 @@
                 <th>PATIENT</th>
                 <th>CONDITION</th>
                 <th>LAST SESSION</th>
-                <th>ADHERENCE</th>
                 <th>STATUS</th>
                 <th>ACTIONS</th>
               </tr>
@@ -173,7 +172,6 @@
                 </td>
                 <td>{{ patient.condition }}</td>
                 <td style="color: var(--text-muted)">{{ formatDate(patient.last_session) }}</td>
-                <td><AdherenceBar :value="patient.adherence_rate" /></td>
                 <td>
                   <AppBadge :variant="getStatusVariant(patient.status)">{{
                     formatStatus(patient.status)
@@ -214,7 +212,7 @@
         <AppCard class="dash-card">
           <h3 class="h4" style="margin-bottom: var(--spacing-3)">Quick Actions</h3>
           <div class="quick-actions">
-            <AppButton variant="secondary" class="quick-action-btn" @click="addPatient">+ Add New Patient</AppButton>
+            <AppButton variant="secondary" class="quick-action-btn" @click="showAddPatientModal = true">+ Add New Patient</AppButton>
             <AppButton variant="secondary" class="quick-action-btn" @click="$router.push('/assign-exercise')">
               📋 Assign Exercise
             </AppButton>
@@ -284,26 +282,8 @@
           </div>
         </AppCard>
 
-        <!-- Adherence Overview -->
-        <AppCard class="dash-card">
-          <h3 class="h4" style="margin-bottom: var(--spacing-3)">Patient Adherence Overview</h3>
-          <div class="adherence-stats">
-            <div class="adherence-stat-row">
-              <span class="caption" style="color: var(--text-secondary)"
-                >High Adherence (≥75%)</span
-              >
-              <AppBadge variant="success">{{ adherenceStats.high }}</AppBadge>
-            </div>
-            <div class="adherence-stat-row">
-              <span class="caption" style="color: var(--text-secondary)">Moderate (50-74%)</span>
-              <AppBadge variant="warning">{{ adherenceStats.moderate }}</AppBadge>
-            </div>
-            <div class="adherence-stat-row">
-              <span class="caption" style="color: var(--text-secondary)">Low Adherence (<50%)</span>
-              <AppBadge variant="error">{{ adherenceStats.low }}</AppBadge>
-            </div>
-          </div>
-        </AppCard>
+        <!-- The "Patient Adherence Overview" card was removed: adherence has no target to be measured against
+             (plans store no frequency) and the stored values are stale. See composables/patientStats.ts. -->
       </div>
     </div>
   </div>
@@ -321,7 +301,6 @@ import { storeToRefs } from 'pinia'
 import AppCard from '@/components/shared/AppCard.vue'
 import AppBadge from '@/components/shared/AppBadge.vue'
 import AppButton from '@/components/shared/AppButton.vue'
-import AdherenceBar from '@/components/shared/AdherenceBar.vue'
 import StatCard from '@/components/shared/StatCard.vue'
 import PageHeader from '@/components/shared/PageHeader.vue'
 import AddPatientModal from '@/components/modals/AddPatientModal.vue'
@@ -395,16 +374,6 @@ const todaySessions = computed(() => {
     }))
 })
 
-const adherenceStats = computed(() => {
-  const high = patients.value.filter((p) => p.adherence_rate >= 75).length
-  const moderate = patients.value.filter(
-    (p) => p.adherence_rate >= 50 && p.adherence_rate < 75,
-  ).length
-  const low = patients.value.filter((p) => p.adherence_rate < 50).length
-
-  return { high, moderate, low }
-})
-
 const filteredPatients = computed(() => {
   let result = patients.value
 
@@ -442,12 +411,13 @@ const getInitials = (name: string) => {
     .slice(0, 2)
 }
 
-const formatDate = (date?: string) => {
+const formatDate = (date?: string | null) => {
   if (!date) return 'No sessions'
   return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
-const formatTimestamp = (timestamp: string) => {
+const formatTimestamp = (timestamp: string | null) => {
+  if (!timestamp) return ''
   const date = new Date(timestamp)
   const now = new Date()
   const diffMs = now.getTime() - date.getTime()
@@ -460,14 +430,14 @@ const formatTimestamp = (timestamp: string) => {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
-const formatStatus = (status: string) => {
-  return status
+const formatStatus = (status: string | null) => {
+  return (status ?? 'unknown')
     .split('_')
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(' ')
 }
 
-const getStatusVariant = (status: string): 'success' | 'warning' | 'error' | 'info' | 'neutral' => {
+const getStatusVariant = (status: string | null): 'success' | 'warning' | 'error' | 'info' | 'neutral' => {
   if (status === 'active') return 'success'
   if (status === 'needs_attention') return 'warning'
   return 'neutral'

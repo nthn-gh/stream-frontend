@@ -85,7 +85,7 @@ export const useExerciseStore = defineStore('exercise', () => {
       reps: defaults?.reps ?? 10,
       duration_seconds:
         defaults?.duration_seconds ?? exercise.duration_seconds ?? (exercise.duration_minutes ?? 10) * 60,
-      difficulty: defaults?.difficulty ?? exercise.difficulty,
+      difficulty: (defaults?.difficulty ?? exercise.difficulty) as ExerciseDifficulty,
       rom_min_degrees: defaults?.rom_min_degrees ?? null,
       rom_max_degrees: defaults?.rom_max_degrees ?? null,
       special_instructions: defaults?.special_instructions ?? null,

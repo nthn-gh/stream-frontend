@@ -9,12 +9,8 @@
       <StatCard label="Total patients" :value="String(patients.length)" icon-bg="var(--accent-blue-soft)" icon-color="var(--color-primary)">
         <template #icon><Users :size="20" /></template>
       </StatCard>
-      <StatCard label="Sessions this month" :value="String(totalSessions)" icon-bg="var(--accent-teal-bg)" icon-color="var(--color-teal)">
-        <template #icon><Calendar :size="20" /></template>
-      </StatCard>
-      <StatCard label="Avg. adherence rate" :value="`${averageAdherence}%`" icon-bg="var(--accent-teal-bg)" icon-color="var(--color-teal)">
-        <template #icon><TrendingUp :size="20" /></template>
-      </StatCard>
+      <!-- "Sessions this month" (it summed an all-time column) and "Avg. adherence rate" (no target to measure
+           against) are hidden: the stored statistics are stale. See composables/patientStats.ts. -->
       <StatCard label="Active care plans" :value="String(activePlans)" icon-bg="var(--accent-purple-bg)" icon-color="var(--accent-purple)">
         <template #icon><CheckSquare :size="20" /></template>
       </StatCard>
@@ -72,9 +68,8 @@
       <div>
         <h2 class="t-h4" style="margin-bottom: var(--spacing-4)">{{ reportData.patient.name }} — report summary</h2>
         <div class="sl-grid sl-cols-4">
-          <div><div class="t-label text-secondary">Total sessions</div><div class="t-body-md">{{ reportData.metrics.total_sessions }}</div></div>
-          <div><div class="t-label text-secondary">Adherence</div><div class="t-body-md">{{ reportData.metrics.adherence }}%</div></div>
-          <div><div class="t-label text-secondary">Avg. accuracy</div><div class="t-body-md">{{ Math.round(reportData.metrics.avg_accuracy) }}%</div></div>
+          <div><div class="t-label text-secondary">Completed sessions</div><div class="t-body-md">{{ reportData.metrics.total_sessions }}</div></div>
+          <div><div class="t-label text-secondary">Avg. score</div><div class="t-body-md">{{ percentText(reportData.metrics.avg_accuracy) }}</div></div>
           <div><div class="t-label text-secondary">ROM change</div><div class="t-body-md">{{ reportData.metrics.rom_improvement >= 0 ? '+' : '' }}{{ reportData.metrics.rom_improvement }}°</div></div>
         </div>
       </div>
@@ -92,7 +87,7 @@
           <tr v-for="row in reportData.exercise_breakdown" :key="row.exercise_name">
             <td class="t-body-md">{{ row.exercise_name }}</td>
             <td>{{ row.sessions_count }}</td>
-            <td>{{ Math.round(row.avg_accuracy) }}%</td>
+            <td>{{ percentText(row.avg_accuracy) }}</td>
           </tr>
         </AppTable>
       </div>
@@ -124,6 +119,7 @@ import {
 import { usePatientStore } from '@/stores/patientStore'
 import { useReportStore } from '@/stores/reportStore'
 import { storeToRefs } from 'pinia'
+import { percentText } from '@/composables/patientStats'
 import AppButton from '@/components/shared/AppButton.vue'
 import AppTable from '@/components/shared/AppTable.vue'
 import StatCard from '@/components/shared/StatCard.vue'
@@ -143,15 +139,15 @@ const reportTypes = [
   {
     key: 'progress',
     title: 'Monthly progress summary',
-    description: 'Adherence, accuracy, and ROM change for the selected patient over the chosen date range.',
+    description: 'Completed sessions, average score, and ROM change for the selected patient over the chosen date range.',
     icon: TrendingUp,
     iconBg: 'var(--accent-blue-soft)',
     iconColor: 'var(--color-primary)',
   },
   {
-    key: 'adherence',
-    title: 'Adherence report',
-    description: 'Session completion vs. assigned schedule for the selected patient.',
+    key: 'sessions',
+    title: 'Sessions report',
+    description: 'Completed sessions per week for the selected patient.',
     icon: CheckSquare,
     iconBg: 'var(--accent-teal-bg)',
     iconColor: 'var(--color-teal)',
@@ -174,11 +170,6 @@ const reportTypes = [
   },
 ] as const
 
-const totalSessions = computed(() => patients.value.reduce((sum, p) => sum + (p.total_sessions || 0), 0))
-const averageAdherence = computed(() => {
-  if (!patients.value.length) return 0
-  return Math.round(patients.value.reduce((sum, p) => sum + (p.adherence_rate ?? 0), 0) / patients.value.length)
-})
 const activePlans = computed(() => patients.value.filter((p) => p.status === 'active').length)
 
 function dateRange() {

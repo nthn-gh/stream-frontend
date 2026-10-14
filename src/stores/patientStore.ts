@@ -210,7 +210,7 @@ export const usePatientStore = defineStore('patient', () => {
     }
   }
 
-  async function addNote(patientId: string, therapistId: string, note: string) {
+  async function addNote(patientId: string, therapistId: string, note: string, sessionId: string | null = null) {
     isLoading.value = true
 
     try {
@@ -220,6 +220,7 @@ export const usePatientStore = defineStore('patient', () => {
           patient_id: patientId,
           therapist_id: therapistId,
           note,
+          session_id: sessionId,
         })
         .select()
         .single()
