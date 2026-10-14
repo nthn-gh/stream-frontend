@@ -1,0 +1,171 @@
+-- ============================================================
+-- Revoke EXECUTE on the patient-stats and alert functions
+--
+-- Context: found during the patient-stats investigation (2026-10-14,
+-- docs/patient-stats-plan.md section 0.4 in the STREAM Android repo).
+-- Three SECURITY DEFINER functions owned by postgres were created in
+-- the SQL editor with the project's default grants, so their ACL is
+--
+--   {=X/postgres, postgres=X/postgres, anon=X/postgres,
+--    authenticated=X/postgres, service_role=X/postgres}
+--
+-- i.e. PUBLIC, anon and authenticated may call them over the REST API
+-- (/rest/v1/rpc/<name>), with any argument, running as the owner
+-- (which bypasses row-level security):
+--
+--   public.create_low_accuracy_alert(p_patient_id uuid, p_threshold numeric)
+--       anyone holding the anon key can insert a low_performance alert
+--       for any patient id they know, with a threshold of their choice
+--       (it inserts only when no open alert exists, so the damage is
+--       unwanted alerts in a therapist's list; it returns nothing and
+--       reads nothing back).
+--   public.create_missed_session_alerts()
+--       anyone can make every active-plan patient with no session
+--       yesterday get a missed_session alert, at any time.
+--   public.recalculate_patient_stats(p_patient_id uuid)
+--       anyone can make the database recompute one patient's stats
+--       (no data leaves; it is a needless write path).
+--
+-- Who legitimately needs them: nobody over the REST API.
+--   * Callers are the two triggers on sessions / session_logs
+--     (trg_fn_after_session_status_update, trg_fn_after_session_log_insert).
+--     Both are SECURITY DEFINER owned by postgres, so they run as the
+--     owner and call these functions as the owner; the invoking
+--     patient's privileges are not involved. (Checked by a rolled-back
+--     patient-completion simulation, see POST-FLIGHT 3.)
+--   * Neither repo calls them: grep of stream-frontend/src and
+--     STREAM/app/src finds no .rpc() / postgrest.rpc() of these names
+--     (the only RPCs used are get_my_therapist and claim_patient_record).
+--   * create_missed_session_alerts() looks meant for a scheduled job,
+--     but pg_cron is not installed and nothing schedules it. If one is
+--     added later, it runs as postgres or service_role, which KEEP
+--     their access below.
+--
+-- What is kept: postgres (owner) and service_role. Both already hold
+-- explicit EXECUTE and are not touched. What is removed: PUBLIC, anon
+-- and authenticated (the explicit anon / authenticated entries must be
+-- revoked separately: REVOKE ... FROM PUBLIC does not remove them).
+--
+-- Verified before this file was written (2026-10-14, read-only session,
+-- each simulation inside BEGIN ... ROLLBACK, nothing persisted, checked
+-- afterwards): with the three REVOKEs applied, (a) a patient completion
+-- (the app's UPDATE sessions + INSERT session_logs as role authenticated)
+-- still succeeds, the stats trigger still updates the patient row and the
+-- low-accuracy alert trigger still inserts its alert (score 40);
+-- (b) calling recalculate_patient_stats as authenticated, and
+-- create_low_accuracy_alert as anon, fails with 42501 permission denied;
+-- (c) service_role still has EXECUTE.
+--
+-- Not in scope (listed so they are not forgotten):
+--   * the two trigger functions (they return `trigger`, so they cannot
+--     be called through the REST API at all; their ACL is cosmetic);
+--   * claim_patient_record, is_admin, stored_role, role_unclaimed: same
+--     default ACL, deliberately callable (RLS policies and the sign-up
+--     flow use them) and not touched here.
+--
+-- PRE-FLIGHT -- run first (DB owner), expect the ACL above for all three:
+--
+--   SELECT p.proname, p.proacl::text,
+--          has_function_privilege('anon',          p.oid, 'EXECUTE') AS anon_can,
+--          has_function_privilege('authenticated', p.oid, 'EXECUTE') AS authed_can
+--   FROM pg_proc p
+--   WHERE p.pronamespace = 'public'::regnamespace
+--     AND p.proname IN ('create_low_accuracy_alert',
+--                       'create_missed_session_alerts',
+--                       'recalculate_patient_stats')
+--   ORDER BY 1;
+--   -- expect 3 rows, anon_can = true, authed_can = true
+--
+--   -- and the two triggers exist and are enabled (tgenabled = 'O'):
+--   SELECT tgname, tgenabled FROM pg_trigger
+--   WHERE NOT tgisinternal AND tgname IN
+--         ('trg_after_session_status_update', 'trg_after_session_log_insert');
+--   -- expect 2 rows
+-- ============================================================
+
+BEGIN;
+
+REVOKE EXECUTE ON FUNCTION public.create_low_accuracy_alert(uuid, numeric)
+  FROM PUBLIC, anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.create_missed_session_alerts()
+  FROM PUBLIC, anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.recalculate_patient_stats(uuid)
+  FROM PUBLIC, anon, authenticated;
+
+COMMIT;
+
+-- ============================================================
+-- POST-FLIGHT -- run after applying (DB owner):
+--
+--   -- 1. privileges: only postgres and service_role remain
+--   SELECT p.proname, p.proacl::text,
+--          has_function_privilege('anon',          p.oid, 'EXECUTE') AS anon_can,
+--          has_function_privilege('authenticated', p.oid, 'EXECUTE') AS authed_can,
+--          has_function_privilege('service_role',  p.oid, 'EXECUTE') AS service_can
+--   FROM pg_proc p
+--   WHERE p.pronamespace = 'public'::regnamespace
+--     AND p.proname IN ('create_low_accuracy_alert',
+--                       'create_missed_session_alerts',
+--                       'recalculate_patient_stats')
+--   ORDER BY 1;
+--   -- expect anon_can = false, authed_can = false, service_can = true;
+--   -- proacl = {postgres=X/postgres,service_role=X/postgres}, no "=X/postgres"
+--
+--   -- 2. a signed-in user can no longer call them (each in its own run,
+--   --    the first error ends the transaction)
+--   BEGIN;
+--   SET LOCAL ROLE authenticated;
+--   SELECT set_config('request.jwt.claims',
+--     '{"sub":"7a258b0d-7294-4e0e-918d-85768b007849","role":"authenticated"}', true);
+--   SELECT public.recalculate_patient_stats(gen_random_uuid());
+--   -- expect: ERROR: permission denied for function recalculate_patient_stats
+--   ROLLBACK;
+--
+--   BEGIN;
+--   SET LOCAL ROLE anon;
+--   SELECT public.create_low_accuracy_alert(gen_random_uuid(), 100);
+--   -- expect: ERROR: permission denied for function create_low_accuracy_alert
+--   ROLLBACK;
+--
+--   -- 3. completion still works for a patient (the triggers still fire):
+--   --    exactly the two writes the Android app makes, then ROLLBACK
+--   BEGIN;
+--   SELECT set_config('sim.session_id', (SELECT s.id::text FROM sessions s
+--     JOIN patients p ON p.id = s.patient_id
+--     WHERE p.user_id = '7a258b0d-7294-4e0e-918d-85768b007849'
+--       AND s.status = 'in_progress' AND s.exercise_id IS NOT NULL
+--     ORDER BY s.started_at DESC LIMIT 1), true);
+--   SELECT set_config('sim.exercise_id',
+--     (SELECT exercise_id::text FROM sessions WHERE id = current_setting('sim.session_id')::uuid), true);
+--   SELECT set_config('request.jwt.claims',
+--     '{"sub":"7a258b0d-7294-4e0e-918d-85768b007849","role":"authenticated"}', true);
+--   SET LOCAL ROLE authenticated;
+--   UPDATE sessions SET status = 'completed', duration_seconds = 95, completed_at = now()
+--     WHERE id = current_setting('sim.session_id')::uuid;
+--   INSERT INTO session_logs (id, session_id, exercise_id, reps_completed, accuracy_score,
+--                             range_of_motion, notes, created_at)
+--     VALUES (gen_random_uuid(), current_setting('sim.session_id')::uuid,
+--             current_setting('sim.exercise_id')::uuid, 8, 82.5, 91.0, 'Keep going', now());
+--   RESET ROLE;
+--   SELECT status FROM sessions WHERE id = current_setting('sim.session_id')::uuid;   -- expect completed
+--   SELECT total_sessions, current_streak FROM patients
+--     WHERE user_id = '7a258b0d-7294-4e0e-918d-85768b007849';                        -- expect the trigger ran: 1, 1
+--   ROLLBACK;
+--
+--   -- 4. the triggers are unchanged
+--   SELECT tgname, tgenabled FROM pg_trigger
+--   WHERE NOT tgisinternal AND tgname IN
+--         ('trg_after_session_status_update', 'trg_after_session_log_insert');
+--   -- expect 2 rows, tgenabled = 'O'
+-- ============================================================
+
+-- ============================================================
+-- ROLLBACK (manual -- not part of this migration):
+--
+--   GRANT EXECUTE ON FUNCTION public.create_low_accuracy_alert(uuid, numeric)
+--     TO PUBLIC, anon, authenticated;
+--   GRANT EXECUTE ON FUNCTION public.create_missed_session_alerts()
+--     TO PUBLIC, anon, authenticated;
+--   GRANT EXECUTE ON FUNCTION public.recalculate_patient_stats(uuid)
+--     TO PUBLIC, anon, authenticated;
+-- ============================================================
