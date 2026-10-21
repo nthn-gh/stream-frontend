@@ -1,0 +1,1364 @@
+<title>STREAM Therapist Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     STREAM Therapist Portal — Design System
+     Tokens transcribed verbatim from STREAM_Project_Handoff_Summary.md
+     Section 6.9 (locked, do not improvise new values).
+     Single-theme (light) by deliberate choice: the handoff's design
+     doc specifies only a light clinical UI with no dark-mode spec —
+     legibility for an older, low-vision patient/therapist audience
+     was the stated priority, so no prefers-color-scheme variant is
+     introduced here. Background/colors are still set explicitly so
+     the page holds correctly on any host ground.
+     ============================================================ */
+  :root{
+    --color-primary:#0EA5E9;
+    --color-primary-hover:rgba(14,165,233,.9);
+    --color-primary-active:rgba(14,165,233,.8);
+    --color-teal:#14B8A6;
+    --color-navy:#030213;
+
+    --color-white:#FFFFFF;
+    --color-slate-50:#F8FAFC;
+    --color-slate-100:#F1F5F9;
+    --color-slate-200:#E2E8F0;
+    --color-slate-300:#CBD5E1;
+    --color-slate-400:#94A3B8;
+    --color-slate-600:#475569;
+    --color-slate-700:#334155;
+    --color-slate-900:#0F172A;
+
+    --color-success:#10B981; --color-success-bg:#D1FAE5; --color-success-text:#065F46;
+    --color-warning:#F59E0B; --color-warning-bg:#FEF3C7; --color-warning-text:#92400E;
+    --color-error:#EF4444;   --color-error-bg:#FEE2E2;   --color-error-text:#991B1B;
+    --color-destructive:#D4183D;
+    --color-info-bg:#DBEAFE; --color-info-text:#1E40AF;
+
+    --accent-purple-bg:#F3E8FF; --accent-purple:#9333EA;
+    --accent-blue-bg:#DBEAFE;   --accent-blue-soft:#EFF6FF;
+    --accent-teal-bg:#F0FDFA;   --accent-teal-soft:#CCFBF1;
+    --accent-orange-bg:#FFEDD5; --accent-orange:#EA580C;
+    --accent-green-bg:#DCFCE7;  --accent-green:#16A34A;
+
+    --gradient-blue-teal:linear-gradient(135deg,#EFF6FF 0%,#F0FDFA 100%);
+    --gradient-page:linear-gradient(180deg,#F8FAFC 0%,#FFFFFF 100%);
+
+    --spacing-1:4px; --spacing-2:8px; --spacing-3:12px; --spacing-4:16px;
+    --spacing-5:20px; --spacing-6:24px; --spacing-8:32px; --spacing-10:40px;
+    --spacing-12:48px; --spacing-16:64px;
+
+    --radius-xs:4px; --radius-sm:6px; --radius-md:8px; --radius-lg:12px;
+    --radius-xl:16px; --radius-2xl:20px; --radius-3xl:24px; --radius-full:9999px;
+
+    --font-size-xs:12px; --font-size-sm:14px; --font-size-base:16px;
+    --font-size-lg:18px; --font-size-xl:20px; --font-size-2xl:24px;
+    --font-size-3xl:30px; --font-size-4xl:36px; --font-size-5xl:48px;
+
+    --weight-normal:400; --weight-medium:500; --weight-semibold:600; --weight-bold:700;
+
+    --lh-tight:1.2; --lh-snug:1.3; --lh-normal:1.4; --lh-relaxed:1.5;
+
+    --shadow-sm:0 1px 2px 0 rgba(0,0,0,.05);
+    --shadow-md:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px -1px rgba(0,0,0,.1);
+    --shadow-lg:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1);
+    --shadow-xl:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);
+    --shadow-2xl:0 25px 50px -12px rgba(0,0,0,.25);
+
+    --z-dropdown:100; --z-sticky:200; --z-fixed:300;
+    --z-modal-overlay:1000; --z-modal:1001; --z-toast:9999;
+
+    --font-sans:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif;
+
+    --sidebar-w:280px; --sidebar-w-collapsed:64px;
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  body{
+    margin:0;
+    font-family:var(--font-sans);
+    background:var(--color-slate-50);
+    color:var(--color-slate-900);
+    font-size:var(--font-size-base);
+    line-height:var(--lh-relaxed);
+    -webkit-font-smoothing:antialiased;
+  }
+  img{ max-width:100%; }
+  [hidden]{ display:none!important; }
+  ::selection{ background:var(--accent-blue-bg); color:var(--color-slate-900); }
+
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{ animation-duration:.001ms!important; animation-iteration-count:1!important; transition-duration:.001ms!important; scroll-behavior:auto!important; }
+  }
+
+  /* ---------- Typography scale (Section 6.2, verbatim) ---------- */
+  .t-display-lg{ font-size:var(--font-size-5xl); line-height:58px; font-weight:var(--weight-bold); letter-spacing:-0.02em; }
+  .t-h1{ font-size:var(--font-size-4xl); line-height:47px; font-weight:var(--weight-bold); letter-spacing:-0.01em; }
+  .t-h2{ font-size:var(--font-size-3xl); line-height:42px; font-weight:var(--weight-bold); letter-spacing:-0.01em; }
+  .t-h3{ font-size:var(--font-size-2xl); line-height:34px; font-weight:var(--weight-semibold); }
+  .t-h4{ font-size:var(--font-size-xl); line-height:30px; font-weight:var(--weight-semibold); }
+  .t-title-lg{ font-size:22px; line-height:31px; font-weight:var(--weight-bold); }
+  .t-title{ font-size:var(--font-size-xl); line-height:28px; font-weight:var(--weight-semibold); }
+  .t-body-lg{ font-size:var(--font-size-lg); line-height:27px; font-weight:var(--weight-normal); }
+  .t-body{ font-size:var(--font-size-base); line-height:24px; font-weight:var(--weight-normal); }
+  .t-body-md{ font-size:var(--font-size-base); line-height:24px; font-weight:var(--weight-medium); }
+  .t-body-sm{ font-size:var(--font-size-sm); line-height:21px; font-weight:var(--weight-normal); }
+  .t-label-lg{ font-size:var(--font-size-base); line-height:24px; font-weight:var(--weight-medium); }
+  .t-label{ font-size:var(--font-size-sm); line-height:21px; font-weight:var(--weight-medium); }
+  .t-caption{ font-size:var(--font-size-xs); line-height:17px; font-weight:var(--weight-normal); color:var(--color-slate-400); }
+  .t-overline{ font-size:var(--font-size-xs); line-height:17px; font-weight:var(--weight-semibold); letter-spacing:.05em; text-transform:uppercase; }
+  h1,h2,h3,h4{ margin:0; text-wrap:balance; color:var(--color-slate-900); font-family:var(--font-sans); }
+  p{ margin:0; }
+  .text-secondary{ color:var(--color-slate-600); }
+  .text-tertiary{ color:var(--color-slate-400); }
+  .text-link{ color:var(--color-primary); text-decoration:none; }
+  .text-link:hover{ text-decoration:underline; }
+
+  /* ---------- Focus & a11y ---------- */
+  a,button,input,select,textarea,[tabindex]{ font-family:inherit; }
+  :focus-visible{ outline:3px solid rgba(14,165,233,.5); outline-offset:2px; border-radius:inherit; }
+  .skip-link{
+    position:absolute; left:8px; top:-48px; background:var(--color-primary); color:#fff;
+    padding:10px 16px; border-radius:var(--radius-md); z-index:var(--z-toast); transition:top .15s ease;
+    font-weight:var(--weight-semibold); text-decoration:none;
+  }
+  .skip-link:focus{ top:8px; }
+  .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* ============================================================
+     Demo / prototype navigator (NOT part of the product UI —
+     lets a reviewer flip between the screens this file documents)
+     ============================================================ */
+  .demo-bar{
+    position:fixed; top:var(--spacing-4); right:var(--spacing-4); z-index:var(--z-toast);
+    display:flex; align-items:center; gap:var(--spacing-2);
+    background:rgba(255,255,255,.92); backdrop-filter:blur(6px);
+    border:1.5px dashed var(--color-slate-300); border-radius:var(--radius-full);
+    padding:6px 8px 6px 14px; box-shadow:var(--shadow-lg);
+  }
+  .demo-bar__label{ font-size:11px; font-weight:var(--weight-semibold); color:var(--color-slate-400); text-transform:uppercase; letter-spacing:.06em; margin-right:2px; }
+  .demo-bar select{
+    border:1px solid var(--color-slate-200); background:var(--color-white); color:var(--color-slate-900);
+    font-size:var(--font-size-sm); font-weight:var(--weight-medium); padding:7px 10px; border-radius:var(--radius-full);
+    cursor:pointer;
+  }
+  .demo-bar__btn{
+    border:none; background:transparent; color:var(--color-slate-600); font-size:var(--font-size-sm);
+    font-weight:var(--weight-medium); padding:7px 14px; border-radius:var(--radius-full); cursor:pointer;
+  }
+  .demo-bar__btn.is-active{ background:var(--color-primary); color:#fff; }
+
+  /* ============================================================
+     Buttons (Section 6.4)
+     ============================================================ */
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    font-family:var(--font-sans); font-weight:var(--weight-semibold); font-size:var(--font-size-base);
+    height:44px; padding:12px 24px; border-radius:var(--radius-lg); border:none; cursor:pointer;
+    box-shadow:var(--shadow-sm); transition:background-color .15s ease, opacity .15s ease, transform .1s ease;
+    white-space:nowrap; line-height:1;
+  }
+  .btn:active{ transform:scale(.98); }
+  .btn-primary{ background:var(--color-primary); color:#fff; }
+  .btn-primary:hover{ background:var(--color-primary-hover); }
+  .btn-primary:active{ background:var(--color-primary-active); }
+  .btn-primary:disabled{ background:var(--color-slate-300); color:var(--color-slate-400); box-shadow:none; cursor:not-allowed; }
+  .btn-secondary{ background:#fff; color:var(--color-slate-900); border:1px solid var(--color-slate-200); box-shadow:none; }
+  .btn-secondary:hover{ background:var(--color-slate-50); }
+  .btn-destructive{ background:var(--color-error); color:#fff; }
+  .btn-destructive:hover{ background:#DC2626; }
+  .btn-lg{ height:52px; font-size:var(--font-size-lg); padding:14px 28px; }
+  .btn-sm{ height:36px; font-size:var(--font-size-sm); padding:8px 16px; border-radius:var(--radius-md); }
+  .btn-icon{ width:40px; height:40px; padding:0; border-radius:var(--radius-lg); background:transparent; border:1px solid var(--color-slate-200); color:var(--color-slate-600); box-shadow:none; }
+  .btn-icon:hover{ background:var(--color-slate-50); }
+  .btn-icon.ghost{ border-color:transparent; }
+  .btn-block{ width:100%; }
+  .icon{ width:20px; height:20px; flex:none; display:inline-block; }
+  .icon-sm{ width:16px; height:16px; }
+  .icon-lg{ width:24px; height:24px; }
+
+  /* ============================================================
+     Cards (Section 6.4)
+     ============================================================ */
+  .card{
+    background:#fff; border:1px solid var(--color-slate-200); border-radius:var(--radius-2xl);
+    padding:var(--spacing-6); box-shadow:var(--shadow-md); transition:box-shadow .2s ease, border-color .2s ease, transform .2s ease;
+  }
+  .card > * + *{ margin-top:var(--spacing-4); }
+  .card--hover:hover{ border-color:var(--color-slate-300); box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+  .card-header{ display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-3); }
+  .stat-card{ min-width:200px; padding:var(--spacing-6); display:flex; flex-direction:column; gap:var(--spacing-4); }
+  .stat-card__icon{ width:40px; height:40px; border-radius:var(--radius-lg); display:flex; align-items:center; justify-content:center; }
+  .stat-card__value{ font-size:32px; font-weight:var(--weight-bold); line-height:1.15; font-variant-numeric:tabular-nums; }
+  .stat-card__label{ font-size:var(--font-size-sm); color:var(--color-slate-600); }
+  .stat-card__delta{ display:inline-flex; align-items:center; gap:4px; font-size:var(--font-size-xs); font-weight:var(--weight-semibold); }
+
+  /* ============================================================
+     Inputs (Section 6.4)
+     ============================================================ */
+  .field{ display:flex; flex-direction:column; gap:6px; }
+  .field label{ font-size:var(--font-size-sm); font-weight:var(--weight-medium); color:var(--color-slate-700); }
+  .input,.select,.textarea{
+    background:#F3F3F5; border:1px solid transparent; border-radius:var(--radius-lg);
+    height:48px; padding:12px 16px; font-size:var(--font-size-base); color:var(--color-slate-900);
+    font-family:var(--font-sans); width:100%;
+  }
+  .input::placeholder,.textarea::placeholder{ color:var(--color-slate-400); }
+  .input:focus,.select:focus,.textarea:focus{
+    outline:none; border-color:var(--color-primary); background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,.2);
+  }
+  .input.has-error{ border-color:var(--color-error); background:#fff; }
+  .input-sm,.select-sm{ height:36px; padding:6px 12px; font-size:var(--font-size-sm); border-radius:var(--radius-md); }
+  .select-sm{ background-position:right 10px center; padding-right:32px; }
+  .field-error{ font-size:var(--font-size-xs); color:var(--color-error-text); }
+  .textarea{ height:auto; min-height:120px; max-height:300px; resize:vertical; }
+  .select{ appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'><path d='M6 9l6 6 6-6' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>"); background-repeat:no-repeat; background-position:right 14px center; padding-right:40px; }
+  .input-icon-wrap{ position:relative; }
+  .input-icon-wrap .icon{ position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--color-slate-400); }
+  .input-icon-wrap .input{ padding-left:44px; }
+  .checkbox-row{ display:flex; align-items:center; gap:10px; font-size:var(--font-size-sm); color:var(--color-slate-700); }
+  .checkbox-row input{ width:18px; height:18px; accent-color:var(--color-primary); }
+
+  /* ============================================================
+     Badges (Section 6.4)
+     ============================================================ */
+  .badge{ display:inline-flex; align-items:center; gap:4px; border-radius:var(--radius-full); padding:4px 12px; font-size:var(--font-size-xs); font-weight:var(--weight-semibold); white-space:nowrap; }
+  .badge-success{ background:var(--color-success-bg); color:var(--color-success-text); }
+  .badge-warning{ background:var(--color-warning-bg); color:var(--color-warning-text); }
+  .badge-error{ background:var(--color-error-bg); color:var(--color-error-text); }
+  .badge-info{ background:var(--color-info-bg); color:var(--color-info-text); }
+  .badge-neutral{ background:var(--color-slate-100); color:var(--color-slate-600); }
+  .badge-lg{ padding:6px 16px; font-size:var(--font-size-sm); }
+  .badge-sm{ padding:2px 8px; font-size:10px; }
+  .badge .dot{ width:6px; height:6px; border-radius:50%; background:currentColor; }
+
+  /* ============================================================
+     Avatars
+     ============================================================ */
+  .avatar{ border-radius:50%; background:var(--color-primary); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-weight:var(--weight-semibold); flex:none; }
+  .avatar img{ width:100%; height:100%; border-radius:50%; object-fit:cover; }
+  .avatar-xs{ width:24px; height:24px; font-size:10px; }
+  .avatar-sm{ width:32px; height:32px; font-size:12px; }
+  .avatar-md{ width:44px; height:44px; font-size:15px; }
+  .avatar-lg{ width:64px; height:64px; font-size:20px; }
+  .avatar-xl{ width:80px; height:80px; font-size:26px; }
+
+  /* ============================================================
+     Table (Section 6.4)
+     ============================================================ */
+  .table-wrap{ background:#fff; border:1px solid var(--color-slate-200); border-radius:var(--radius-2xl); overflow:hidden; }
+  .table-scroll{ overflow-x:auto; }
+  table.data-table{ width:100%; border-collapse:collapse; min-width:640px; }
+  .data-table thead th{ background:var(--color-slate-50); height:56px; font-size:var(--font-size-sm); font-weight:var(--weight-semibold); color:var(--color-slate-700); text-align:left; padding:0 var(--spacing-5); border-bottom:1px solid var(--color-slate-200); position:sticky; top:0; }
+  .data-table tbody td{ height:64px; padding:0 var(--spacing-5); border-bottom:1px solid var(--color-slate-200); font-size:var(--font-size-sm); color:var(--color-slate-700); }
+  .data-table tbody tr{ transition:background-color .15s ease; cursor:pointer; }
+  .data-table tbody tr:hover{ background:var(--color-slate-50); }
+  .data-table tbody tr:last-child td{ border-bottom:none; }
+  .data-table tbody tr.is-selected{ background:var(--accent-blue-soft); box-shadow:inset 3px 0 0 var(--color-primary); }
+  .row-person{ display:flex; align-items:center; gap:12px; }
+
+  /* ============================================================
+     Tabs
+     ============================================================ */
+  .tabs{ display:flex; gap:8px; border-bottom:1px solid var(--color-slate-200); }
+  .tab{ background:transparent; border:none; font-family:var(--font-sans); font-size:var(--font-size-base); font-weight:var(--weight-medium); color:var(--color-slate-600); padding:12px 24px; border-radius:12px 12px 0 0; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; }
+  .tab:hover{ background:var(--color-slate-50); }
+  .tab[aria-selected="true"]{ background:#fff; color:var(--color-primary); font-weight:var(--weight-semibold); border-bottom-color:var(--color-primary); }
+
+  /* ============================================================
+     Progress
+     ============================================================ */
+  .bar-track{ height:8px; border-radius:var(--radius-full); background:var(--color-slate-200); overflow:hidden; }
+  .bar-track.lg{ height:12px; }
+  .bar-fill{ height:100%; border-radius:var(--radius-full); background:var(--color-primary); transition:width .3s ease; }
+  .bar-fill.success{ background:var(--color-teal); }
+
+  /* ============================================================
+     Alerts / Toasts / list items
+     ============================================================ */
+  .alert{ display:flex; gap:12px; align-items:flex-start; border-radius:var(--radius-lg); padding:var(--spacing-4); border:1px solid; font-size:var(--font-size-sm); }
+  .alert-success{ background:var(--color-success-bg); border-color:#A7F3D0; color:var(--color-success-text); }
+  .alert-warning{ background:var(--color-warning-bg); border-color:#FDE68A; color:var(--color-warning-text); }
+  .alert-error{ background:var(--color-error-bg); border-color:#FECACA; color:var(--color-error-text); }
+  .alert-info{ background:var(--color-info-bg); border-color:#BFDBFE; color:var(--color-info-text); }
+
+  .alert-item{ display:flex; gap:14px; min-height:100px; padding:var(--spacing-4) var(--spacing-4) var(--spacing-4) 18px; border-radius:var(--radius-lg); background:#fff; border:1px solid var(--color-slate-200); position:relative; overflow:hidden; }
+  .alert-item::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:4px; }
+  .alert-item.sev-high::before{ background:var(--color-error); }
+  .alert-item.sev-moderate::before{ background:var(--color-warning); }
+  .alert-item.sev-low::before{ background:var(--color-primary); }
+  .alert-item__icon{ width:40px; height:40px; border-radius:var(--radius-lg); flex:none; display:flex; align-items:center; justify-content:center; }
+
+  /* ============================================================
+     Modal
+     ============================================================ */
+  .modal-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.4); backdrop-filter:blur(4px); z-index:var(--z-modal-overlay); display:flex; align-items:center; justify-content:center; padding:var(--spacing-4); }
+  .modal{ background:#fff; border-radius:var(--radius-2xl); max-width:520px; width:100%; box-shadow:var(--shadow-2xl); z-index:var(--z-modal); }
+  .modal-header{ padding:var(--spacing-6); border-bottom:1px solid var(--color-slate-200); display:flex; align-items:center; justify-content:space-between; }
+  .modal-body{ padding:var(--spacing-6); max-height:60vh; overflow:auto; }
+  .modal-footer{ padding:var(--spacing-6); border-top:1px solid var(--color-slate-200); display:flex; justify-content:flex-end; gap:12px; }
+
+  /* ============================================================
+     Layout shell
+     ============================================================ */
+  .grid{ display:grid; gap:var(--spacing-6); }
+  .stack{ display:flex; flex-direction:column; }
+  .row{ display:flex; align-items:center; }
+  .g-2{ gap:8px } .g-3{ gap:12px } .g-4{ gap:16px } .g-6{ gap:24px }
+
+  .portal-view{ display:flex; min-height:100vh; align-items:stretch; }
+
+  .sidebar{
+    width:var(--sidebar-w); flex:none; background:var(--color-slate-50); border-right:1px solid var(--color-slate-200);
+    display:flex; flex-direction:column; height:100vh; position:sticky; top:0; transition:width .2s ease; z-index:var(--z-sticky);
+  }
+  .sidebar.is-collapsed{ width:var(--sidebar-w-collapsed); }
+  .sidebar.is-collapsed .brand__text,
+  .sidebar.is-collapsed .nav-item__label,
+  .sidebar.is-collapsed .sidebar__section-label,
+  .sidebar.is-collapsed .sidebar__foot-text{ display:none; }
+  .sidebar__brand{ display:flex; align-items:center; gap:12px; padding:var(--spacing-5); height:72px; border-bottom:1px solid var(--color-slate-200); }
+  .brand__mark{ width:36px; height:36px; border-radius:var(--radius-md); background:var(--color-primary); color:#fff; display:flex; align-items:center; justify-content:center; flex:none; }
+  .brand__text strong{ display:block; font-size:var(--font-size-base); font-weight:var(--weight-bold); color:var(--color-navy); line-height:1.15; }
+  .brand__text span{ display:block; font-size:11px; color:var(--color-slate-400); font-weight:var(--weight-medium); letter-spacing:.03em; text-transform:uppercase; }
+
+  .sidebar__nav{ flex:1; overflow-y:auto; padding:var(--spacing-4) var(--spacing-3); }
+  .sidebar__section-label{ font-size:11px; font-weight:var(--weight-semibold); letter-spacing:.06em; text-transform:uppercase; color:var(--color-slate-400); padding:var(--spacing-3) var(--spacing-3) 8px; }
+  .nav-item{
+    display:flex; align-items:center; gap:12px; height:44px; padding:0 12px; border-radius:var(--radius-lg);
+    color:var(--color-slate-700); font-size:var(--font-size-base); font-weight:var(--weight-medium); text-decoration:none;
+    cursor:pointer; border:none; background:transparent; width:100%; text-align:left; font-family:var(--font-sans);
+  }
+  .nav-item:hover{ background:var(--color-slate-200); }
+  .nav-item[aria-current="page"]{ background:var(--color-primary); color:#fff; }
+  .nav-item .icon{ flex:none; }
+  .nav-item__badge{ margin-left:auto; }
+
+  .sidebar__foot{ padding:var(--spacing-4); border-top:1px solid var(--color-slate-200); }
+  .sidebar__user{ display:flex; align-items:center; gap:10px; }
+  .sidebar__foot-text{ flex:1; min-width:0; }
+  .sidebar__foot-text strong{ display:block; font-size:var(--font-size-sm); color:var(--color-slate-900); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .sidebar__foot-text span{ display:block; font-size:12px; color:var(--color-slate-400); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+  .portal-main{ flex:1; min-width:0; display:flex; flex-direction:column; background:var(--gradient-page); }
+  .topbar{
+    height:72px; flex:none; display:flex; align-items:center; gap:var(--spacing-4); padding:0 var(--spacing-8);
+    border-bottom:1px solid var(--color-slate-200); background:#fff; position:sticky; top:0; z-index:var(--z-sticky);
+  }
+  .topbar__search{ width:400px; max-width:100%; }
+  .topbar__spacer{ flex:1; }
+  .topbar__icon-btn{ position:relative; }
+  .notif-dot{ position:absolute; top:8px; right:8px; width:8px; height:8px; border-radius:50%; background:var(--color-error); border:2px solid #fff; }
+  .topbar__profile{ display:flex; align-items:center; gap:10px; padding:6px 10px 6px 6px; border-radius:var(--radius-full); cursor:pointer; border:1px solid transparent; background:transparent; }
+  .topbar__profile:hover{ background:var(--color-slate-50); border-color:var(--color-slate-200); }
+  .topbar__profile-text{ text-align:left; line-height:1.2; }
+  .topbar__profile-text strong{ display:block; font-size:var(--font-size-sm); color:var(--color-slate-900); }
+  .topbar__profile-text span{ display:block; font-size:12px; color:var(--color-slate-400); }
+
+  .page{ flex:1; padding:var(--spacing-8); max-width:1160px; width:100%; margin:0 auto; }
+  .page-header{ display:flex; align-items:flex-start; justify-content:space-between; gap:var(--spacing-4); margin-bottom:var(--spacing-8); flex-wrap:wrap; }
+  .page-header p{ margin-top:6px; }
+  .section-heading{ margin:var(--spacing-10) 0 var(--spacing-4); }
+  .section-heading:first-child{ margin-top:0; }
+
+  /* Grid helpers matching the 12-col / stat-card / 3-col content specs */
+  .cols-4{ grid-template-columns:repeat(4,1fr); }
+  .cols-3{ grid-template-columns:repeat(3,1fr); }
+  .cols-2{ grid-template-columns:repeat(2,1fr); }
+  .profile-grid{ grid-template-columns:2fr 2fr 1fr; align-items:start; }
+  @media (max-width:1180px){
+    .cols-4{ grid-template-columns:repeat(2,1fr); }
+    .cols-3{ grid-template-columns:repeat(2,1fr); }
+    .profile-grid{ grid-template-columns:1fr 1fr; }
+  }
+  @media (max-width:860px){
+    .cols-4,.cols-3,.cols-2,.profile-grid{ grid-template-columns:1fr; }
+  }
+
+  /* 8px visible baseline grid overlay — toggled from the components/foundations screen */
+  .grid-overlay{ position:fixed; inset:0; pointer-events:none; z-index:5; background-image:linear-gradient(to right, rgba(14,165,233,.08) 1px, transparent 1px); background-size:8px 100%; display:none; }
+  .grid-overlay.is-on{ display:block; }
+
+  /* ============================================================
+     LOGIN SCREEN
+     ============================================================ */
+  .login-view{ min-height:100vh; display:flex; }
+  .login-illustration{
+    flex:1; background:linear-gradient(135deg,#0EA5E9 0%,#14B8A6 100%); display:flex; flex-direction:column;
+    justify-content:space-between; padding:var(--spacing-12); color:#fff; position:relative; overflow:hidden;
+  }
+  .login-illustration::after{
+    content:""; position:absolute; inset:0; opacity:.15;
+    background-image:radial-gradient(circle at 20% 20%, #fff 0, transparent 45%), radial-gradient(circle at 80% 70%, #fff 0, transparent 40%);
+  }
+  .login-illustration > *{ position:relative; }
+  .login-illustration .brand{ display:flex; align-items:center; gap:12px; }
+  .login-illustration .brand-mark{ width:44px; height:44px; border-radius:var(--radius-lg); background:rgba(255,255,255,.2); display:flex; align-items:center; justify-content:center; }
+  .login-copy{ max-width:420px; }
+  .login-copy h1{ color:#fff; margin-bottom:var(--spacing-4); }
+  .login-copy p{ color:rgba(255,255,255,.88); font-size:var(--font-size-lg); line-height:27px; }
+  .login-stats{ display:flex; gap:var(--spacing-8); }
+  .login-stats div strong{ display:block; font-size:var(--font-size-3xl); font-weight:var(--weight-bold); }
+  .login-stats div span{ font-size:var(--font-size-sm); color:rgba(255,255,255,.85); }
+  .login-form-panel{ flex:1; display:flex; align-items:center; justify-content:center; background:#fff; padding:var(--spacing-8); }
+  .login-form{ width:400px; max-width:100%; }
+  .login-form__head{ margin-bottom:var(--spacing-8); }
+  .login-form__foot{ margin-top:var(--spacing-6); text-align:center; }
+  .login-divider{ display:flex; align-items:center; gap:12px; color:var(--color-slate-400); font-size:var(--font-size-sm); margin:var(--spacing-6) 0; }
+  .login-divider::before,.login-divider::after{ content:""; flex:1; height:1px; background:var(--color-slate-200); }
+  @media (max-width:860px){ .login-illustration{ display:none; } }
+
+  /* ============================================================
+     Misc small components used across screens
+     ============================================================ */
+  .quick-action{ display:flex; align-items:center; gap:12px; padding:var(--spacing-4); border-radius:var(--radius-lg); border:1px solid var(--color-slate-200); background:#fff; cursor:pointer; text-align:left; width:100%; font-family:var(--font-sans); }
+  .quick-action:hover{ background:var(--color-slate-50); border-color:var(--color-slate-300); }
+  .quick-action__icon{ width:40px; height:40px; border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; flex:none; }
+
+  .exercise-card{ border:1.5px solid var(--color-slate-200); border-radius:var(--radius-lg); padding:var(--spacing-4); height:140px; display:flex; flex-direction:column; justify-content:space-between; cursor:pointer; background:#fff; }
+  .exercise-card:hover{ border-color:var(--color-slate-300); }
+  .exercise-card.is-selected{ border-color:var(--color-primary); background:var(--accent-blue-soft); }
+  .exercise-card__top{ display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
+  .exercise-card__icon{ width:36px; height:36px; border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; flex:none; }
+
+  .empty-state{ text-align:center; padding:var(--spacing-12) var(--spacing-6); color:var(--color-slate-400); }
+  .empty-state .icon-lg{ width:40px; height:40px; margin-bottom:var(--spacing-4); }
+
+  .legend{ display:flex; gap:var(--spacing-4); flex-wrap:wrap; }
+  .legend__item{ display:flex; align-items:center; gap:8px; font-size:var(--font-size-sm); color:var(--color-slate-600); }
+  .legend__swatch{ width:10px; height:10px; border-radius:2px; }
+
+  .mobile-fallback{ display:none; }
+  @media (max-width:767px){
+    .portal-view{ display:none; }
+    .mobile-fallback{ display:flex; }
+  }
+  .tablet-drawer-toggle{ display:none; }
+  [data-desktop-only]{ display:inline-flex; }
+  @media (max-width:1023px){
+    .sidebar{ position:fixed; left:0; top:0; bottom:0; transform:translateX(-100%); transition:transform .2s ease; box-shadow:var(--shadow-2xl); }
+    .sidebar.is-open{ transform:translateX(0); }
+    .tablet-drawer-toggle{ display:inline-flex; }
+    [data-desktop-only]{ display:none!important; }
+    .page{ padding:var(--spacing-5); }
+    .topbar{ padding:0 var(--spacing-5); }
+    .topbar__search{ width:100%; max-width:280px; }
+  }
+  .drawer-scrim{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:calc(var(--z-sticky) - 1); }
+  .drawer-scrim.is-visible{ display:block; }
+
+  .foundations-swatch{ border-radius:var(--radius-lg); height:64px; border:1px solid var(--color-slate-200); }
+  .foundations-row{ display:flex; align-items:center; gap:16px; padding:12px 0; border-bottom:1px solid var(--color-slate-100); }
+  .type-sample-label{ width:150px; flex:none; font-size:12px; color:var(--color-slate-400); font-family:ui-monospace,monospace; }
+</style>
+
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<div class="demo-bar" role="region" aria-label="Prototype navigator">
+  <span class="demo-bar__label">Prototype</span>
+  <button class="demo-bar__btn is-active" id="demo-goto-login" type="button">Login</button>
+  <button class="demo-bar__btn" id="demo-goto-portal" type="button">Portal</button>
+  <select id="demo-screen-select" aria-label="Jump to screen" hidden>
+    <option value="overview">Overview / Dashboard</option>
+    <option value="patients">Patients</option>
+    <option value="profile">Patient Profile</option>
+    <option value="assign">Assign Exercise</option>
+    <option value="alerts">Alerts</option>
+    <option value="reports">Reports</option>
+    <option value="messages">Messages</option>
+    <option value="components">Foundations &amp; Components</option>
+  </select>
+</div>
+
+<!-- ============================================================
+     LOGIN SCREEN
+     ============================================================ -->
+<div id="view-login">
+  <div class="login-view">
+    <div class="login-illustration">
+      <div class="brand">
+        <div class="brand-mark"><i class="icon icon-lg" data-icon="activity" aria-hidden="true"></i></div>
+        <strong class="t-title" style="color:#fff">STREAM</strong>
+      </div>
+      <div class="login-copy">
+        <h1 class="t-h1">Stroke Telerehabilitation, Remote Exercise &amp; Management</h1>
+        <p>Monitor recovery, assign home exercise plans, and catch setbacks early — for every patient on your caseload, from one dashboard.</p>
+      </div>
+      <div class="login-stats">
+        <div><strong>1,240+</strong><span>Sessions tracked this month</span></div>
+        <div><strong>96%</strong><span>Alert response within 24h</span></div>
+        <div><strong>38</strong><span>Partner clinics nationwide</span></div>
+      </div>
+    </div>
+    <div class="login-form-panel">
+      <form class="login-form" novalidate>
+        <div class="login-form__head">
+          <h2 class="t-h2">Welcome back</h2>
+          <p class="text-secondary" style="margin-top:8px;">Sign in to your therapist account</p>
+        </div>
+        <div class="stack g-4">
+          <div class="field">
+            <label for="li-email">Email address</label>
+            <div class="input-icon-wrap">
+              <i class="icon" data-icon="mail" aria-hidden="true"></i>
+              <input class="input" id="li-email" type="email" autocomplete="email" placeholder="you@clinic.ph" value="a.cruz@brightpathrehab.ph">
+            </div>
+          </div>
+          <div class="field">
+            <label for="li-password">Password</label>
+            <div class="input-icon-wrap">
+              <i class="icon" data-icon="eye-off" aria-hidden="true"></i>
+              <input class="input" id="li-password" type="password" autocomplete="current-password" placeholder="••••••••" value="••••••••••">
+            </div>
+          </div>
+          <div class="row" style="justify-content:space-between;">
+            <label class="checkbox-row"><input type="checkbox" checked> Keep me signed in</label>
+            <a class="text-link t-body-sm" href="#">Forgot password?</a>
+          </div>
+          <button class="btn btn-primary btn-lg btn-block" type="button" id="login-submit">Sign in</button>
+        </div>
+        <div class="login-divider">New to STREAM?</div>
+        <button class="btn btn-secondary btn-block" type="button">Request a clinic account</button>
+        <p class="t-caption" style="margin-top:var(--spacing-6); text-align:center;">By continuing you agree this portal is a clinical support tool and not a replacement for in-person therapy.</p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     THERAPIST PORTAL SHELL
+     ============================================================ -->
+<div id="view-portal" hidden>
+<div class="mobile-fallback" style="min-height:100vh; align-items:center; justify-content:center; text-align:center; flex-direction:column; gap:var(--spacing-3); padding:var(--spacing-8);">
+  <div class="brand__mark" style="width:56px; height:56px;"><i class="icon icon-lg" data-icon="activity" aria-hidden="true"></i></div>
+  <h1 class="t-h3" style="margin-top:var(--spacing-3);">This portal works best on a larger screen</h1>
+  <p class="t-body text-secondary" style="max-width:320px;">Try a tablet or desktop, or ask your clinic to install the STREAM companion app for patients and caregivers.</p>
+</div>
+<div class="drawer-scrim" id="drawer-scrim"></div>
+<div class="portal-view">
+  <aside class="sidebar" id="sidebar" aria-label="Primary">
+    <div class="sidebar__brand">
+      <div class="brand__mark"><i class="icon" data-icon="activity" aria-hidden="true"></i></div>
+      <div class="brand__text"><strong>STREAM</strong><span>Therapist Portal</span></div>
+    </div>
+    <nav class="sidebar__nav" aria-label="Sections">
+      <div class="sidebar__section-label">Care</div>
+      <button class="nav-item" data-screen="overview" aria-current="page"><i class="icon" data-icon="home" aria-hidden="true"></i><span class="nav-item__label">Overview</span></button>
+      <button class="nav-item" data-screen="patients"><i class="icon" data-icon="users" aria-hidden="true"></i><span class="nav-item__label">Patients</span></button>
+      <button class="nav-item" data-screen="alerts"><i class="icon" data-icon="bell" aria-hidden="true"></i><span class="nav-item__label">Alerts</span><span class="nav-item__badge badge badge-error badge-sm">3</span></button>
+      <button class="nav-item" data-screen="reports"><i class="icon" data-icon="bar-chart-2" aria-hidden="true"></i><span class="nav-item__label">Reports</span></button>
+      <button class="nav-item" data-screen="messages"><i class="icon" data-icon="message-square" aria-hidden="true"></i><span class="nav-item__label">Messages</span><span class="nav-item__badge badge badge-info badge-sm">2</span></button>
+      <div class="sidebar__section-label" style="margin-top:var(--spacing-3);">Reference</div>
+      <button class="nav-item" data-screen="components"><i class="icon" data-icon="clipboard" aria-hidden="true"></i><span class="nav-item__label">Foundations &amp; Components</span></button>
+    </nav>
+    <div class="sidebar__foot">
+      <div class="sidebar__user">
+        <div class="avatar avatar-md">AC</div>
+        <div class="sidebar__foot-text"><strong>Angela Cruz, RPT</strong><span>Bright Path Rehab, QC</span></div>
+        <button class="btn-icon ghost" aria-label="Settings"><i class="icon icon-sm" data-icon="settings" aria-hidden="true"></i></button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="portal-main">
+    <header class="topbar">
+      <button class="btn-icon tablet-drawer-toggle" id="drawer-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar"><i class="icon" data-icon="menu" aria-hidden="true"></i></button>
+      <button class="btn-icon" id="sidebar-collapse-toggle" aria-label="Collapse sidebar" data-desktop-only><i class="icon" data-icon="menu" aria-hidden="true"></i></button>
+      <div class="input-icon-wrap topbar__search">
+        <i class="icon" data-icon="search" aria-hidden="true"></i>
+        <input class="input" type="search" placeholder="Search patients, sessions, plans…" aria-label="Search">
+      </div>
+      <div class="topbar__spacer"></div>
+      <button class="btn-icon topbar__icon-btn" aria-label="3 unread notifications"><i class="icon" data-icon="bell" aria-hidden="true"></i><span class="notif-dot"></span></button>
+      <button class="topbar__profile" type="button">
+        <div class="avatar avatar-sm">AC</div>
+        <span class="topbar__profile-text"><strong>Angela Cruz</strong><span>Therapist</span></span>
+        <i class="icon icon-sm" data-icon="chevron-down" aria-hidden="true"></i>
+      </button>
+    </header>
+
+    <main class="page" id="main-content" tabindex="-1">
+
+      <!-- ================= OVERVIEW ================= -->
+      <section id="screen-overview" class="screen">
+        <div class="page-header">
+          <div>
+            <h1 class="t-h1">Good afternoon, Angela</h1>
+            <p class="text-secondary t-body">Here's how your caseload is doing today, Tue Sep 15.</p>
+          </div>
+          <div class="row g-3">
+            <button class="btn btn-secondary"><i class="icon" data-icon="download" aria-hidden="true"></i>Export summary</button>
+            <button class="btn btn-primary" data-goto-screen="assign"><i class="icon" data-icon="plus" aria-hidden="true"></i>Assign exercise plan</button>
+          </div>
+        </div>
+
+        <div class="grid cols-4">
+          <div class="card stat-card">
+            <div class="stat-card__icon" style="background:var(--accent-blue-soft);"><i class="icon" data-icon="users" style="color:var(--color-primary)" aria-hidden="true"></i></div>
+            <div><div class="stat-card__value">24</div><div class="stat-card__label">Active patients</div></div>
+            <span class="stat-card__delta" style="color:var(--color-success-text)"><i class="icon icon-sm" data-icon="trending-up" aria-hidden="true"></i>+3 this month</span>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-card__icon" style="background:var(--accent-teal-bg);"><i class="icon" data-icon="check-circle" style="color:var(--color-teal)" aria-hidden="true"></i></div>
+            <div><div class="stat-card__value">87%</div><div class="stat-card__label">Avg. adherence rate</div></div>
+            <span class="stat-card__delta" style="color:var(--color-success-text)"><i class="icon icon-sm" data-icon="trending-up" aria-hidden="true"></i>+4% vs last week</span>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-card__icon" style="background:var(--accent-orange-bg);"><i class="icon" data-icon="alert-triangle" style="color:var(--accent-orange)" aria-hidden="true"></i></div>
+            <div><div class="stat-card__value">5</div><div class="stat-card__label">Needing attention</div></div>
+            <span class="stat-card__delta" style="color:var(--color-error-text)"><i class="icon icon-sm" data-icon="alert-circle" aria-hidden="true"></i>2 missed 3+ sessions</span>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-card__icon" style="background:var(--accent-purple-bg);"><i class="icon" data-icon="target" style="color:var(--accent-purple)" aria-hidden="true"></i></div>
+            <div><div class="stat-card__value">78%</div><div class="stat-card__label">Avg. exercise accuracy</div></div>
+            <span class="stat-card__delta" style="color:var(--color-slate-600)">stable vs last week</span>
+          </div>
+        </div>
+
+        <div class="grid" style="grid-template-columns:2fr 1fr; margin-top:var(--spacing-8); align-items:start;">
+          <div class="stack g-6">
+            <div class="card">
+              <div class="card-header">
+                <h2 class="t-h4">Patients needing attention</h2>
+                <a class="text-link t-body-sm" data-goto-screen="patients">View all patients</a>
+              </div>
+              <div class="table-wrap table-scroll">
+                <table class="data-table">
+                  <thead><tr><th>Patient</th><th>Condition</th><th>Last session</th><th>Adherence</th><th>Status</th><th></th></tr></thead>
+                  <tbody>
+                    <tr data-goto-screen="profile">
+                      <td><div class="row-person"><div class="avatar avatar-sm">RS</div><span class="t-body-md">Reynaldo Santos</span></div></td>
+                      <td>Ischemic stroke, R hemiparesis</td>
+                      <td>6 days ago</td>
+                      <td style="width:120px;"><div class="bar-track"><div class="bar-fill" style="width:42%; background:var(--color-error);"></div></div></td>
+                      <td><span class="badge badge-error"><span class="dot"></span>Needs attention</span></td>
+                      <td><i class="icon icon-sm" data-icon="chevron-right" aria-hidden="true"></i></td>
+                    </tr>
+                    <tr data-goto-screen="profile">
+                      <td><div class="row-person"><div class="avatar avatar-sm">LB</div><span class="t-body-md">Liza Bautista</span></div></td>
+                      <td>Hemorrhagic stroke, L-sided weakness</td>
+                      <td>4 days ago</td>
+                      <td style="width:120px;"><div class="bar-track"><div class="bar-fill" style="width:55%; background:var(--color-warning);"></div></div></td>
+                      <td><span class="badge badge-warning"><span class="dot"></span>Needs attention</span></td>
+                      <td><i class="icon icon-sm" data-icon="chevron-right" aria-hidden="true"></i></td>
+                    </tr>
+                    <tr data-goto-screen="profile">
+                      <td><div class="row-person"><div class="avatar avatar-sm">EM</div><span class="t-body-md">Edgar Mendoza</span></div></td>
+                      <td>Ischemic stroke, expressive aphasia</td>
+                      <td>9 days ago</td>
+                      <td style="width:120px;"><div class="bar-track"><div class="bar-fill" style="width:30%; background:var(--color-error);"></div></div></td>
+                      <td><span class="badge badge-error"><span class="dot"></span>Needs attention</span></td>
+                      <td><i class="icon icon-sm" data-icon="chevron-right" aria-hidden="true"></i></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="card">
+              <h2 class="t-h4" style="margin-bottom:4px;">Quick actions</h2>
+              <div class="grid cols-3" style="margin-top:var(--spacing-4);">
+                <button class="quick-action" data-goto-screen="assign">
+                  <div class="quick-action__icon" style="background:var(--accent-blue-soft);"><i class="icon" data-icon="dumbbell" style="color:var(--color-primary)" aria-hidden="true"></i></div>
+                  <span class="t-body-md">Assign exercise plan</span>
+                </button>
+                <button class="quick-action" data-goto-screen="reports">
+                  <div class="quick-action__icon" style="background:var(--accent-teal-bg);"><i class="icon" data-icon="file-text" style="color:var(--color-teal)" aria-hidden="true"></i></div>
+                  <span class="t-body-md">Generate report</span>
+                </button>
+                <button class="quick-action" data-goto-screen="messages">
+                  <div class="quick-action__icon" style="background:var(--accent-purple-bg);"><i class="icon" data-icon="message-square" style="color:var(--accent-purple)" aria-hidden="true"></i></div>
+                  <span class="t-body-md">Message a patient</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" aria-label="Alerts panel" style="padding:0; overflow:hidden;">
+            <div style="padding:var(--spacing-6) var(--spacing-6) 0;">
+              <div class="card-header"><h2 class="t-h4">Alerts</h2><a class="text-link t-body-sm" data-goto-screen="alerts">See all</a></div>
+            </div>
+            <div class="stack g-3" style="padding:var(--spacing-4) var(--spacing-6) var(--spacing-6);" role="log" aria-live="polite">
+              <div class="alert-item sev-high">
+                <div class="alert-item__icon" style="background:var(--color-error-bg);"><i class="icon icon-sm" data-icon="alert-circle" style="color:var(--color-error)" aria-hidden="true"></i></div>
+                <div class="stack g-2"><strong class="t-label">Reynaldo Santos</strong><span class="t-body-sm text-secondary">Missed 3 consecutive sessions</span><span class="t-caption">2 hours ago</span></div>
+              </div>
+              <div class="alert-item sev-moderate">
+                <div class="alert-item__icon" style="background:var(--color-warning-bg);"><i class="icon icon-sm" data-icon="alert-triangle" style="color:var(--color-warning)" aria-hidden="true"></i></div>
+                <div class="stack g-2"><strong class="t-label">Liza Bautista</strong><span class="t-body-sm text-secondary">Accuracy dropped below 60%</span><span class="t-caption">Yesterday</span></div>
+              </div>
+              <div class="alert-item sev-low">
+                <div class="alert-item__icon" style="background:var(--accent-blue-soft);"><i class="icon icon-sm" data-icon="info" style="color:var(--color-primary)" aria-hidden="true"></i></div>
+                <div class="stack g-2"><strong class="t-label">Marites Villanueva</strong><span class="t-body-sm text-secondary">Technical issue reported in session</span><span class="t-caption">2 days ago</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= PATIENTS ================= -->
+      <section id="screen-patients" class="screen" hidden>
+        <div class="page-header">
+          <div><h1 class="t-h1">Patients</h1><p class="text-secondary t-body">24 active patients across 3 exercise plans.</p></div>
+          <button class="btn btn-primary"><i class="icon" data-icon="plus" aria-hidden="true"></i>Add patient</button>
+        </div>
+        <div class="row g-3" style="margin-bottom:var(--spacing-5); flex-wrap:wrap;">
+          <div class="input-icon-wrap" style="width:320px; max-width:100%;"><i class="icon" data-icon="search" aria-hidden="true"></i><input class="input" placeholder="Search by name or condition" aria-label="Search patients"></div>
+          <select class="select" style="width:180px;" aria-label="Filter by status"><option>All statuses</option><option>Active</option><option>Needs attention</option><option>Inactive</option></select>
+          <select class="select" style="width:200px;" aria-label="Filter by condition"><option>All conditions</option><option>Ischemic stroke</option><option>Hemorrhagic stroke</option></select>
+          <div class="topbar__spacer"></div>
+          <button class="btn-icon" aria-label="Filter options"><i class="icon" data-icon="filter" aria-hidden="true"></i></button>
+        </div>
+        <div class="table-wrap table-scroll">
+          <table class="data-table">
+            <thead><tr><th style="width:25%">Name</th><th style="width:20%">Condition</th><th style="width:15%">Last session</th><th style="width:15%">Adherence</th><th style="width:15%">Status</th><th style="width:10%">Actions</th></tr></thead>
+            <tbody>
+              <tr class="is-selected" data-goto-screen="profile"><td><div class="row-person"><div class="avatar avatar-sm">RS</div><div><div class="t-body-md">Reynaldo Santos</div><div class="t-caption">Age 61 · M</div></div></div></td><td>Ischemic stroke, R hemiparesis</td><td>6 days ago</td><td><div class="bar-track" style="width:100px;"><div class="bar-fill" style="width:42%; background:var(--color-error);"></div></div></td><td><span class="badge badge-error">Needs attention</span></td><td><button class="btn-icon ghost" aria-label="More actions"><i class="icon icon-sm" data-icon="more-vertical" aria-hidden="true"></i></button></td></tr>
+              <tr data-goto-screen="profile"><td><div class="row-person"><div class="avatar avatar-sm" style="background:var(--color-teal)">LB</div><div><div class="t-body-md">Liza Bautista</div><div class="t-caption">Age 54 · F</div></div></div></td><td>Hemorrhagic stroke, L weakness</td><td>4 days ago</td><td><div class="bar-track" style="width:100px;"><div class="bar-fill" style="width:55%; background:var(--color-warning);"></div></div></td><td><span class="badge badge-warning">Needs attention</span></td><td><button class="btn-icon ghost" aria-label="More actions"><i class="icon icon-sm" data-icon="more-vertical" aria-hidden="true"></i></button></td></tr>
+              <tr data-goto-screen="profile"><td><div class="row-person"><div class="avatar avatar-sm" style="background:var(--accent-purple)">EM</div><div><div class="t-body-md">Edgar Mendoza</div><div class="t-caption">Age 67 · M</div></div></div></td><td>Ischemic stroke, expressive aphasia</td><td>9 days ago</td><td><div class="bar-track" style="width:100px;"><div class="bar-fill" style="width:30%; background:var(--color-error);"></div></div></td><td><span class="badge badge-error">Needs attention</span></td><td><button class="btn-icon ghost" aria-label="More actions"><i class="icon icon-sm" data-icon="more-vertical" aria-hidden="true"></i></button></td></tr>
+              <tr data-goto-screen="profile"><td><div class="row-person"><div class="avatar avatar-sm" style="background:var(--accent-orange)">MV</div><div><div class="t-body-md">Marites Villanueva</div><div class="t-caption">Age 58 · F</div></div></div></td><td>Ischemic stroke, L hemiparesis</td><td>2 days ago</td><td><div class="bar-track" style="width:100px;"><div class="bar-fill success" style="width:81%;"></div></div></td><td><span class="badge badge-success">Active</span></td><td><button class="btn-icon ghost" aria-label="More actions"><i class="icon icon-sm" data-icon="more-vertical" aria-hidden="true"></i></button></td></tr>
+              <tr data-goto-screen="profile"><td><div class="row-person"><div class="avatar avatar-sm" style="background:var(--accent-green)">JT</div><div><div class="t-body-md">Joel Tan</div><div class="t-caption">Age 49 · M</div></div></div></td><td>Ischemic stroke, ataxia</td><td>Today</td><td><div class="bar-track" style="width:100px;"><div class="bar-fill success" style="width:94%;"></div></div></td><td><span class="badge badge-success">Active</span></td><td><button class="btn-icon ghost" aria-label="More actions"><i class="icon icon-sm" data-icon="more-vertical" aria-hidden="true"></i></button></td></tr>
+              <tr data-goto-screen="profile"><td><div class="row-person"><div class="avatar avatar-sm">CR</div><div><div class="t-body-md">Corazon Reyes</div><div class="t-caption">Age 72 · F</div></div></div></td><td>Hemorrhagic stroke, balance deficit</td><td>1 day ago</td><td><div class="bar-track" style="width:100px;"><div class="bar-fill success" style="width:88%;"></div></div></td><td><span class="badge badge-success">Active</span></td><td><button class="btn-icon ghost" aria-label="More actions"><i class="icon icon-sm" data-icon="more-vertical" aria-hidden="true"></i></button></td></tr>
+              <tr><td><div class="row-person"><div class="avatar avatar-sm" style="background:var(--color-slate-400)">FD</div><div><div class="t-body-md">Fernando Dizon</div><div class="t-caption">Age 65 · M</div></div></div></td><td>Ischemic stroke, R hemiparesis</td><td>21 days ago</td><td><div class="bar-track" style="width:100px;"><div class="bar-fill" style="width:8%; background:var(--color-slate-400);"></div></div></td><td><span class="badge badge-neutral">Inactive</span></td><td><button class="btn-icon ghost" aria-label="More actions"><i class="icon icon-sm" data-icon="more-vertical" aria-hidden="true"></i></button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= PATIENT PROFILE ================= -->
+      <section id="screen-profile" class="screen" hidden>
+        <button class="btn btn-secondary btn-sm" data-goto-screen="patients" style="margin-bottom:var(--spacing-5);"><i class="icon icon-sm" data-icon="arrow-left" aria-hidden="true"></i>Back to patients</button>
+        <div class="card" style="display:flex; align-items:center; gap:var(--spacing-5); flex-wrap:wrap;">
+          <div class="avatar avatar-xl">RS</div>
+          <div style="flex:1; min-width:220px;">
+            <div class="row g-3" style="flex-wrap:wrap;"><h1 class="t-h3">Reynaldo Santos</h1><span class="badge badge-error"><span class="dot"></span>Needs attention</span></div>
+            <p class="text-secondary t-body-lg" style="margin-top:6px;">Age 61 · Male · Ischemic stroke — left MCA territory, right hemiparesis</p>
+            <p class="t-caption" style="margin-top:4px;">Enrolled Mar 3, 2026 · Patient ID STR-1042</p>
+          </div>
+          <div class="row g-2">
+            <button class="btn-icon" aria-label="Call patient"><i class="icon" data-icon="phone" aria-hidden="true"></i></button>
+            <button class="btn-icon" aria-label="Video call patient"><i class="icon" data-icon="video" aria-hidden="true"></i></button>
+            <button class="btn btn-primary" data-goto-screen="assign"><i class="icon" data-icon="dumbbell" aria-hidden="true"></i>Assign exercise</button>
+          </div>
+        </div>
+
+        <div class="tabs" role="tablist" style="margin-top:var(--spacing-8);">
+          <button class="tab" role="tab" aria-selected="true" data-tab="profile-tab">Profile</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="progress-tab">Progress</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="activity-tab">Activity Log</button>
+        </div>
+
+        <div id="profile-tab" role="tabpanel" style="margin-top:var(--spacing-6);">
+          <div class="grid profile-grid">
+            <div class="stack g-6">
+              <div class="card">
+                <h2 class="t-h4">Personal &amp; medical info</h2>
+                <div class="grid cols-2" style="margin-top:var(--spacing-4);">
+                  <div><div class="t-label text-secondary">Contact number</div><div class="t-body-md">+63 917 555 0142</div></div>
+                  <div><div class="t-label text-secondary">Email</div><div class="t-body-md">r.santos.ph@gmail.com</div></div>
+                  <div><div class="t-label text-secondary">Caregiver</div><div class="t-body-md">Nena Santos (spouse)</div></div>
+                  <div><div class="t-label text-secondary">Stroke onset</div><div class="t-body-md">Feb 12, 2026</div></div>
+                  <div><div class="t-label text-secondary">Affected side</div><div class="t-body-md">Right (dominant)</div></div>
+                  <div><div class="t-label text-secondary">Comorbidities</div><div class="t-body-md">Hypertension</div></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header"><h2 class="t-h4">Current exercise plan</h2><span class="badge badge-info">Active</span></div>
+                <p class="t-body-sm text-secondary">Upper-limb recovery, phase 2 · Mar 3 – Oct 3, 2026</p>
+                <div class="table-wrap" style="margin-top:var(--spacing-4);">
+                  <table class="data-table">
+                    <thead><tr><th>Exercise</th><th>Sets × reps</th><th>Difficulty</th></tr></thead>
+                    <tbody>
+                      <tr><td class="t-body-md">Shoulder flexion, R arm</td><td>3 × 10</td><td><span class="badge badge-warning">Medium</span></td></tr>
+                      <tr><td class="t-body-md">Wrist extension, R hand</td><td>3 × 12</td><td><span class="badge badge-success">Easy</span></td></tr>
+                      <tr><td class="t-body-md">Sit-to-stand</td><td>2 × 8</td><td><span class="badge badge-error">Hard</span></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="stack g-6">
+              <div class="card">
+                <h2 class="t-h4">Recent sessions</h2>
+                <div class="stack g-4" style="margin-top:var(--spacing-4);">
+                  <div class="row" style="justify-content:space-between; padding-bottom:var(--spacing-3); border-bottom:1px solid var(--color-slate-100);">
+                    <div><div class="t-body-md">Sep 9 — Shoulder flexion</div><div class="t-caption">3 sets · 8/10 reps · 6:12 min</div></div>
+                    <span class="badge badge-warning">Needs work</span>
+                  </div>
+                  <div class="row" style="justify-content:space-between; padding-bottom:var(--spacing-3); border-bottom:1px solid var(--color-slate-100);">
+                    <div><div class="t-body-md">Sep 6 — Wrist extension</div><div class="t-caption">3 sets · 12/12 reps · 4:40 min</div></div>
+                    <span class="badge badge-success">Good</span>
+                  </div>
+                  <div class="row" style="justify-content:space-between;">
+                    <div><div class="t-body-md">Sep 3 — Sit-to-stand</div><div class="t-caption">2 sets · 6/8 reps · 5:02 min</div></div>
+                    <span class="badge badge-warning">Needs work</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <h2 class="t-h4">Range of motion — shoulder flexion</h2>
+                <div id="chart-rom" style="margin-top:var(--spacing-4);"></div>
+              </div>
+            </div>
+
+            <div class="stack g-6">
+              <div class="card">
+                <h2 class="t-h4">Session notes</h2>
+                <div class="field" style="margin-top:var(--spacing-3);">
+                  <textarea class="textarea" placeholder="Add a clinical note for this patient…" aria-label="New session note"></textarea>
+                </div>
+                <button class="btn btn-primary btn-sm btn-block" style="margin-top:var(--spacing-3);">Save note</button>
+                <div class="stack g-3" style="margin-top:var(--spacing-5); padding-top:var(--spacing-5); border-top:1px solid var(--color-slate-100);">
+                  <div><p class="t-body-sm">Grip strength improving; still guarding on overhead reach. Cue for scapular setting before flexion.</p><span class="t-caption">Angela Cruz · Sep 9</span></div>
+                  <div><p class="t-body-sm">Patient reports fatigue by set 3. Consider shortening session or splitting AM/PM.</p><span class="t-caption">Angela Cruz · Sep 6</span></div>
+                </div>
+              </div>
+              <div class="card">
+                <h2 class="t-h4">Quick actions</h2>
+                <div class="stack g-2" style="margin-top:var(--spacing-3);">
+                  <button class="quick-action" data-goto-screen="assign"><div class="quick-action__icon" style="background:var(--accent-blue-soft);"><i class="icon icon-sm" data-icon="dumbbell" style="color:var(--color-primary)" aria-hidden="true"></i></div><span class="t-body-sm">Adjust exercise plan</span></button>
+                  <button class="quick-action" data-goto-screen="messages"><div class="quick-action__icon" style="background:var(--accent-purple-bg);"><i class="icon icon-sm" data-icon="message-square" style="color:var(--accent-purple)" aria-hidden="true"></i></div><span class="t-body-sm">Message patient</span></button>
+                  <button class="quick-action" data-goto-screen="reports"><div class="quick-action__icon" style="background:var(--accent-teal-bg);"><i class="icon icon-sm" data-icon="file-text" style="color:var(--color-teal)" aria-hidden="true"></i></div><span class="t-body-sm">Generate progress report</span></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="progress-tab" role="tabpanel" hidden style="margin-top:var(--spacing-6);">
+          <div class="grid" style="grid-template-columns:2fr 1fr;">
+            <div class="card">
+              <h2 class="t-h4">Recovery trend — last 8 weeks</h2>
+              <div id="chart-rom-2" style="margin-top:var(--spacing-4);"></div>
+            </div>
+            <div class="stack g-6">
+              <div class="card" style="text-align:center;">
+                <h2 class="t-h4" style="text-align:left;">Adherence</h2>
+                <div id="ring-adherence" style="margin:var(--spacing-4) auto 0;"></div>
+              </div>
+              <div class="card"><div class="stat-card__label">Avg. accuracy (30d)</div><div class="stat-card__value" style="margin-top:6px;">74%</div><div class="bar-track" style="margin-top:10px;"><div class="bar-fill" style="width:74%;"></div></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="activity-tab" role="tabpanel" hidden style="margin-top:var(--spacing-6);">
+          <div class="table-wrap table-scroll">
+            <table class="data-table">
+              <thead><tr><th>Date</th><th>Exercise</th><th>Sets/Reps</th><th>Accuracy</th><th>Duration</th><th>Form quality</th></tr></thead>
+              <tbody>
+                <tr><td>Sep 9</td><td>Shoulder flexion</td><td>3 × 8/10</td><td>68%</td><td>6:12</td><td><span class="badge badge-warning">Needs work</span></td></tr>
+                <tr><td>Sep 6</td><td>Wrist extension</td><td>3 × 12/12</td><td>91%</td><td>4:40</td><td><span class="badge badge-success">Good</span></td></tr>
+                <tr><td>Sep 3</td><td>Sit-to-stand</td><td>2 × 6/8</td><td>62%</td><td>5:02</td><td><span class="badge badge-warning">Needs work</span></td></tr>
+                <tr><td>Aug 30</td><td>Shoulder flexion</td><td>3 × 7/10</td><td>59%</td><td>7:20</td><td><span class="badge badge-error">Needs work</span></td></tr>
+                <tr><td>Aug 27</td><td>Wrist extension</td><td>3 × 10/12</td><td>85%</td><td>5:05</td><td><span class="badge badge-success">Good</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= ASSIGN EXERCISE ================= -->
+      <section id="screen-assign" class="screen" hidden>
+        <div class="page-header"><div><h1 class="t-h1">Assign exercise plan</h1><p class="text-secondary t-body">For Reynaldo Santos · Ischemic stroke, R hemiparesis</p></div></div>
+        <div class="card" style="max-width:800px;">
+          <div class="grid cols-2">
+            <div class="field"><label for="asg-patient">Patient</label><select class="select" id="asg-patient"><option>Reynaldo Santos</option><option>Liza Bautista</option><option>Edgar Mendoza</option></select></div>
+            <div class="field"><label for="asg-name">Plan name</label><input class="input" id="asg-name" value="Upper-limb recovery, phase 3"></div>
+            <div class="field"><label for="asg-start">Start date</label><input class="input" id="asg-start" type="date" value="2026-09-16"></div>
+            <div class="field"><label for="asg-end">End date</label><input class="input" id="asg-end" type="date" value="2026-11-11"></div>
+          </div>
+
+          <div>
+            <div class="row" style="justify-content:space-between; margin-bottom:var(--spacing-3);">
+              <h2 class="t-h4">Exercise library</h2>
+              <select class="select" style="width:180px;" aria-label="Filter category"><option>All categories</option><option>Upper body</option><option>Lower body</option><option>Balance</option><option>Flexibility</option></select>
+            </div>
+            <div class="grid cols-3">
+              <label class="exercise-card is-selected">
+                <div class="exercise-card__top"><div class="exercise-card__icon" style="background:var(--accent-blue-soft);"><i class="icon icon-sm" data-icon="dumbbell" style="color:var(--color-primary)" aria-hidden="true"></i></div><input type="checkbox" checked aria-label="Select Shoulder flexion"></div>
+                <div><div class="t-body-md">Shoulder flexion</div><div class="t-caption">Upper body · 10 min</div></div>
+              </label>
+              <label class="exercise-card is-selected">
+                <div class="exercise-card__top"><div class="exercise-card__icon" style="background:var(--accent-blue-soft);"><i class="icon icon-sm" data-icon="dumbbell" style="color:var(--color-primary)" aria-hidden="true"></i></div><input type="checkbox" checked aria-label="Select Wrist extension"></div>
+                <div><div class="t-body-md">Wrist extension</div><div class="t-caption">Upper body · 8 min</div></div>
+              </label>
+              <label class="exercise-card">
+                <div class="exercise-card__top"><div class="exercise-card__icon" style="background:var(--accent-teal-bg);"><i class="icon icon-sm" data-icon="activity" style="color:var(--color-teal)" aria-hidden="true"></i></div><input type="checkbox" aria-label="Select Sit-to-stand"></div>
+                <div><div class="t-body-md">Sit-to-stand</div><div class="t-caption">Lower body · 10 min</div></div>
+              </label>
+              <label class="exercise-card">
+                <div class="exercise-card__top"><div class="exercise-card__icon" style="background:var(--accent-purple-bg);"><i class="icon icon-sm" data-icon="target" style="color:var(--accent-purple)" aria-hidden="true"></i></div><input type="checkbox" aria-label="Select Balance reach"></div>
+                <div><div class="t-body-md">Balance reach</div><div class="t-caption">Balance · 12 min</div></div>
+              </label>
+              <label class="exercise-card">
+                <div class="exercise-card__top"><div class="exercise-card__icon" style="background:var(--accent-green-bg);"><i class="icon icon-sm" data-icon="heart" style="color:var(--accent-green)" aria-hidden="true"></i></div><input type="checkbox" aria-label="Select Ankle dorsiflexion"></div>
+                <div><div class="t-body-md">Ankle dorsiflexion</div><div class="t-caption">Flexibility · 6 min</div></div>
+              </label>
+              <label class="exercise-card">
+                <div class="exercise-card__top"><div class="exercise-card__icon" style="background:var(--accent-orange-bg);"><i class="icon icon-sm" data-icon="refresh-cw" style="color:var(--accent-orange)" aria-hidden="true"></i></div><input type="checkbox" aria-label="Select Trunk rotation"></div>
+                <div><div class="t-body-md">Trunk rotation</div><div class="t-caption">Flexibility · 9 min</div></div>
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <h2 class="t-h4" style="margin-bottom:var(--spacing-3);">Configure selected exercises</h2>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead><tr><th>Exercise</th><th>Sets</th><th>Reps</th><th>Difficulty</th><th>Special instructions</th></tr></thead>
+                <tbody>
+                  <tr><td class="t-body-md">Shoulder flexion</td><td><input class="input input-sm" style="width:64px;" value="3"></td><td><input class="input input-sm" style="width:64px;" value="10"></td><td><select class="select select-sm"><option>Easy</option><option selected>Medium</option><option>Hard</option></select></td><td><input class="input input-sm" placeholder="Optional"></td></tr>
+                  <tr><td class="t-body-md">Wrist extension</td><td><input class="input input-sm" style="width:64px;" value="3"></td><td><input class="input input-sm" style="width:64px;" value="12"></td><td><select class="select select-sm"><option selected>Easy</option><option>Medium</option><option>Hard</option></select></td><td><input class="input input-sm" placeholder="Optional"></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="row" style="justify-content:flex-end; gap:12px; padding-top:var(--spacing-5); border-top:1px solid var(--color-slate-200);">
+            <button class="btn btn-secondary" data-goto-screen="profile">Cancel</button>
+            <button class="btn btn-primary" data-goto-screen="profile">Assign plan</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= ALERTS ================= -->
+      <section id="screen-alerts" class="screen" hidden>
+        <div class="page-header"><div><h1 class="t-h1">Alerts</h1><p class="text-secondary t-body">3 unresolved alerts across your caseload.</p></div></div>
+        <div class="row g-3" style="margin-bottom:var(--spacing-5);">
+          <button class="btn btn-secondary btn-sm" style="background:var(--color-error-bg); border-color:transparent; color:var(--color-error-text);">High · 1</button>
+          <button class="btn btn-secondary btn-sm" style="background:var(--color-warning-bg); border-color:transparent; color:var(--color-warning-text);">Moderate · 1</button>
+          <button class="btn btn-secondary btn-sm" style="background:var(--accent-blue-soft); border-color:transparent; color:var(--color-primary);">Low · 1</button>
+          <div class="topbar__spacer"></div>
+          <label class="checkbox-row"><input type="checkbox"> Show resolved</label>
+        </div>
+        <div class="stack g-4">
+          <div class="alert-item sev-high">
+            <div class="alert-item__icon" style="background:var(--color-error-bg);"><i class="icon" data-icon="alert-circle" style="color:var(--color-error)" aria-hidden="true"></i></div>
+            <div class="stack g-2" style="flex:1;">
+              <div class="row" style="justify-content:space-between;"><strong class="t-body-md">Reynaldo Santos</strong><span class="t-caption">2 hours ago</span></div>
+              <p class="t-body-sm text-secondary">Missed 3 consecutive scheduled sessions (Sep 6, 7, 8). Adherence has dropped to 42% this month.</p>
+              <div class="row g-2" style="margin-top:4px;"><button class="btn btn-primary btn-sm" data-goto-screen="profile">View patient</button><button class="btn btn-secondary btn-sm">Mark resolved</button></div>
+            </div>
+          </div>
+          <div class="alert-item sev-moderate">
+            <div class="alert-item__icon" style="background:var(--color-warning-bg);"><i class="icon" data-icon="alert-triangle" style="color:var(--color-warning)" aria-hidden="true"></i></div>
+            <div class="stack g-2" style="flex:1;">
+              <div class="row" style="justify-content:space-between;"><strong class="t-body-md">Liza Bautista</strong><span class="t-caption">Yesterday</span></div>
+              <p class="t-body-sm text-secondary">Exercise accuracy for wrist extension dropped below 60% for 2 sessions in a row.</p>
+              <div class="row g-2" style="margin-top:4px;"><button class="btn btn-primary btn-sm" data-goto-screen="profile">View patient</button><button class="btn btn-secondary btn-sm">Mark resolved</button></div>
+            </div>
+          </div>
+          <div class="alert-item sev-low">
+            <div class="alert-item__icon" style="background:var(--accent-blue-soft);"><i class="icon" data-icon="info" style="color:var(--color-primary)" aria-hidden="true"></i></div>
+            <div class="stack g-2" style="flex:1;">
+              <div class="row" style="justify-content:space-between;"><strong class="t-body-md">Marites Villanueva</strong><span class="t-caption">2 days ago</span></div>
+              <p class="t-body-sm text-secondary">Reported camera tracking issue mid-session; session ended early at 4 of 10 planned minutes.</p>
+              <div class="row g-2" style="margin-top:4px;"><button class="btn btn-primary btn-sm" data-goto-screen="profile">View patient</button><button class="btn btn-secondary btn-sm">Mark resolved</button></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= REPORTS ================= -->
+      <section id="screen-reports" class="screen" hidden>
+        <div class="page-header"><div><h1 class="t-h1">Reports</h1><p class="text-secondary t-body">Generate and export clinical reports for patients, clinics, or funders.</p></div></div>
+        <div class="card" style="display:flex; gap:var(--spacing-4); flex-wrap:wrap; align-items:flex-end;">
+          <div class="field" style="width:200px;"><label for="rp-range">Date range</label><select class="select" id="rp-range"><option>Last 30 days</option><option>Last 90 days</option><option>This quarter</option><option>Custom…</option></select></div>
+          <div class="field" style="width:200px;"><label for="rp-patient">Patient</label><select class="select" id="rp-patient"><option>All patients</option><option>Reynaldo Santos</option><option>Liza Bautista</option></select></div>
+          <div class="field" style="width:200px;"><label for="rp-type">Exercise type</label><select class="select" id="rp-type"><option>All types</option><option>Upper body</option><option>Lower body</option><option>Balance</option></select></div>
+          <button class="btn btn-primary"><i class="icon" data-icon="filter" aria-hidden="true"></i>Apply filters</button>
+        </div>
+        <div class="grid cols-2" style="margin-top:var(--spacing-6);">
+          <div class="card card--hover">
+            <div class="card-header"><div class="row g-3"><div class="stat-card__icon" style="background:var(--accent-blue-soft);"><i class="icon" data-icon="trending-up" style="color:var(--color-primary)" aria-hidden="true"></i></div><h2 class="t-h4">Monthly progress summary</h2></div><button class="btn-icon ghost" aria-label="Download PDF"><i class="icon" data-icon="download" aria-hidden="true"></i></button></div>
+            <p class="t-body-sm text-secondary">Adherence, accuracy, and ROM change for all active patients — Aug 15–Sep 15.</p>
+          </div>
+          <div class="card card--hover">
+            <div class="card-header"><div class="row g-3"><div class="stat-card__icon" style="background:var(--accent-teal-bg);"><i class="icon" data-icon="check-square" style="color:var(--color-teal)" aria-hidden="true"></i></div><h2 class="t-h4">Adherence report</h2></div><button class="btn-icon ghost" aria-label="Download PDF"><i class="icon" data-icon="download" aria-hidden="true"></i></button></div>
+            <p class="t-body-sm text-secondary">Session completion vs. assigned schedule, per patient and clinic-wide.</p>
+          </div>
+          <div class="card card--hover">
+            <div class="card-header"><div class="row g-3"><div class="stat-card__icon" style="background:var(--accent-purple-bg);"><i class="icon" data-icon="clipboard" style="color:var(--accent-purple)" aria-hidden="true"></i></div><h2 class="t-h4">Exercise completion log</h2></div><button class="btn-icon ghost" aria-label="Download PDF"><i class="icon" data-icon="download" aria-hidden="true"></i></button></div>
+            <p class="t-body-sm text-secondary">Full session-by-session log with sets, reps, and accuracy for audit or insurance.</p>
+          </div>
+          <div class="card card--hover">
+            <div class="card-header"><div class="row g-3"><div class="stat-card__icon" style="background:var(--accent-orange-bg);"><i class="icon" data-icon="award" style="color:var(--accent-orange)" aria-hidden="true"></i></div><h2 class="t-h4">Clinical outcomes report</h2></div><button class="btn-icon ghost" aria-label="Download PDF"><i class="icon" data-icon="download" aria-hidden="true"></i></button></div>
+            <p class="t-body-sm text-secondary">ROM, strength, and balance score trends for referring physicians.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= MESSAGES ================= -->
+      <section id="screen-messages" class="screen" hidden>
+        <div class="page-header"><div><h1 class="t-h1">Messages</h1><p class="text-secondary t-body">Secure messaging with patients and caregivers.</p></div><button class="btn btn-primary"><i class="icon" data-icon="edit" aria-hidden="true"></i>Compose</button></div>
+        <div class="card" style="padding:0; display:grid; grid-template-columns:320px 1fr; overflow:hidden; min-height:520px;">
+          <div style="border-right:1px solid var(--color-slate-200); display:flex; flex-direction:column;">
+            <div style="padding:var(--spacing-4);"><div class="input-icon-wrap"><i class="icon icon-sm" data-icon="search" aria-hidden="true"></i><input class="input" style="height:40px;" placeholder="Search messages"></div></div>
+            <div class="stack" style="overflow-y:auto;">
+              <button class="quick-action" style="border:none; border-radius:0; border-bottom:1px solid var(--color-slate-100); background:var(--accent-blue-soft);">
+                <div class="avatar avatar-sm">RS</div>
+                <div style="flex:1; min-width:0;"><div class="row" style="justify-content:space-between;"><strong class="t-body-sm">Reynaldo Santos</strong><span class="t-caption">9:14 AM</span></div><div class="t-caption" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Doc, may tanong ako tungkol sa exercise ko po...</div></div>
+                <span class="badge badge-info badge-sm">2</span>
+              </button>
+              <button class="quick-action" style="border:none; border-radius:0; border-bottom:1px solid var(--color-slate-100);">
+                <div class="avatar avatar-sm" style="background:var(--color-teal)">LB</div>
+                <div style="flex:1; min-width:0;"><div class="row" style="justify-content:space-between;"><strong class="t-body-sm">Liza Bautista</strong><span class="t-caption">Yesterday</span></div><div class="t-caption" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Salamat po sa update, therapist!</div></div>
+              </button>
+              <button class="quick-action" style="border:none; border-radius:0; border-bottom:1px solid var(--color-slate-100);">
+                <div class="avatar avatar-sm" style="background:var(--accent-purple)">NS</div>
+                <div style="flex:1; min-width:0;"><div class="row" style="justify-content:space-between;"><strong class="t-body-sm">Nena Santos (caregiver)</strong><span class="t-caption">Mon</span></div><div class="t-caption" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">He felt dizzy during today's session</div></div>
+              </button>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column;">
+            <div class="row" style="justify-content:space-between; padding:var(--spacing-4) var(--spacing-5); border-bottom:1px solid var(--color-slate-200);">
+              <div class="row g-3"><div class="avatar avatar-sm">RS</div><strong class="t-body-md">Reynaldo Santos</strong></div>
+              <div class="row g-2"><button class="btn-icon" aria-label="Call"><i class="icon icon-sm" data-icon="phone" aria-hidden="true"></i></button><button class="btn-icon" aria-label="Video call"><i class="icon icon-sm" data-icon="video" aria-hidden="true"></i></button></div>
+            </div>
+            <div class="stack g-4" style="flex:1; padding:var(--spacing-5); overflow-y:auto;">
+              <div style="max-width:70%; background:var(--color-slate-100); border-radius:var(--radius-lg) var(--radius-lg) var(--radius-lg) 4px; padding:12px 16px;"><p class="t-body-sm">Doc, may tanong ako tungkol sa exercise ko po para sa balikat. Sumasakit po ito pag umaangat ako.</p></div>
+              <div style="max-width:70%; align-self:flex-end; background:var(--color-primary); color:#fff; border-radius:var(--radius-lg) var(--radius-lg) 4px var(--radius-lg); padding:12px 16px;"><p class="t-body-sm">Noted po, Mr. Santos. Sandali lang po para pareview ko yung last session mo — huwag muna lampasan ang comfortable range hanggang next check-in.</p></div>
+              <div style="max-width:70%; background:var(--color-slate-100); border-radius:var(--radius-lg) var(--radius-lg) var(--radius-lg) 4px; padding:12px 16px;"><p class="t-body-sm">Sige po, salamat Doc!</p></div>
+            </div>
+            <div class="row g-3" style="padding:var(--spacing-4) var(--spacing-5); border-top:1px solid var(--color-slate-200);">
+              <input class="input" placeholder="Type a message…" aria-label="Message">
+              <button class="btn-icon" style="background:var(--color-primary); color:#fff; border:none;" aria-label="Send message"><i class="icon" data-icon="send" aria-hidden="true"></i></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= FOUNDATIONS & COMPONENTS ================= -->
+      <section id="screen-components" class="screen" hidden>
+        <div class="page-header">
+          <div><h1 class="t-h1">Foundations &amp; components</h1><p class="text-secondary t-body">Design tokens and shared components — the source of truth for engineering handoff.</p></div>
+          <label class="checkbox-row"><input type="checkbox" id="toggle-grid"> Show 8px grid overlay</label>
+        </div>
+
+        <h2 class="t-h3 section-heading">Color</h2>
+        <div class="grid cols-4">
+          <div><div class="foundations-swatch" style="background:var(--color-primary)"></div><div class="t-label" style="margin-top:8px;">Primary blue</div><div class="t-caption">#0EA5E9</div></div>
+          <div><div class="foundations-swatch" style="background:var(--color-teal)"></div><div class="t-label" style="margin-top:8px;">Teal accent</div><div class="t-caption">#14B8A6</div></div>
+          <div><div class="foundations-swatch" style="background:var(--color-navy)"></div><div class="t-label" style="margin-top:8px;">Deep navy</div><div class="t-caption">#030213</div></div>
+          <div><div class="foundations-swatch" style="background:var(--color-slate-900)"></div><div class="t-label" style="margin-top:8px;">Slate 900</div><div class="t-caption">#0F172A</div></div>
+          <div><div class="foundations-swatch" style="background:var(--color-success)"></div><div class="t-label" style="margin-top:8px;">Success</div><div class="t-caption">#10B981</div></div>
+          <div><div class="foundations-swatch" style="background:var(--color-warning)"></div><div class="t-label" style="margin-top:8px;">Warning</div><div class="t-caption">#F59E0B</div></div>
+          <div><div class="foundations-swatch" style="background:var(--color-error)"></div><div class="t-label" style="margin-top:8px;">Error</div><div class="t-caption">#EF4444</div></div>
+          <div><div class="foundations-swatch" style="background:var(--color-slate-200)"></div><div class="t-label" style="margin-top:8px;">Slate 200 (border)</div><div class="t-caption">#E2E8F0</div></div>
+        </div>
+
+        <h2 class="t-h3 section-heading">Typography — DM Sans</h2>
+        <p class="t-body-sm text-secondary" style="margin-bottom:var(--spacing-4);">Resolved per handoff: the reference doc's system-UI stack and the Vue portal's actual DM Sans typeface conflicted (open question #6) — DM Sans is treated as canonical here since it matches production intent, with the system-UI stack kept only as an emergency fallback.</p>
+        <div class="card">
+          <div class="foundations-row"><span class="type-sample-label">Heading 1 / 36</span><span class="t-h1">Patient recovery overview</span></div>
+          <div class="foundations-row"><span class="type-sample-label">Heading 2 / 30</span><span class="t-h2">Session history</span></div>
+          <div class="foundations-row"><span class="type-sample-label">Heading 3 / 24</span><span class="t-h3">Reynaldo Santos</span></div>
+          <div class="foundations-row"><span class="type-sample-label">Heading 4 / 20</span><span class="t-h4">Range of motion</span></div>
+          <div class="foundations-row"><span class="type-sample-label">Body large / 18</span><span class="t-body-lg">Age 61 · Male · Ischemic stroke</span></div>
+          <div class="foundations-row"><span class="type-sample-label">Body / 16</span><span class="t-body">Missed 3 consecutive sessions this week.</span></div>
+          <div class="foundations-row"><span class="type-sample-label">Body small / 14</span><span class="t-body-sm">Grip strength improving; still guarding on reach.</span></div>
+          <div class="foundations-row"><span class="type-sample-label">Label / 14</span><span class="t-label">Adherence rate</span></div>
+          <div class="foundations-row"><span class="type-sample-label">Caption / 12</span><span class="t-caption">Updated 2 hours ago</span></div>
+          <div class="foundations-row"><span class="type-sample-label">Overline / 12</span><span class="t-overline" style="color:var(--color-slate-400)">Care team</span></div>
+        </div>
+
+        <h2 class="t-h3 section-heading">Spacing — 8px scale</h2>
+        <div class="card">
+          <div class="stack g-2">
+            <div class="row g-4"><span class="type-sample-label">4 · 8 · 12</span><div style="height:4px; width:4px; background:var(--color-primary);"></div><div style="height:8px; width:8px; background:var(--color-primary);"></div><div style="height:12px; width:12px; background:var(--color-primary);"></div></div>
+            <div class="row g-4"><span class="type-sample-label">16 · 24 · 32</span><div style="height:16px; width:16px; background:var(--color-teal);"></div><div style="height:24px; width:24px; background:var(--color-teal);"></div><div style="height:32px; width:32px; background:var(--color-teal);"></div></div>
+          </div>
+        </div>
+
+        <h2 class="t-h3 section-heading">Buttons</h2>
+        <div class="card row g-4" style="flex-wrap:wrap;">
+          <button class="btn btn-primary">Primary</button>
+          <button class="btn btn-secondary">Secondary</button>
+          <button class="btn btn-destructive">Destructive</button>
+          <button class="btn btn-primary" disabled>Disabled</button>
+          <button class="btn-icon" aria-label="Icon button"><i class="icon" data-icon="bell" aria-hidden="true"></i></button>
+          <button class="btn btn-primary btn-sm">Small</button>
+          <button class="btn btn-primary btn-lg">Large</button>
+        </div>
+
+        <h2 class="t-h3 section-heading">Badges</h2>
+        <div class="card row g-3" style="flex-wrap:wrap;">
+          <span class="badge badge-success">Success</span>
+          <span class="badge badge-warning">Warning</span>
+          <span class="badge badge-error">Error</span>
+          <span class="badge badge-info">Info</span>
+          <span class="badge badge-neutral">Neutral</span>
+        </div>
+
+        <h2 class="t-h3 section-heading">Form controls</h2>
+        <div class="card grid cols-2">
+          <div class="field"><label for="fc-1">Default input</label><input class="input" id="fc-1" placeholder="Placeholder text"></div>
+          <div class="field"><label for="fc-2">Error state</label><input class="input has-error" id="fc-2" value="invalid@"><span class="field-error">Enter a valid email address</span></div>
+          <div class="field"><label for="fc-3">Select</label><select class="select" id="fc-3"><option>Choose an option</option></select></div>
+          <div class="field"><label for="fc-4">Textarea</label><textarea class="textarea" id="fc-4" placeholder="Notes…"></textarea></div>
+        </div>
+
+        <h2 class="t-h3 section-heading">Cards &amp; stat cards</h2>
+        <div class="grid cols-3">
+          <div class="card stat-card"><div class="stat-card__icon" style="background:var(--accent-blue-soft);"><i class="icon" data-icon="users" style="color:var(--color-primary)" aria-hidden="true"></i></div><div><div class="stat-card__value">24</div><div class="stat-card__label">Active patients</div></div></div>
+          <div class="card card--hover"><h2 class="t-h4">Hoverable card</h2><p class="t-body-sm text-secondary">Lifts and adds shadow on hover — used for clickable report/patient cards.</p></div>
+          <div class="card"><div class="empty-state"><i class="icon icon-lg" data-icon="clipboard" aria-hidden="true"></i><p class="t-body-sm">No items yet.</p></div></div>
+        </div>
+
+        <h2 class="t-h3 section-heading">Accessibility notes</h2>
+        <div class="card stack g-3">
+          <p class="t-body-sm">Text contrast (re-measured 2026-10-21): Slate 900 on white 17.9:1 (AAA); Slate 600 on white 7.6:1 (AAA); status text/background pairs 6.4–7.2:1 (all pass AA; only the info pair reaches AAA). Primary blue #0EA5E9 on white is 2.77:1 — below AA for body text and below the 3:1 minimum for large text and non-text UI, so it must not carry text or be the only cue. For filled controls with white text use the solid token #0A79AD (4.83:1, AA).</p>
+          <p class="t-body-sm">Minimum sizes: 16px body (elderly-friendly, since stroke patients skew older), 16px inputs (prevents iOS zoom), 44px+ touch targets throughout.</p>
+          <p class="t-body-sm">Focus: 3px primary-blue ring at 50% opacity, 2px offset, visible on every interactive element via <code>:focus-visible</code>. Skip-to-content link on every screen. <code>prefers-reduced-motion</code> disables non-functional animation.</p>
+          <p class="t-body-sm">ARIA: alerts use <code>role="alert"</code>/<code>aria-live</code>, tabs use the <code>tablist/tab/tabpanel</code> pattern, active nav uses <code>aria-current="page"</code>, icon-only buttons always carry <code>aria-label</code>.</p>
+        </div>
+
+        <h2 class="t-h3 section-heading">Responsive breakpoints</h2>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Breakpoint</th><th>Width</th><th>Behavior</th></tr></thead>
+            <tbody>
+              <tr><td>Desktop</td><td>≥1200px</td><td>Full layout, sidebar expanded (280px)</td></tr>
+              <tr><td>Tablet landscape</td><td>1024–1199px</td><td>4-col stat grids collapse to 2-col; 3-col profile grid collapses to 2-col</td></tr>
+              <tr><td>Tablet portrait</td><td>768–1023px</td><td>Sidebar becomes an overlay drawer, opened via the menu button</td></tr>
+              <tr><td>Mobile</td><td>&lt;768px</td><td>Web portal shows a "use a larger screen or the STREAM app" state — per the locked design spec, the therapist web portal is not optimized below 768px</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card" style="margin-top:var(--spacing-6); align-items:center; text-align:center; flex-direction:column; display:flex; max-width:400px;">
+          <i class="icon icon-lg" data-icon="activity" style="color:var(--color-primary)" aria-hidden="true"></i>
+          <h2 class="t-h4" style="margin-top:var(--spacing-3);">This portal works best on a larger screen</h2>
+          <p class="t-body-sm text-secondary">Try a tablet or desktop, or ask your clinic for the STREAM companion app.</p>
+          <span class="t-caption">Preview of the actual &lt;768px fallback screen — shrink the window to see it live.</span>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+  var ICONS = {
+    home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/>',
+    users:'<circle cx="9" cy="8" r="3"/><path d="M2 20c0-3.3 3.1-6 7-6s7 2.7 7 6"/><circle cx="17" cy="9" r="2.3"/><path d="M16 14.2c2.6.5 4.5 2.4 5 5.8"/>',
+    user:'<circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>',
+    bell:'<path d="M6 10a6 6 0 0112 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6z"/><path d="M10 19a2 2 0 004 0"/>',
+    'bell-dot':'<path d="M6 10a6 6 0 0112 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6z"/><path d="M10 19a2 2 0 004 0"/><circle cx="18" cy="6" r="3" fill="currentColor" stroke="none"/>',
+    calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/>',
+    clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+    'check-circle':'<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9"/>',
+    'x-circle':'<circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/>',
+    'alert-circle':'<circle cx="12" cy="12" r="9"/><path d="M12 7.5v6"/><path d="M12 16.5h.01" stroke-width="3"/>',
+    'alert-triangle':'<path d="M12 3.5l9.5 16.5H2.5z"/><path d="M12 9.5v5"/><path d="M12 17.2h.01" stroke-width="3"/>',
+    info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/><path d="M12 7.6h.01" stroke-width="3"/>',
+    'chevron-right':'<path d="M9 6l6 6-6 6"/>',
+    'chevron-down':'<path d="M6 9l6 6 6-6"/>',
+    'chevron-left':'<path d="M15 6l-6 6 6 6"/>',
+    search:'<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',
+    filter:'<path d="M4 5h16l-6 8v5l-4 2v-7z"/>',
+    download:'<path d="M12 4v11"/><path d="M7.5 11.5L12 16l4.5-4.5"/><path d="M4 19h16"/>',
+    upload:'<path d="M12 20V9"/><path d="M7.5 13.5L12 9l4.5 4.5"/><path d="M4 20h16"/>',
+    plus:'<path d="M12 5v14M5 12h14"/>',
+    minus:'<path d="M5 12h14"/>',
+    edit:'<path d="M4 20h4l11-11-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>',
+    trash:'<path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/>',
+    send:'<path d="M3 11l18-8-8 18-2.5-7.5L3 11z"/>',
+    'message-square':'<path d="M4 5h16v11H8l-4 4z"/>',
+    video:'<rect x="3" y="7" width="12" height="10" rx="2"/><path d="M15 10l6-3v10l-6-3z"/>',
+    phone:'<path d="M5 4h3l2 5-2.5 1.5a12 12 0 006 6L15 14l5 2v3a2 2 0 01-2.2 2A16 16 0 015 6.2 2 2 0 015 4z"/>',
+    mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 6l9 7 9-7"/>',
+    'map-pin':'<path d="M12 21s7-6.5 7-11.5A7 7 0 105 9.5C5 14.5 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.3"/>',
+    settings:'<circle cx="12" cy="12" r="3"/><path d="M12 3v2M12 19v2M4.2 6.6l1.4 1.4M18.4 16l1.4 1.4M2 12h2M20 12h2M4.2 17.4l1.4-1.4M18.4 8l1.4-1.4"/>',
+    'log-out':'<path d="M9 4H5v16h4"/><path d="M13 12h8M17 8l4 4-4 4"/>',
+    menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',
+    'more-vertical':'<circle cx="12" cy="5" r="1.3" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.3" fill="currentColor" stroke="none"/>',
+    'arrow-left':'<path d="M19 12H5M11 6l-6 6 6 6"/>',
+    activity:'<path d="M3 12h4l2 7 4-14 2 7h6"/>',
+    dumbbell:'<path d="M4 9v6M2 10v4M20 9v6M22 10v4M7 12h10"/>',
+    'trending-up':'<path d="M3 17l6-6 4 4 8-9"/><path d="M15 6h6v6"/>',
+    'file-text':'<path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h7M9 8h3"/>',
+    'bar-chart-2':'<path d="M6 20V10M12 20V4M18 20v-7"/>',
+    target:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.6" fill="currentColor" stroke="none"/>',
+    award:'<circle cx="12" cy="9" r="5"/><path d="M9 13.5L7 21l5-2.5L17 21l-2-7.5"/>',
+    clipboard:'<rect x="6" y="5" width="12" height="15" rx="2"/><rect x="9" y="3" width="6" height="4" rx="1"/>',
+    'check-square':'<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12l3 3 5-6"/>',
+    square:'<rect x="4" y="4" width="16" height="16" rx="3"/>',
+    x:'<path d="M6 6l12 12M18 6L6 18"/>',
+    eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>',
+    'eye-off':'<path d="M3 3l18 18"/><path d="M10.6 5.2A10.6 10.6 0 0112 5c6 0 10 7 10 7a15 15 0 01-4 4.4M6.5 6.6A15 15 0 002 12s4 7 10 7c1.3 0 2.5-.2 3.6-.6"/><path d="M9.9 10a3 3 0 004.2 4.2"/>',
+    shield:'<path d="M12 3l7 3v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6z"/>',
+    zap:'<path d="M13 3L4 14h6l-1 7 9-11h-6z"/>',
+    'refresh-cw':'<path d="M4 10a8 8 0 0114-4.9M20 4v6h-6"/><path d="M20 14a8 8 0 01-14 4.9M4 20v-6h6"/>',
+    camera:'<path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13.5" r="3.5"/>',
+    'help-circle':'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.6 2.6 0 015 .6c0 1.7-2.5 2-2.5 3.7"/><path d="M12 17h.01" stroke-width="3"/>',
+    heart:'<path d="M12 20s-8-5-8-11a4.5 4.5 0 018-2.7A4.5 4.5 0 0120 9c0 6-8 11-8 11z"/>',
+    play:'<path d="M6 4l14 8-14 8z" fill="currentColor" stroke="none"/>',
+    pause:'<rect x="6" y="4" width="4" height="16" rx="1" fill="currentColor" stroke="none"/><rect x="14" y="4" width="4" height="16" rx="1" fill="currentColor" stroke="none"/>'
+  };
+
+  function renderIcons(){
+    document.querySelectorAll('i[data-icon]').forEach(function(el){
+      var name = el.getAttribute('data-icon');
+      var inner = ICONS[name];
+      if(!inner) return;
+      el.innerHTML = '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+inner+'</svg>';
+    });
+  }
+
+  function showView(view){
+    document.getElementById('view-login').hidden = view !== 'login';
+    document.getElementById('view-portal').hidden = view !== 'portal';
+    document.getElementById('demo-goto-login').classList.toggle('is-active', view==='login');
+    document.getElementById('demo-goto-portal').classList.toggle('is-active', view==='portal');
+    document.getElementById('demo-screen-select').hidden = view !== 'portal';
+  }
+
+  function showScreen(name){
+    document.querySelectorAll('.screen').forEach(function(s){ s.hidden = (s.id !== 'screen-'+name); });
+    document.querySelectorAll('.nav-item[data-screen]').forEach(function(b){
+      if(b.dataset.screen === name){ b.setAttribute('aria-current','page'); } else { b.removeAttribute('aria-current'); }
+    });
+    var sel = document.getElementById('demo-screen-select');
+    if(sel) sel.value = name;
+    document.getElementById('main-content').focus({preventScroll:true});
+    window.scrollTo({top:0, behavior:'auto'});
+    closeDrawer();
+  }
+
+  function openDrawer(){
+    document.getElementById('sidebar').classList.add('is-open');
+    document.getElementById('drawer-scrim').classList.add('is-visible');
+    document.getElementById('drawer-toggle').setAttribute('aria-expanded','true');
+  }
+  function closeDrawer(){
+    document.getElementById('sidebar').classList.remove('is-open');
+    document.getElementById('drawer-scrim').classList.remove('is-visible');
+    var t = document.getElementById('drawer-toggle');
+    if(t) t.setAttribute('aria-expanded','false');
+  }
+
+  function drawLineChart(container, series, opts){
+    opts = opts || {};
+    var w = 520, h = 220, padL = 36, padR = 16, padT = 16, padB = 28;
+    var allVals = series.reduce(function(a,s){ return a.concat(s.values); },[]);
+    var min = opts.min !== undefined ? opts.min : Math.min.apply(null, allVals);
+    var max = opts.max !== undefined ? opts.max : Math.max.apply(null, allVals);
+    var n = series[0].values.length;
+    function x(i){ return padL + (i/(n-1)) * (w - padL - padR); }
+    function y(v){ return padT + (1 - (v-min)/(max-min)) * (h - padT - padB); }
+    var svg = '<svg viewBox="0 0 '+w+' '+h+'" width="100%" height="'+h+'" role="img" aria-label="'+(opts.ariaLabel||'Trend chart')+'">';
+    // gridlines
+    for(var g=0; g<=4; g++){
+      var gy = padT + g*(h-padT-padB)/4;
+      svg += '<line x1="'+padL+'" y1="'+gy+'" x2="'+(w-padR)+'" y2="'+gy+'" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="4 4"/>';
+      var val = Math.round(max - g*(max-min)/4);
+      svg += '<text x="'+(padL-8)+'" y="'+(gy+4)+'" font-size="11" fill="#94A3B8" text-anchor="end" font-family="DM Sans, sans-serif">'+val+(opts.unit||'')+'</text>';
+    }
+    series.forEach(function(s){
+      var pts = s.values.map(function(v,i){ return x(i)+','+y(v); }).join(' ');
+      svg += '<polyline points="'+pts+'" fill="none" stroke="'+s.color+'" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>';
+      s.values.forEach(function(v,i){
+        var r = (i===n-1) ? 5 : 3.5;
+        svg += '<circle cx="'+x(i)+'" cy="'+y(v)+'" r="'+r+'" fill="'+s.color+'" stroke="#fff" stroke-width="1.5"><title>'+s.label+' — '+(opts.xLabels?opts.xLabels[i]:('point '+(i+1)))+': '+v+(opts.unit||'')+'</title></circle>';
+      });
+    });
+    if(opts.xLabels){
+      opts.xLabels.forEach(function(lab,i){
+        if(i % Math.ceil(n/6) !== 0 && i !== n-1) return;
+        svg += '<text x="'+x(i)+'" y="'+(h-6)+'" font-size="11" fill="#94A3B8" text-anchor="middle" font-family="DM Sans, sans-serif">'+lab+'</text>';
+      });
+    }
+    svg += '</svg>';
+    container.innerHTML = svg;
+  }
+
+  function drawRing(container, pct, label, color){
+    var size=140, stroke=12, r=(size-stroke)/2, c=2*Math.PI*r;
+    var offset = c * (1-pct/100);
+    container.innerHTML =
+      '<svg viewBox="0 0 '+size+' '+size+'" width="140" height="140" role="img" aria-label="'+label+': '+pct+' percent">'+
+      '<circle cx="'+size/2+'" cy="'+size/2+'" r="'+r+'" fill="none" stroke="#E2E8F0" stroke-width="'+stroke+'"/>'+
+      '<circle cx="'+size/2+'" cy="'+size/2+'" r="'+r+'" fill="none" stroke="'+color+'" stroke-width="'+stroke+'" stroke-linecap="round" '+
+      'stroke-dasharray="'+c+'" stroke-dashoffset="'+offset+'" transform="rotate(-90 '+size/2+' '+size/2+')"/>'+
+      '<text x="50%" y="52%" text-anchor="middle" font-size="28" font-weight="700" fill="#0F172A" font-family="DM Sans, sans-serif">'+pct+'%</text>'+
+      '</svg>';
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    renderIcons();
+
+    var xLabels = ['Wk1','Wk2','Wk3','Wk4','Wk5','Wk6','Wk7','Wk8'];
+    var romChart = document.getElementById('chart-rom');
+    if(romChart){
+      drawLineChart(romChart, [{label:'Shoulder flexion ROM', values:[62,65,68,70,74,78,82,86], color:'#0EA5E9'}], {unit:'°', xLabels:xLabels, ariaLabel:'Shoulder flexion range of motion over 8 weeks'});
+    }
+    var romChart2 = document.getElementById('chart-rom-2');
+    if(romChart2){
+      drawLineChart(romChart2, [
+        {label:'ROM (degrees)', values:[62,65,68,70,74,78,82,86], color:'#0EA5E9'},
+        {label:'Adherence (%)', values:[70,72,68,75,80,77,84,87], color:'#14B8A6'}
+      ], {xLabels:xLabels, ariaLabel:'ROM and adherence trend over 8 weeks'});
+      var legendEl = document.createElement('div');
+      legendEl.className='legend';
+      legendEl.style.marginTop='12px';
+      legendEl.innerHTML = '<span class="legend__item"><span class="legend__swatch" style="background:#0EA5E9"></span>ROM (degrees)</span><span class="legend__item"><span class="legend__swatch" style="background:#14B8A6"></span>Adherence (%)</span>';
+      romChart2.parentNode.appendChild(legendEl);
+    }
+    var ring = document.getElementById('ring-adherence');
+    if(ring) drawRing(ring, 87, 'Adherence', '#0EA5E9');
+
+    document.getElementById('demo-goto-login').addEventListener('click', function(){ showView('login'); });
+    document.getElementById('demo-goto-portal').addEventListener('click', function(){ showView('portal'); showScreen('overview'); });
+    document.getElementById('demo-screen-select').addEventListener('change', function(e){ showScreen(e.target.value); });
+    document.getElementById('login-submit').addEventListener('click', function(){ showView('portal'); showScreen('overview'); });
+
+    document.querySelectorAll('[data-screen]').forEach(function(btn){
+      btn.addEventListener('click', function(){ showScreen(btn.dataset.screen); });
+    });
+    document.querySelectorAll('[data-goto-screen]').forEach(function(el){
+      el.addEventListener('click', function(){ showScreen(el.dataset.gotoScreen); });
+    });
+
+    document.getElementById('drawer-toggle').addEventListener('click', function(){
+      var sb = document.getElementById('sidebar');
+      if(sb.classList.contains('is-open')){ closeDrawer(); } else { openDrawer(); }
+    });
+    document.getElementById('drawer-scrim').addEventListener('click', closeDrawer);
+
+    document.getElementById('sidebar-collapse-toggle').addEventListener('click', function(){
+      document.getElementById('sidebar').classList.toggle('is-collapsed');
+    });
+
+    document.querySelectorAll('.tab').forEach(function(tab){
+      tab.addEventListener('click', function(){
+        document.querySelectorAll('.tab').forEach(function(t){ t.setAttribute('aria-selected','false'); });
+        tab.setAttribute('aria-selected','true');
+        ['profile-tab','progress-tab','activity-tab'].forEach(function(id){
+          document.getElementById(id).hidden = (id !== tab.dataset.tab);
+        });
+      });
+    });
+
+    document.querySelectorAll('.exercise-card').forEach(function(card){
+      card.addEventListener('click', function(e){
+        if(e.target.tagName !== 'INPUT'){ var cb = card.querySelector('input'); cb.checked = !cb.checked; }
+        card.classList.toggle('is-selected', card.querySelector('input').checked);
+      });
+    });
+
+    var gridToggle = document.getElementById('toggle-grid');
+    var overlay = document.createElement('div');
+    overlay.className = 'grid-overlay';
+    document.body.appendChild(overlay);
+    gridToggle.addEventListener('change', function(){ overlay.classList.toggle('is-on', gridToggle.checked); });
+
+    showView('login');
+  });
+})();
+</script>
