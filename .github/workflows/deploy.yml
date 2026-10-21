@@ -32,6 +32,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Check CSS (early-terminated comments, CSS build warnings)
+        run: npm run check:css
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+
       - name: Build
         run: npm run build-only
         env:
