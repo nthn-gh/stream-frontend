@@ -20,7 +20,7 @@
           <div class="modal-header" style="padding: 20px 24px 16px">
             <div class="flex items-center justify-between">
               <div class="flex items-center" style="gap: 10px">
-                <UserPlus :size="22" style="color: var(--text-primary)" />
+                <AppIcon :icon="UserPlus" style="color: var(--text-primary)" />
                 <h3 id="modal-title" style="font-size: 20px; font-weight: 700; color: var(--text-primary)">
                   Add New Patient
                 </h3>
@@ -31,8 +31,10 @@
                 :disabled="isSubmitting"
                 class="close-btn"
                 style="
-                  width: 32px;
-                  height: 32px;
+                  width: 44px;
+                  height: 44px;
+                  flex-shrink: 0;
+                  margin: -6px -10px -6px 0;
                   border-radius: 8px;
                   border: none;
                   background: transparent;
@@ -45,7 +47,7 @@
                 "
                 aria-label="Close modal"
               >
-                <X :size="20" />
+                <AppIcon :icon="X" size="lg" />
               </button>
             </div>
           </div>
@@ -70,7 +72,7 @@
                 margin-bottom: 16px;
               "
             >
-              <AlertCircle :size="18" style="color: var(--warning); flex-shrink: 0; margin-top: 1px" />
+              <AppIcon :icon="AlertCircle" style="color: var(--warning); flex-shrink: 0" />
               <p style="font-size: 14px; color: var(--text-primary); line-height: 1.5">
                 <strong>Important:</strong> Patients created here must self-register in the STREAM Android app using the same email address to link their account.
               </p>
@@ -183,7 +185,7 @@
                 justify-content: center;
               "
             >
-              <CheckCircle :size="30" style="color: var(--success)" />
+              <CheckCircle :size="30" aria-hidden="true" style="color: var(--success)" />
             </div>
             <div style="max-width: 420px">
               <h4
@@ -277,6 +279,7 @@
 import { supabase } from '@/services/supabase'
 import { ref, reactive, watch } from 'vue'
 import { UserPlus, X, CheckCircle, AlertCircle } from 'lucide-vue-next'
+import AppIcon from '@/components/shared/AppIcon.vue'
 import { useAuthStore } from '@/stores/authStore'
 
 interface Props {

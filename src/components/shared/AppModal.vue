@@ -19,11 +19,10 @@
               <button
                 v-if="closable"
                 @click="handleClose"
-                class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-colors"
+                aria-label="Close"
+                class="w-11 h-11 -my-2 -mr-2 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-colors"
               >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <AppIcon :icon="X" size="lg" />
               </button>
             </div>
             
@@ -43,6 +42,8 @@
 
 <script setup lang="ts">
 import { useId } from 'vue'
+import { X } from 'lucide-vue-next'
+import AppIcon from '@/components/shared/AppIcon.vue'
 
 interface Props {
   modelValue: boolean

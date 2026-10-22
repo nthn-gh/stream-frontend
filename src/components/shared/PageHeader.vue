@@ -7,7 +7,7 @@
         class="sl-btn sl-btn-icon page-header__back"
         aria-label="Back"
       >
-        <ArrowLeft :size="20" aria-hidden="true" />
+        <AppIcon :icon="ArrowLeft" size="lg" />
       </RouterLink>
 
       <div class="page-header__text">
@@ -30,6 +30,7 @@
 import { RouterLink } from 'vue-router'
 import type { RouteLocationRaw } from 'vue-router'
 import { ArrowLeft } from 'lucide-vue-next'
+import AppIcon from '@/components/shared/AppIcon.vue'
 
 /**
  * The single source of a page's title (the app header no longer renders one).
@@ -65,6 +66,8 @@ defineProps<{
 }
 .page-header__back {
   flex: none;
+  width: 44px;
+  height: 44px;
   /* optical alignment with the first line of the 36px/47px title */
   margin-top: var(--spacing-1);
 }

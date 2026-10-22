@@ -67,9 +67,9 @@
                 type="button"
                 @click="showPassword = !showPassword"
                 class="password-toggle"
+                :aria-label="showPassword ? 'Hide password' : 'Show password'"
               >
-                <Eye v-if="!showPassword" :size="20" />
-                <EyeOff v-else :size="20" />
+                <AppIcon :icon="showPassword ? EyeOff : Eye" />
               </button>
             </template>
           </AppInput>
@@ -87,9 +87,9 @@
                 type="button"
                 @click="showConfirmPassword = !showConfirmPassword"
                 class="password-toggle"
+                :aria-label="showConfirmPassword ? 'Hide password' : 'Show password'"
               >
-                <Eye v-if="!showConfirmPassword" :size="20" />
-                <EyeOff v-else :size="20" />
+                <AppIcon :icon="showConfirmPassword ? EyeOff : Eye" />
               </button>
             </template>
           </AppInput>
@@ -122,6 +122,7 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { Eye, EyeOff } from 'lucide-vue-next'
+import AppIcon from '@/components/shared/AppIcon.vue'
 import { useAuthStore } from '@/stores/authStore'
 import AppInput from '@/components/shared/AppInput.vue'
 import AppButton from '@/components/shared/AppButton.vue'

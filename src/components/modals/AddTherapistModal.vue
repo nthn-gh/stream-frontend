@@ -63,9 +63,13 @@
                   :class="['input-field', { 'input-error': errors.password }]"
                   style="padding-right: var(--spacing-12)"
                 />
-                <button type="button" class="eye-toggle" @click="showPassword = !showPassword">
-                  <EyeOff v-if="showPassword" :size="18" />
-                  <Eye v-else :size="18" />
+                <button
+                  type="button"
+                  class="eye-toggle"
+                  :aria-label="showPassword ? 'Hide password' : 'Show password'"
+                  @click="showPassword = !showPassword"
+                >
+                  <AppIcon :icon="showPassword ? EyeOff : Eye" />
                 </button>
               </div>
               <p v-if="errors.password" class="error-message">{{ errors.password }}</p>
@@ -77,7 +81,7 @@
     <!-- Success State -->
     <div v-else class="modal-body success-body">
       <div class="success-icon-wrap">
-        <CheckCircle :size="32" style="color: var(--success)" />
+        <CheckCircle :size="32" aria-hidden="true" style="color: var(--success)" />
       </div>
       <h4 class="success-title">Therapist Created Successfully</h4>
       <p class="success-subtitle">Share these credentials with the therapist:</p>
@@ -114,6 +118,7 @@
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue'
 import { Eye, EyeOff, CheckCircle } from 'lucide-vue-next'
+import AppIcon from '@/components/shared/AppIcon.vue'
 import { useAdminStore } from '@/stores/adminStore'
 import AppModal from '@/components/shared/AppModal.vue'
 import AppButton from '@/components/shared/AppButton.vue'
