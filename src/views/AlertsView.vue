@@ -205,4 +205,27 @@ onBeforeUnmount(() => {
 .sl-alert-item.is-resolved {
   opacity: 0.7;
 }
+/* .sl-alert-item and the empty-state .sl-card are always white, but the text colours they
+   inherit follow the theme, so patient names were light-on-white (about 1.1:1) in dark mode.
+   Same fix as Messages: use the themed surface and text tokens. */
+.sl-alert-item,
+.sl-empty-state {
+  background: var(--bg-card);
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+.sl-empty-state {
+  box-shadow: var(--shadow-card);
+}
+.sl-alert-item .t-caption,
+.sl-empty-state .t-caption {
+  color: var(--text-muted);
+}
+.sl-alert-item .text-secondary,
+.sl-empty-state .text-secondary {
+  color: var(--text-secondary);
+}
+.sl-checkbox-row {
+  color: var(--text-primary);
+}
 </style>
