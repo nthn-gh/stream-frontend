@@ -11,11 +11,11 @@
     <PageHeader title="Patients" subtitle="Manage and monitor all your patients">
       <template #actions>
         <AppButton variant="secondary" class="btn-secondary btn-icon-gap" @click="showAddPatientModal = true">
-          <UserPlus :size="16" />
+          <AppIcon :icon="UserPlus" />
           <span>Add Patient</span>
         </AppButton>
         <AppButton variant="primary" class="btn-icon-gap" @click="router.push('/assign-exercise')">
-          <Plus :size="16" />
+          <AppIcon :icon="Plus" />
           <span>Assign Exercise</span>
         </AppButton>
       </template>
@@ -28,7 +28,7 @@
         <h3 class="h4">Patient List</h3>
         <div class="table-controls">
           <div class="search-input">
-            <Search :size="16" class="search-icon" />
+            <AppIcon :icon="Search" size="sm" class="search-icon" />
             <input
               v-model="searchQuery"
               type="text"
@@ -56,7 +56,7 @@
 
       <!-- Empty State -->
       <div v-else-if="filteredPatients.length === 0" class="empty-state-inline">
-        <Users :size="48" style="color: var(--text-muted);" />
+        <Users :size="48" aria-hidden="true" style="color: var(--text-muted);" />
         <p style="color: var(--text-secondary); margin-top: var(--spacing-2);">No patients found</p>
       </div>
 
@@ -129,6 +129,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { Search, Users, Plus, UserPlus } from 'lucide-vue-next'
+import AppIcon from '@/components/shared/AppIcon.vue'
 import { usePatientStore } from '@/stores/patientStore'
 import { useAuthStore } from '@/stores/authStore'
 import { storeToRefs } from 'pinia'

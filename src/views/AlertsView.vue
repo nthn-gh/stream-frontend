@@ -52,7 +52,7 @@
     </div>
 
     <div v-else-if="displayedAlerts.length === 0" class="sl-card sl-empty-state">
-      <CheckCircle :size="40" style="color: var(--color-success); margin-bottom: var(--spacing-4)" />
+      <CheckCircle :size="40" aria-hidden="true" style="color: var(--color-success); margin-bottom: var(--spacing-4)" />
       <p class="t-body-md">No alerts to show.</p>
       <p class="t-body-sm text-secondary" style="margin-top: 4px">All patients are on track, or try a different filter.</p>
     </div>
@@ -65,7 +65,7 @@
         :class="[`sev-${alert.priority}`, { 'is-resolved': alert.resolved }]"
       >
         <div class="sl-alert-item__icon" :style="{ background: iconBg(alert.type) }">
-          <component :is="alertIcon(alert.type)" :size="20" :style="{ color: iconColor(alert.type) }" />
+          <AppIcon :icon="alertIcon(alert.type)" :style="{ color: iconColor(alert.type) }" />
         </div>
         <div style="flex: 1; display: flex; flex-direction: column; gap: 8px">
           <div style="display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap">
@@ -92,6 +92,7 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { AlertCircle, AlertTriangle, Info, CheckCircle } from 'lucide-vue-next'
+import AppIcon from '@/components/shared/AppIcon.vue'
 import { useAlertStore } from '@/stores/alertStore'
 import { storeToRefs } from 'pinia'
 import AppButton from '@/components/shared/AppButton.vue'

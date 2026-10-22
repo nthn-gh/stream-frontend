@@ -7,12 +7,12 @@
 
     <div class="sl-grid sl-cols-4" style="margin-bottom: var(--spacing-6)">
       <StatCard label="Total patients" :value="String(patients.length)" icon-bg="var(--accent-blue-soft)" icon-color="var(--color-primary)">
-        <template #icon><Users :size="20" /></template>
+        <template #icon><AppIcon :icon="Users" /></template>
       </StatCard>
       <!-- "Sessions this month" (it summed an all-time column) and "Avg. adherence rate" (no target to measure
            against) are hidden: the stored statistics are stale. See composables/patientStats.ts. -->
       <StatCard label="Active care plans" :value="String(activePlans)" icon-bg="var(--accent-purple-bg)" icon-color="var(--accent-purple)">
-        <template #icon><CheckSquare :size="20" /></template>
+        <template #icon><AppIcon :icon="CheckSquare" /></template>
       </StatCard>
     </div>
 
@@ -54,11 +54,11 @@
         <div style="display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-3)">
           <div style="display: flex; align-items: center; gap: 12px">
             <div class="report-card__icon" :style="{ background: type.iconBg }">
-              <component :is="type.icon" :size="20" :style="{ color: type.iconColor }" />
+              <AppIcon :icon="type.icon" :style="{ color: type.iconColor }" />
             </div>
             <h2 class="t-h4">{{ type.title }}</h2>
           </div>
-          <span class="sl-btn-icon" aria-hidden="true"><Download :size="18" /></span>
+          <span class="sl-btn-icon" aria-hidden="true"><AppIcon :icon="Download" /></span>
         </div>
         <p class="t-body-sm text-secondary" style="margin-top: var(--spacing-3); text-align: left">{{ type.description }}</p>
       </button>
@@ -121,6 +121,7 @@ import { useReportStore } from '@/stores/reportStore'
 import { storeToRefs } from 'pinia'
 import { percentText } from '@/composables/patientStats'
 import AppButton from '@/components/shared/AppButton.vue'
+import AppIcon from '@/components/shared/AppIcon.vue'
 import AppTable from '@/components/shared/AppTable.vue'
 import StatCard from '@/components/shared/StatCard.vue'
 import PageHeader from '@/components/shared/PageHeader.vue'

@@ -37,7 +37,7 @@
         </div>
 
         <div class="search-input">
-          <Search :size="16" class="search-icon" />
+          <AppIcon :icon="Search" size="sm" class="search-icon" />
           <input v-model.trim="patientSearch" type="text" placeholder="Search patients by name or email" />
         </div>
 
@@ -114,7 +114,7 @@
           <div class="filter-group">
             <label class="filter-label">Search</label>
             <div class="search-input">
-              <Search :size="16" class="search-icon" />
+              <AppIcon :icon="Search" size="sm" class="search-icon" />
               <input v-model.trim="filters.search" type="text" placeholder="Search exercises..." />
             </div>
           </div>
@@ -159,7 +159,7 @@
             <span v-for="exercise in selectedExercises" :key="exercise.id" class="selected-tag">
               {{ exercise.name }}
               <button type="button" class="tag-remove" @click="removeExercise(exercise.id)">
-                <X :size="14" />
+                <AppIcon :icon="X" size="sm" />
               </button>
             </span>
           </div>
@@ -280,7 +280,7 @@
       <AppCard v-if="currentStep === 3" class="dash-card">
         <div class="success-state">
           <div class="success-icon">
-            <Check :size="40" />
+            <Check :size="40" aria-hidden="true" />
           </div>
           <h2 class="h2">Plan Created Successfully</h2>
           <p class="state-copy">
@@ -306,6 +306,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Search, X, Check } from 'lucide-vue-next'
+import AppIcon from '@/components/shared/AppIcon.vue'
 import { usePatientStore } from '@/stores/patientStore'
 import { useExerciseStore } from '@/stores/exerciseStore'
 import { useAuthStore } from '@/stores/authStore'
