@@ -2,10 +2,7 @@
   <header class="app-header">
     <div class="header-center">
       <div class="search-bar">
-        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-          <circle cx="11" cy="11" r="8"/>
-          <path d="m21 21-4.35-4.35"/>
-        </svg>
+        <AppIcon :icon="Search" size="sm" class="search-icon" />
         <input 
           v-model="searchQuery" 
           type="search" 
@@ -21,10 +18,7 @@
         <div class="header-time">{{ currentTime }}</div>
       </div>
       <button class="icon-btn" aria-label="Notifications" @click="$router.push('/alerts')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-        </svg>
+        <AppIcon :icon="Bell" size="lg" />
         <span v-if="unreadCount > 0" class="notification-dot"></span>
       </button>
       <div class="header-avatar">{{ initials }}</div>
@@ -38,6 +32,8 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import { useAlertStore } from '@/stores/alertStore'
 import { storeToRefs } from 'pinia'
+import { Bell, Search } from 'lucide-vue-next'
+import AppIcon from '@/components/shared/AppIcon.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -171,8 +167,8 @@ onBeforeUnmount(() => {
   border: none;
   cursor: pointer;
   color: var(--text-secondary);
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
@@ -186,8 +182,8 @@ onBeforeUnmount(() => {
 }
 .notification-dot {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 10px;
+  right: 10px;
   width: 8px;
   height: 8px;
   background: #EF4444;
