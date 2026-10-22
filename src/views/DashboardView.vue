@@ -9,7 +9,7 @@
     />
 
     <PageHeader
-      :title="`Good ${timeOfDay}, ${therapistName} 👋`"
+      :title="therapistName ? `Good ${timeOfDay}, ${therapistName}` : `Good ${timeOfDay}`"
       subtitle="Here's what's happening with your patients today."
     >
       <template #actions>
@@ -22,83 +22,34 @@
       <StatCard
         :value="String(stats.totalPatients)"
         label="Total Patients"
-        gradient="var(--gradient-primary)"
-        :trend="{ text: '↑ 2 this month', positive: true }"
+        icon-bg="var(--status-info-bg)"
+        icon-color="var(--status-info-text)"
       >
-        <template #icon>
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            width="24"
-            height="24"
-          >
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-          </svg>
-        </template>
+        <template #icon><AppIcon :icon="Users" /></template>
       </StatCard>
       <StatCard
         :value="String(stats.sessionsToday)"
         label="Sessions Today"
-        gradient="var(--gradient-success)"
-        :trend="{ text: '— No change', positive: true }"
+        icon-bg="var(--status-active-bg)"
+        icon-color="var(--status-active-text)"
       >
-        <template #icon>
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            width="24"
-            height="24"
-          >
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-          </svg>
-        </template>
+        <template #icon><AppIcon :icon="Activity" /></template>
       </StatCard>
       <StatCard
         :value="String(stats.pendingReviews)"
         label="Pending Reviews"
-        gradient="var(--gradient-warning)"
-        :trend="{ text: '↑ 1 this week', positive: false }"
+        icon-bg="var(--status-warning-bg)"
+        icon-color="var(--status-warning-text)"
       >
-        <template #icon>
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            width="24"
-            height="24"
-          >
-            <path d="M9 11l3 3L22 4" />
-            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-          </svg>
-        </template>
+        <template #icon><AppIcon :icon="ClipboardCheck" /></template>
       </StatCard>
       <StatCard
         :value="String(unreadCount)"
         label="Unread Alerts"
-        gradient="var(--gradient-danger)"
-        :trend="{ text: '— No change', positive: true }"
+        icon-bg="var(--status-danger-bg)"
+        icon-color="var(--status-danger-text)"
       >
-        <template #icon>
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            width="24"
-            height="24"
-          >
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-          </svg>
-        </template>
+        <template #icon><AppIcon :icon="Bell" /></template>
       </StatCard>
     </div>
 
@@ -125,64 +76,66 @@
               </select>
             </div>
           </div>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>PATIENT</th>
-                <th>CONDITION</th>
-                <th>LAST SESSION</th>
-                <th>STATUS</th>
-                <th>ACTIONS</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-if="isLoading">
-                <td
-                  colspan="6"
-                  style="text-align: center; padding: var(--spacing-8); color: var(--text-muted)"
+          <div class="sl-table-scroll">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>PATIENT</th>
+                  <th>CONDITION</th>
+                  <th>LAST SESSION</th>
+                  <th>STATUS</th>
+                  <th>ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-if="isLoading">
+                  <td
+                    colspan="6"
+                    style="text-align: center; padding: var(--spacing-8); color: var(--text-muted)"
+                  >
+                    Loading patients...
+                  </td>
+                </tr>
+                <tr v-else-if="paginatedPatients.length === 0">
+                  <td
+                    colspan="6"
+                    style="text-align: center; padding: var(--spacing-8); color: var(--text-muted)"
+                  >
+                    No patients found
+                  </td>
+                </tr>
+                <tr
+                  v-else
+                  v-for="patient in paginatedPatients"
+                  :key="patient.id"
+                  @click="viewPatient(patient.id)"
                 >
-                  Loading patients...
-                </td>
-              </tr>
-              <tr v-else-if="paginatedPatients.length === 0">
-                <td
-                  colspan="6"
-                  style="text-align: center; padding: var(--spacing-8); color: var(--text-muted)"
-                >
-                  No patients found
-                </td>
-              </tr>
-              <tr
-                v-else
-                v-for="patient in paginatedPatients"
-                :key="patient.id"
-                @click="viewPatient(patient.id)"
-              >
-                <td>
-                  <div class="patient-cell">
-                    <div v-if="patient.avatar_url" class="patient-avatar-img">
-                      <img :src="patient.avatar_url" :alt="patient.name" />
+                  <td>
+                    <div class="patient-cell">
+                      <div v-if="patient.avatar_url" class="patient-avatar-img">
+                        <img :src="patient.avatar_url" :alt="patient.name" />
+                      </div>
+                      <div v-else class="patient-avatar">{{ getInitials(patient.name) }}</div>
+                      <div>
+                        <div class="patient-name">{{ patient.name }}</div>
+                        <div class="patient-email">{{ patient.email }}</div>
+                      </div>
                     </div>
-                    <div v-else class="patient-avatar">{{ getInitials(patient.name) }}</div>
-                    <div>
-                      <div class="patient-name">{{ patient.name }}</div>
-                      <div class="patient-email">{{ patient.email }}</div>
-                    </div>
-                  </div>
-                </td>
-                <td>{{ patient.condition }}</td>
-                <td style="color: var(--text-muted)">{{ formatDate(patient.last_session) }}</td>
-                <td>
-                  <AppBadge :variant="getStatusVariant(patient.status)">{{
-                    formatStatus(patient.status)
-                  }}</AppBadge>
-                </td>
-                <td>
-                  <AppButton variant="secondary" class="btn-ghost" @click.stop="viewPatient(patient.id)">View</AppButton>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                  </td>
+                  <td>{{ patient.condition }}</td>
+                  <td style="color: var(--text-muted)">{{ formatDate(patient.last_session) }}</td>
+                  <td>
+                    <AppBadge :variant="getStatusVariant(patient.status)">{{
+                      formatStatus(patient.status)
+                    }}</AppBadge>
+                  </td>
+                  <td>
+                    <AppButton variant="secondary" class="btn-ghost" @click.stop="viewPatient(patient.id)">View</AppButton>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
           <div v-if="totalPages > 1" class="table-footer">
             <span class="caption" style="color: var(--text-secondary)">
               Showing {{ (currentPage - 1) * perPage + 1 }} to
@@ -212,15 +165,17 @@
         <AppCard class="dash-card">
           <h3 class="h4" style="margin-bottom: var(--spacing-3)">Quick Actions</h3>
           <div class="quick-actions">
-            <AppButton variant="secondary" class="quick-action-btn" @click="showAddPatientModal = true">+ Add New Patient</AppButton>
+            <AppButton variant="primary" class="quick-action-btn" @click="showAddPatientModal = true">
+              <AppIcon :icon="UserPlus" /> Add New Patient
+            </AppButton>
             <AppButton variant="secondary" class="quick-action-btn" @click="$router.push('/assign-exercise')">
-              📋 Assign Exercise
+              <AppIcon :icon="ClipboardCheck" /> Assign Exercise
             </AppButton>
             <AppButton variant="secondary" class="quick-action-btn" @click="$router.push('/reports')">
-              📊 Generate Report
+              <AppIcon :icon="FileText" /> Generate Report
             </AppButton>
             <AppButton variant="secondary" class="quick-action-btn" @click="$router.push('/alerts')">
-              🔔 View Alerts
+              <AppIcon :icon="Bell" /> View Alerts
             </AppButton>
           </div>
         </AppCard>
@@ -302,6 +257,8 @@ import AppCard from '@/components/shared/AppCard.vue'
 import AppBadge from '@/components/shared/AppBadge.vue'
 import AppButton from '@/components/shared/AppButton.vue'
 import StatCard from '@/components/shared/StatCard.vue'
+import AppIcon from '@/components/shared/AppIcon.vue'
+import { Activity, Bell, ClipboardCheck, FileText, UserPlus, Users } from 'lucide-vue-next'
 import PageHeader from '@/components/shared/PageHeader.vue'
 import AddPatientModal from '@/components/modals/AddPatientModal.vue'
 
@@ -330,7 +287,8 @@ const timeOfDay = computed(() => {
 })
 
 const therapistName = computed(() => {
-  const fullName = therapistProfile.value?.name || 'Dr. Test'
+  const fullName = therapistProfile.value?.name
+  if (!fullName) return ''
   const parts = fullName.split(' ')
   return parts.length > 1 ? parts[parts.length - 1] : parts[0]
 })
@@ -500,16 +458,29 @@ onMounted(async () => {
 }
 .stats-grid {
   display: grid;
-  /* auto-fit instead of a fixed 4 columns: StatCard has min-width 200px, so a
-     hard repeat(4, 1fr) overflowed the content area below ~1128px viewport. */
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  /* 4 across only when each card (icon + label on one row) has room; otherwise 2 x 2,
+     never 3 + 1 with an empty cell. StatCard has min-width 200px. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--spacing-6);
+}
+@media (min-width: 1240px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 .dashboard-body {
   display: grid;
   grid-template-columns: 1fr 280px;
   gap: var(--spacing-6);
   align-items: start;
+}
+/* Below ~1180px the 1fr column is narrower than the patients table, which then ran
+   under the Quick Actions card. Stack instead; the table sits in .sl-table-scroll so a wide
+   table scrolls inside its card rather than widening the page. */
+@media (max-width: 1179px) {
+  .dashboard-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 .dashboard-main {
   min-width: 0;
@@ -525,6 +496,8 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--spacing-3);
   margin-bottom: var(--spacing-4);
 }
 .table-controls {
@@ -634,10 +607,11 @@ onMounted(async () => {
 /* .btn-primary removed: the header "+ Add Patient" button now renders
    via AppButton's own native primary variant (already token-driven,
    see AppButton.vue), so this hand-rolled rule had no remaining
-   consumer. .btn-ghost/.quick-action-btn are kept: AppButton has no
-   variant matching either bespoke look, so both still apply their
-   full original styling on top of <AppButton variant="secondary">
-   via the class passthrough below, overriding its default look. */
+   consumer. .btn-ghost is kept: AppButton has no variant matching
+   that bespoke look, so it still applies its full original styling
+   on top of <AppButton variant="secondary"> via the class passthrough
+   below. .quick-action-btn only sets layout (width, height, alignment);
+   the variant (primary / secondary) supplies the colours. */
 .btn-ghost {
   background: none;
   border: 1px solid var(--border);
@@ -670,24 +644,13 @@ onMounted(async () => {
 }
 .quick-action-btn {
   width: 100%;
-  height: 40px;
-  text-align: left;
-  background: var(--primary-light);
-  color: var(--primary);
-  border: none;
-  cursor: pointer;
-  border-radius: var(--radius-md);
+  min-height: 44px;
+  justify-content: flex-start;
+  gap: var(--spacing-2);
   padding: 0 var(--spacing-4);
-  font: inherit;
   font-size: var(--font-size-sm);
   font-weight: 600;
-  transition:
-    background 0.15s,
-    color 0.15s;
-}
-.quick-action-btn:hover {
-  background: var(--gradient-primary);
-  color: white;
+  text-align: left;
 }
 
 /* Alerts */

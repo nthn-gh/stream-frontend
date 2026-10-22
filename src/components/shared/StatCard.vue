@@ -1,14 +1,17 @@
 <template>
   <div class="stat-card sl-card">
-    <div class="stat-icon" :style="{ background: iconBg ?? gradient, color: iconColor }">
-      <slot name="icon" />
-    </div>
-    <div class="stat-body">
-      <div class="stat-value">{{ value }}</div>
-      <div class="stat-label">{{ label }}</div>
-      <div v-if="trend" class="stat-trend" :class="trend.positive ? 'trend--up' : 'trend--down'">
-        {{ trend.text }}
+    <div class="stat-head">
+      <div
+        class="stat-icon"
+        :style="{ background: iconBg ?? 'var(--status-info-bg)', color: iconColor ?? 'var(--status-info-text)' }"
+      >
+        <slot name="icon" />
       </div>
+      <div class="stat-label">{{ label }}</div>
+    </div>
+    <div class="stat-value">{{ value }}</div>
+    <div v-if="trend" class="stat-trend" :class="trend.positive ? 'trend--up' : 'trend--down'">
+      {{ trend.text }}
     </div>
   </div>
 </template>
@@ -28,13 +31,12 @@ defineProps({
     type: String,
     required: true
   },
-  // Legacy prop, kept for callers that haven't moved to iconBg/iconColor
-  // yet -- the locked spec (design/stream-portal.html .stat-card__icon)
-  // uses a flat tinted background with a colored icon, not a gradient
-  // with a white icon, so prefer iconBg/iconColor on any new call site.
+  // Legacy prop, kept so existing callers still compile. It is no longer rendered:
+  // the icon tile is a flat tint (iconBg/iconColor, default = the info status tint),
+  // per design/stream-portal.html .stat-card__icon, not a gradient.
   gradient: {
     type: String,
-    default: 'var(--gradient-primary)'
+    default: undefined
   },
   iconBg: {
     type: String,
@@ -52,15 +54,25 @@ defineProps({
 </script>
 
 <style scoped>
-/* Sized/tinted per design/stream-portal.html Section 6.4 .stat-card:
-   min-width 200px, 24px padding, 40x40 icon container (12px radius),
-   32px bold value, 14px slate-600 label -- was 48px/8px-radius icon and
-   28px/13px value+label before this pass. */
+/* Content-height card on the same surface tokens as the other dashboard cards
+   (.dash-card), so it follows the theme instead of staying white on a dark page.
+   Icon tile and label share one row; the number is the dominant element below.
+   Padding is .sl-card's 24px. The status tints (--status-*) are themed in main.css,
+   so a tile keeps its contrast in both light and dark. */
 .stat-card {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-4);
+  gap: var(--spacing-2);
   min-width: 200px;
+  background: var(--bg-card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-card);
+}
+.stat-head {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  min-width: 0;
 }
 .stat-icon {
   width: 40px;
@@ -71,16 +83,19 @@ defineProps({
   justify-content: center;
   flex-shrink: 0;
 }
+.stat-label {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  min-width: 0;
+}
 .stat-value {
   font-size: 32px;
   font-weight: 700;
-  color: var(--color-slate-900);
+  color: var(--text-primary);
   line-height: 1.15;
   font-variant-numeric: tabular-nums;
-}
-.stat-label {
-  font-size: 14px;
-  color: var(--color-slate-600);
 }
 .stat-trend {
   display: inline-flex;
