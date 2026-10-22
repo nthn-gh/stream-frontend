@@ -8,7 +8,7 @@
       <div class="messages-list">
         <div style="padding: var(--spacing-4)">
           <div class="input-icon-wrap">
-            <Search :size="16" style="color: var(--color-slate-400)" />
+            <AppIcon :icon="Search" size="sm" style="color: var(--text-muted)" />
             <input v-model="search" class="sl-input" style="height: 40px" placeholder="Search patients" aria-label="Search patients" />
           </div>
         </div>
@@ -29,12 +29,12 @@
             <AppAvatar :name="conversation.patientName" :src="conversation.avatarUrl" size="sm" />
             <div style="flex: 1; min-width: 0; text-align: left">
               <div style="display: flex; justify-content: space-between; gap: 8px">
-                <strong class="t-body-sm">{{ conversation.patientName }}</strong>
+                <strong class="t-body-sm conversation-name" :title="conversation.patientName">{{ conversation.patientName }}</strong>
                 <span class="t-caption" style="flex-shrink: 0">{{ formatTime(conversation.lastMessage?.created_at) }}</span>
               </div>
               <div class="t-caption conversation-preview">{{ conversation.lastMessage?.content || 'No messages yet' }}</div>
             </div>
-            <span v-if="conversation.unreadCount" class="sl-badge sl-badge-info" style="flex-shrink: 0">{{ conversation.unreadCount }}</span>
+            <span v-if="conversation.unreadCount" class="sl-badge sl-badge-info" style="flex-shrink: 0">{{ conversation.unreadCount }}<span class="sr-only"> unread</span></span>
           </button>
           <p v-if="!filteredConversations.length" class="t-body-sm text-secondary" style="padding: var(--spacing-4)">
             No patients to message yet.
@@ -46,7 +46,7 @@
         <template v-if="activeConversation">
           <div class="thread-header">
             <AppAvatar :name="activeConversation.patientName" :src="activeConversation.avatarUrl" size="sm" />
-            <strong class="t-body-md">{{ activeConversation.patientName }}</strong>
+            <strong class="t-body-md thread-name" :title="activeConversation.patientName">{{ activeConversation.patientName }}</strong>
           </div>
           <div ref="threadScroll" class="thread-body">
             <div
@@ -63,13 +63,13 @@
           </div>
           <form class="thread-composer" @submit.prevent="handleSend">
             <input v-model="draft" class="sl-input" placeholder="Type a message…" aria-label="Message" />
-            <button type="submit" class="sl-btn-icon" style="background: var(--color-primary); color: #fff; border: none" aria-label="Send message" :disabled="isSending || !draft.trim()">
-              <Send :size="18" />
+            <button type="submit" class="send-btn" aria-label="Send message" :disabled="isSending || !draft.trim()">
+              <AppIcon :icon="Send" size="lg" />
             </button>
           </form>
         </template>
         <div v-else class="sl-empty-state" style="margin: auto">
-          <MessageSquare :size="40" style="margin-bottom: var(--spacing-4)" />
+          <MessageSquare :size="40" aria-hidden="true" style="margin-bottom: var(--spacing-4)" />
           <p class="t-body-md">Select a patient to start messaging.</p>
         </div>
       </div>
@@ -85,6 +85,7 @@ import { usePatientStore } from '@/stores/patientStore'
 import { useMessageStore, type ConversationSummary } from '@/stores/messageStore'
 import { useAuthStore } from '@/stores/authStore'
 import AppAvatar from '@/components/shared/AppAvatar.vue'
+import AppIcon from '@/components/shared/AppIcon.vue'
 import AppSkeleton from '@/components/shared/AppSkeleton.vue'
 import PageHeader from '@/components/shared/PageHeader.vue'
 
@@ -181,17 +182,40 @@ onBeforeUnmount(() => {
 .input-icon-wrap .sl-input {
   padding-left: 40px;
 }
+/* The shell is .sl-card (always white) but the text colours it inherits follow the theme, which
+   left names and incoming bubbles light-on-white in dark mode. Use the same surface and text
+   tokens as the other cards so both follow the theme. */
 .messages-shell {
   padding: 0;
   display: grid;
-  grid-template-columns: 320px 1fr;
+  grid-template-columns: clamp(220px, 40%, 320px) minmax(0, 1fr);
   overflow: hidden;
   min-height: 520px;
+  background: var(--bg-card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-card);
+  color: var(--text-primary);
+}
+.messages-shell .t-caption {
+  color: var(--text-muted);
+}
+/* .sl-input is a light-only spec class; keep the two inputs on the themed input surface. */
+.messages-shell .sl-input {
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+.messages-shell .sl-input::placeholder {
+  color: var(--text-muted);
+}
+.messages-shell .sl-input:focus {
+  border-color: var(--border-focus);
 }
 .messages-list {
-  border-right: 1px solid var(--color-slate-200);
+  border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 .conversation-row {
   display: flex;
@@ -200,17 +224,25 @@ onBeforeUnmount(() => {
   width: 100%;
   padding: var(--spacing-3) var(--spacing-4);
   border: none;
-  border-bottom: 1px solid var(--color-slate-100);
+  border-bottom: 1px solid var(--border);
   background: transparent;
+  color: var(--text-primary);
   font-family: inherit;
   cursor: pointer;
   text-align: left;
 }
 .conversation-row:hover {
-  background: var(--color-slate-50);
+  background: var(--bg-hover);
 }
 .conversation-row.is-active {
-  background: var(--accent-blue-soft);
+  background: var(--primary-light);
+}
+.conversation-name,
+.thread-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .conversation-preview {
   overflow: hidden;
@@ -227,7 +259,7 @@ onBeforeUnmount(() => {
   align-items: center;
   gap: 12px;
   padding: var(--spacing-4) var(--spacing-5);
-  border-bottom: 1px solid var(--color-slate-200);
+  border-bottom: 1px solid var(--border);
 }
 .thread-body {
   flex: 1;
@@ -243,12 +275,13 @@ onBeforeUnmount(() => {
   border-radius: var(--radius-lg);
 }
 .thread-bubble.from-them {
-  background: var(--color-slate-100);
+  background: var(--bg-hover);
+  color: var(--text-primary);
   border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) 4px;
   align-self: flex-start;
 }
 .thread-bubble.from-me {
-  background: var(--color-primary);
+  background: var(--color-primary-solid);
   color: #fff;
   border-radius: var(--radius-lg) var(--radius-lg) 4px var(--radius-lg);
   align-self: flex-end;
@@ -257,6 +290,35 @@ onBeforeUnmount(() => {
   display: flex;
   gap: 12px;
   padding: var(--spacing-4) var(--spacing-5);
-  border-top: 1px solid var(--color-slate-200);
+  border-top: 1px solid var(--border);
+}
+/* Icon-only send control: a flex box so the icon is centred, 48px to match the input beside it
+   (and clear the 44px touch target). The old markup used .sl-btn-icon without .sl-btn, so it
+   stayed display:block and the icon sat against the left edge. */
+.send-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--color-primary-solid);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+.send-btn:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+.send-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+.send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 </style>
