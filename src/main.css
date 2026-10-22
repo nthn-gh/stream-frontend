@@ -171,11 +171,24 @@
 
 /* Native selects use the spec's .sl-select (stream-locked.css, light-only). Keep them on
    the themed input surface in dark mode, as the pre-restyle selects were, with a light
-   chevron so the arrow stays visible on the dark fill. */
-.dark .sl-select {
+   chevron so the arrow stays visible on the dark fill.
+
+   The :focus rules are needed because stream-locked.css sets `background: #fff` on
+   .sl-select:focus. That shorthand resets background-image, -repeat and -position, and at
+   specificity (0,2,0) it beats .sl-select, so a focused select lost its chevron (light) or
+   tiled it across the whole field (dark). The chevron longhands are restated for :focus. */
+.sl-select:focus {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'><path d='M6 9l6 6 6-6' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+}
+.dark .sl-select,
+.dark .sl-select:focus {
   background-color: var(--bg-input);
   color: var(--text-primary);
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'><path d='M6 9l6 6 6-6' fill='none' stroke='%23CBD5E1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
 }
 
 @theme {
