@@ -49,7 +49,7 @@
     <PageHeader title="Admin Panel" subtitle="Manage therapists and monitor platform activity">
       <template #actions>
         <AppButton variant="primary" class="btn-icon-gap" @click="showAddModal = true">
-          <UserPlus :size="16" />
+          <AppIcon :icon="UserPlus" />
           <span>Add Therapist</span>
         </AppButton>
       </template>
@@ -63,9 +63,7 @@
         gradient="var(--gradient-primary)"
       >
         <template #icon>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-          </svg>
+          <AppIcon :icon="ShieldCheck" />
         </template>
       </StatCard>
 
@@ -75,12 +73,7 @@
         gradient="linear-gradient(135deg, var(--purple), var(--purple-dark))"
       >
         <template #icon>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-          </svg>
+          <AppIcon :icon="Users" />
         </template>
       </StatCard>
 
@@ -90,9 +83,7 @@
         gradient="var(--gradient-success)"
       >
         <template #icon>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-          </svg>
+          <AppIcon :icon="Activity" />
         </template>
       </StatCard>
     </div>
@@ -103,7 +94,7 @@
         <h3 class="h4">Therapist Management</h3>
         <div class="table-controls">
           <div class="search-input">
-            <Search :size="16" class="search-icon" />
+            <AppIcon :icon="Search" size="sm" class="search-icon" />
             <input
               v-model="searchQuery"
               type="text"
@@ -125,9 +116,7 @@
 
       <!-- Empty State -->
       <div v-else-if="filteredTherapists.length === 0" class="empty-state-inline">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--text-muted)">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-        </svg>
+        <ShieldCheck :size="48" aria-hidden="true" style="color: var(--text-muted)" />
         <p style="color: var(--text-secondary); margin-top: var(--spacing-2)">No therapists found</p>
       </div>
 
@@ -205,7 +194,7 @@
 
 <script setup lang="ts">
 import { ref, computed, reactive, onMounted } from 'vue'
-import { Search, UserPlus } from 'lucide-vue-next'
+import { Activity, Search, ShieldCheck, UserPlus, Users } from 'lucide-vue-next'
 import { useAdminStore } from '@/stores/adminStore'
 import type { TherapistWithUser } from '@/stores/adminStore'
 import AppCard from '@/components/shared/AppCard.vue'
@@ -213,6 +202,7 @@ import AppBadge from '@/components/shared/AppBadge.vue'
 import AppButton from '@/components/shared/AppButton.vue'
 import AppModal from '@/components/shared/AppModal.vue'
 import StatCard from '@/components/shared/StatCard.vue'
+import AppIcon from '@/components/shared/AppIcon.vue'
 import PageHeader from '@/components/shared/PageHeader.vue'
 import AddTherapistModal from '@/components/modals/AddTherapistModal.vue'
 
