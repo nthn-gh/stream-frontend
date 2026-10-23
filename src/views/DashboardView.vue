@@ -458,12 +458,13 @@ onMounted(async () => {
 }
 .stats-grid {
   display: grid;
-  /* 4 across only when each card (icon + label on one row) has room; otherwise 2 x 2,
-     never 3 + 1 with an empty cell. StatCard has min-width 200px. */
+  /* 4 across only when each card has room for the label, "View patient list" and a
+     3-digit value on one line each (about 236px, reached at a 1320px viewport);
+     otherwise 2 x 2, never 3 + 1 with an empty cell. StatCard has min-width 200px. */
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--spacing-6);
 }
-@media (min-width: 1240px) {
+@media (min-width: 1320px) {
   .stats-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
