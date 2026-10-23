@@ -30,6 +30,8 @@
       <StatCard
         :value="String(stats.sessionsToday)"
         label="Sessions Today"
+        to="/patients"
+        link-text="View patients"
         icon-bg="var(--status-active-bg)"
         icon-color="var(--status-active-text)"
       >
@@ -38,6 +40,8 @@
       <StatCard
         :value="String(stats.pendingReviews)"
         label="Pending Reviews"
+        :to="{ path: '/patients', query: { status: 'needs_attention' } }"
+        link-text="Review patients"
         icon-bg="var(--status-warning-bg)"
         icon-color="var(--status-warning-text)"
       >
@@ -46,6 +50,8 @@
       <StatCard
         :value="String(unreadCount)"
         label="Unread Alerts"
+        to="/alerts"
+        link-text="View alerts"
         icon-bg="var(--status-danger-bg)"
         icon-color="var(--status-danger-text)"
       >
