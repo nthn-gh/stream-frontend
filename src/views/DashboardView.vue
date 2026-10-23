@@ -22,8 +22,8 @@
       <StatCard
         :value="String(stats.totalPatients)"
         label="Total Patients"
-        icon-bg="var(--status-info-bg)"
-        icon-color="var(--status-info-text)"
+        to="/patients"
+        link-text="View patient list"
       >
         <template #icon><AppIcon :icon="Users" /></template>
       </StatCard>
